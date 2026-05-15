@@ -1,0 +1,539 @@
+{
+  "violations": [
+    {
+      "id": "d8c1169f-3a32-4316-a529-306c04ecb6bc",
+      "title": "Fake Job Applicant Probing Internal Process",
+      "category": "social_engineering",
+      "difficulty": 2,
+      "question_type": "mcq",
+      "source": "manual",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_c"
+      ],
+      "options_preview": {
+        "option_a": "Answer in general terms, to keep the workflow moving.",
+        "option_b": "Politely deflect, end the call early if questions\u2026",
+        "option_c": "Answer \u2014 eager candidates often ask",
+        "option_d": "Defer to onboarding, because it feels urgent."
+      }
+    },
+    {
+      "id": "8e57d5b8-a93f-47ab-a047-83ad7f4243c1",
+      "title": "Password Reuse is Safe with Complexity",
+      "category": "password_hygiene",
+      "difficulty": 1,
+      "question_type": "true_false",
+      "source": "manual",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a",
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "True",
+        "option_b": "",
+        "option_c": "",
+        "option_d": "False"
+      }
+    },
+    {
+      "id": "0834352f-c616-4e96-8993-2131a6a48d67",
+      "title": "HTTPS Guarantees a Legitimate Site",
+      "category": "phishing_email",
+      "difficulty": 2,
+      "question_type": "true_false",
+      "source": "manual",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a",
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "True",
+        "option_b": "",
+        "option_c": "False",
+        "option_d": ""
+      }
+    },
+    {
+      "id": "d057a9f9-9baa-48c1-b2c1-32da9168cf94",
+      "title": "[True/False] Credential Harvest \u2014 d2",
+      "category": "phishing_email",
+      "difficulty": 2,
+      "question_type": "true_false",
+      "source": "openphish",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a",
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "True",
+        "option_b": "False",
+        "option_c": "",
+        "option_d": ""
+      }
+    },
+    {
+      "id": "8de7e81d-d576-4595-a386-65c89f729161",
+      "title": "[True/False] Credential Harvest \u2014 d2",
+      "category": "phishing_email",
+      "difficulty": 2,
+      "question_type": "true_false",
+      "source": "openphish",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a",
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "True",
+        "option_b": "False",
+        "option_c": "",
+        "option_d": ""
+      }
+    },
+    {
+      "id": "e037486e-f292-42ee-85d6-fc3b455b626a",
+      "title": "[True/False] Credential Harvest  d2",
+      "category": "phishing_email",
+      "difficulty": 2,
+      "question_type": "true_false",
+      "source": "openphish",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a",
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "True",
+        "option_b": "False",
+        "option_c": "",
+        "option_d": ""
+      }
+    },
+    {
+      "id": "21a2a019-66e0-40d8-bf98-22302ac3c0bd",
+      "title": "[True/False] Credential Harvest  d1",
+      "category": "phishing_email",
+      "difficulty": 1,
+      "question_type": "true_false",
+      "source": "openphish",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a",
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "True",
+        "option_b": "False",
+        "option_c": "",
+        "option_d": ""
+      }
+    },
+    {
+      "id": "2b567472-c61c-45a1-95b9-70a197567113",
+      "title": "[True/False] Credential Harvest  d2",
+      "category": "phishing_email",
+      "difficulty": 2,
+      "question_type": "true_false",
+      "source": "openphish",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a",
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "True",
+        "option_b": "False",
+        "option_c": "",
+        "option_d": ""
+      }
+    },
+    {
+      "id": "6eb8d0e3-1888-40b9-8dc5-0fe73b89b464",
+      "title": "[True/False] Credential Harvest  d2",
+      "category": "phishing_email",
+      "difficulty": 2,
+      "question_type": "true_false",
+      "source": "openphish",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a",
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "True",
+        "option_b": "False",
+        "option_c": "",
+        "option_d": ""
+      }
+    },
+    {
+      "id": "bd1021a7-7dc4-4ee0-8284-31310fb9af88",
+      "title": "[True/False] Credential Harvest  d2",
+      "category": "phishing_email",
+      "difficulty": 2,
+      "question_type": "true_false",
+      "source": "openphish",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a",
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "True",
+        "option_b": "False",
+        "option_c": "",
+        "option_d": ""
+      }
+    },
+    {
+      "id": "0592cd6d-9b6b-4cc6-be84-3bc1df751789",
+      "title": "[True/False] Credential Harvest  d2",
+      "category": "phishing_email",
+      "difficulty": 2,
+      "question_type": "true_false",
+      "source": "openphish",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a",
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "True",
+        "option_b": "False",
+        "option_c": "",
+        "option_d": ""
+      }
+    },
+    {
+      "id": "1e395223-bd74-47c6-8b72-22375f98a4d3",
+      "title": "[True/False] Credential Harvest  d1",
+      "category": "phishing_email",
+      "difficulty": 1,
+      "question_type": "true_false",
+      "source": "phishstats",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a",
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "True",
+        "option_b": "False",
+        "option_c": "",
+        "option_d": ""
+      }
+    },
+    {
+      "id": "c36a2b96-0913-461b-98df-eb632ded0d55",
+      "title": "[Identify] Credential Harvest  d1",
+      "category": "phishing_email",
+      "difficulty": 1,
+      "question_type": "identify_threat",
+      "source": "phishstats",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_c",
+        "option_d"
+      ],
+      "options_preview": {
+        "option_a": "Social Engineering",
+        "option_b": "Phishing Email",
+        "option_c": "Smishing",
+        "option_d": "Usb Baiting"
+      }
+    },
+    {
+      "id": "f6c95f34-f8b0-4155-88b9-c531e43ecafc",
+      "title": "[Identify] Credential Harvest  d1",
+      "category": "phishing_email",
+      "difficulty": 1,
+      "question_type": "identify_threat",
+      "source": "phishstats",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a"
+      ],
+      "options_preview": {
+        "option_a": "Vishing",
+        "option_b": "Phishing Email",
+        "option_c": "Data Handling",
+        "option_d": "Social Engineering"
+      }
+    },
+    {
+      "id": "856888d4-5681-4972-8938-6a0612285e02",
+      "title": "[True/False] Credential Harvest  d1",
+      "category": "phishing_email",
+      "difficulty": 1,
+      "question_type": "true_false",
+      "source": "phishstats",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a",
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "True",
+        "option_b": "False",
+        "option_c": "",
+        "option_d": ""
+      }
+    },
+    {
+      "id": "61c968c6-b9b8-4e39-9770-6601c02d4e55",
+      "title": "[Identify] Credential Harvest  d1",
+      "category": "phishing_email",
+      "difficulty": 1,
+      "question_type": "identify_threat",
+      "source": "phishstats",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a",
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "Vishing",
+        "option_b": "Usb Baiting",
+        "option_c": "Data Handling",
+        "option_d": "Phishing Email"
+      }
+    },
+    {
+      "id": "d770f239-0093-49e3-8895-e40ccc3cd253",
+      "title": "[True/False] Credential Harvest  d1",
+      "category": "phishing_email",
+      "difficulty": 1,
+      "question_type": "true_false",
+      "source": "phishstats",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a",
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "True",
+        "option_b": "False",
+        "option_c": "",
+        "option_d": ""
+      }
+    },
+    {
+      "id": "413b49a2-45a4-47e6-a21c-ea0960cac932",
+      "title": "[Identify] Credential Harvest  d2",
+      "category": "phishing_email",
+      "difficulty": 2,
+      "question_type": "identify_threat",
+      "source": "urlscan",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_c"
+      ],
+      "options_preview": {
+        "option_a": "Data Handling",
+        "option_b": "Social Engineering",
+        "option_c": "Vishing",
+        "option_d": "Phishing Email"
+      }
+    },
+    {
+      "id": "4cfc23f5-3afd-4052-99bd-e9ba91f845b3",
+      "title": "[Identify] Credential Harvest  d2",
+      "category": "phishing_email",
+      "difficulty": 2,
+      "question_type": "identify_threat",
+      "source": "urlscan",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a",
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "Vishing",
+        "option_b": "Usb Baiting",
+        "option_c": "Phishing Email",
+        "option_d": "Social Engineering"
+      }
+    },
+    {
+      "id": "4e8af0cb-2bcf-42e8-b6e4-d37720cf16f1",
+      "title": "[Identify] Credential Harvest  d2",
+      "category": "phishing_email",
+      "difficulty": 2,
+      "question_type": "identify_threat",
+      "source": "urlscan",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a",
+        "option_d"
+      ],
+      "options_preview": {
+        "option_a": "Vishing",
+        "option_b": "Physical Security",
+        "option_c": "Phishing Email",
+        "option_d": "Smishing"
+      }
+    },
+    {
+      "id": "65afc619-f30b-4e10-966a-9040516fba58",
+      "title": "[Identify] Credential Harvest  d2",
+      "category": "phishing_email",
+      "difficulty": 2,
+      "question_type": "identify_threat",
+      "source": "urlscan",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_b",
+        "option_c"
+      ],
+      "options_preview": {
+        "option_a": "Phishing Email",
+        "option_b": "Smishing",
+        "option_c": "Vishing",
+        "option_d": "Data Handling"
+      }
+    },
+    {
+      "id": "84fddaf7-82a9-4ce9-9b59-4b6ccc9ef97c",
+      "title": "[True/False] Credential Harvest  d2",
+      "category": "phishing_email",
+      "difficulty": 2,
+      "question_type": "true_false",
+      "source": "urlscan",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a",
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "True",
+        "option_b": "False",
+        "option_c": "",
+        "option_d": ""
+      }
+    },
+    {
+      "id": "037b94ce-a6c5-4dda-affc-a60212dc2033",
+      "title": "[True/False] Credential Harvest  d2",
+      "category": "phishing_email",
+      "difficulty": 2,
+      "question_type": "true_false",
+      "source": "urlscan",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a",
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "True",
+        "option_b": "False",
+        "option_c": "",
+        "option_d": ""
+      }
+    },
+    {
+      "id": "722bf78e-3e53-449f-b8a3-ee903315446d",
+      "title": "[Identify] Credential Harvest  d2",
+      "category": "phishing_email",
+      "difficulty": 2,
+      "question_type": "identify_threat",
+      "source": "urlscan",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a"
+      ],
+      "options_preview": {
+        "option_a": "Usb Baiting",
+        "option_b": "Phishing Email",
+        "option_c": "Password Hygiene",
+        "option_d": "Physical Security"
+      }
+    },
+    {
+      "id": "2cef42e3-0caf-4c7d-ad96-aa60fc59c8e9",
+      "title": "[True/False] Credential Harvest  d2",
+      "category": "phishing_email",
+      "difficulty": 2,
+      "question_type": "true_false",
+      "source": "urlscan",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a",
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "True",
+        "option_b": "False",
+        "option_c": "",
+        "option_d": ""
+      }
+    },
+    {
+      "id": "8b23a262-bc97-4a2c-be2e-2be6cdd3a647",
+      "title": "[Identify] Credential Harvest  d2",
+      "category": "phishing_email",
+      "difficulty": 2,
+      "question_type": "identify_threat",
+      "source": "urlscan",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_c"
+      ],
+      "options_preview": {
+        "option_a": "Password Hygiene",
+        "option_b": "Phishing Email",
+        "option_c": "Vishing",
+        "option_d": "Physical Security"
+      }
+    },
+    {
+      "id": "e284343e-b827-4577-90b6-ae691960660a",
+      "title": "[Identify] Credential Harvest  d2",
+      "category": "phishing_email",
+      "difficulty": 2,
+      "question_type": "identify_threat",
+      "source": "urlscan",
+      "generator": null,
+      "is_active": true,
+      "stub_keys": [
+        "option_a"
+      ],
+      "options_preview": {
+        "option_a": "Smishing",
+        "option_b": "Password Hygiene",
+        "option_c": "Data Handling",
+        "option_d": "Phishing Email"
+      }
+    }
+  ],
+  "recoverable": []
+}

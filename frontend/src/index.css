@@ -1,0 +1,104 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Design tokens (dark theme — single mode) ─────────────────── */
+:root {
+  color-scheme: dark;
+
+  --bg-base:        #080C14;
+  --bg-surface:     #0F1521;
+  --bg-elevated:    #162030;
+  --bg-overlay:     #1D2A3F;
+
+  --border-subtle:  #1E2D42;
+  --border-default: #2A3F5C;
+  --border-strong:  #3A5578;
+
+  --text-primary:   #F0F4F8;
+  --text-secondary: #8BA4BF;
+  --text-muted:     #4E6882;
+  --text-inverse:   #080C14;
+
+  --risk-critical:  #EF4444;
+  --risk-high:      #F97316;
+  --risk-medium:    #EAB308;
+  --risk-low:       #22C55E;
+  --risk-unknown:   #6B7280;
+
+  --accent:         #3B82F6;
+  --accent-hover:   #2563EB;
+  --accent-muted:   #1E3A5F;
+
+  --success:        #10B981;
+  --warning:        #F59E0B;
+  --error:          #EF4444;
+}
+
+@layer base {
+  html, body, #root {
+    height: 100%;
+  }
+  body {
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  table, thead, tbody, tfoot, tr { color: inherit; }
+  tbody, tbody tr, tbody td { color: var(--text-primary); }
+  h1, h2, h3, h4 { line-height: 1.2; letter-spacing: -0.01em; font-weight: 600; }
+  ::selection { background: var(--accent-muted); color: var(--text-primary); }
+
+  :focus { outline: none; }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  button:disabled,
+  [role="button"]:disabled,
+  input:disabled,
+  select:disabled,
+  textarea:disabled {
+    -webkit-text-fill-color: inherit;
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-default);
+    border-radius: 6px;
+    border: 2px solid var(--bg-base);
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .bg-shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--bg-surface) 0%,
+      var(--bg-elevated) 50%,
+      var(--bg-surface) 100%
+    );
+    background-size: 200% 100%;
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "violations": [
+    {
+      "id": "d8c1169f-3a32-4316-a529-306c04ecb6bc",
+      "title": "Fake Job Applicant Probing Internal Process",
+      "category": "social_engineering",
+      "difficulty": 2,
+      "question_type": "mcq",
+      "source": "manual",
+      "generator": null,
+      "is_active": false,
+      "stub_keys": [
+        "option_c"
+      ],
+      "options_preview": {
+        "option_a": "Answer in general terms, to keep the workflow moving.",
+        "option_b": "Politely deflect, end the call early if questions\u2026",
+        "option_c": "Answer \u2014 eager candidates often ask",
+        "option_d": "Defer to onboarding, because it feels urgent."
+      }
+    },
+    {
+      "id": "8e57d5b8-a93f-47ab-a047-83ad7f4243c1",
+      "title": "Password Reuse is Safe with Complexity",
+      "category": "password_hygiene",
+      "difficulty": 1,
+      "question_type": "true_false",
+      "source": "manual",
+      "generator": null,
+      "is_active": false,
+      "stub_keys": [
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "True",
+        "option_b": "",
+        "option_c": "",
+        "option_d": "False"
+      }
+    },
+    {
+      "id": "0834352f-c616-4e96-8993-2131a6a48d67",
+      "title": "HTTPS Guarantees a Legitimate Site",
+      "category": "phishing_email",
+      "difficulty": 2,
+      "question_type": "true_false",
+      "source": "manual",
+      "generator": null,
+      "is_active": false,
+      "stub_keys": [
+        "option_b"
+      ],
+      "options_preview": {
+        "option_a": "True",
+        "option_b": "",
+        "option_c": "False",
+        "option_d": ""
+      }
+    }
+  ],
+  "recoverable": []
+}
