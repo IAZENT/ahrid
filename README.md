@@ -1,5 +1,8 @@
 # AHRIP v2  Adaptive Human Risk Intelligence Platform
 
+<img width="1920" height="970" alt="image" src="https://github.com/user-attachments/assets/66cd632d-9c07-454c-9654-fa4986325f67" />
+
+
 A role-aware human-risk dashboard for security awareness training: phishing,
 vishing, smishing, physical security, password hygiene, USB baiting, social
 engineering, and data handling  with adaptive scenario selection, sentiment
