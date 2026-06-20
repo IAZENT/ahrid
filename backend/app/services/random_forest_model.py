@@ -53,7 +53,7 @@ FEATURE_NAMES: list[str] = [
     "attempts_count",
 ]
 N_FEATURES = len(FEATURE_NAMES)
-assert N_FEATURES == 14, "Feature count drift — master doc requires exactly 14"
+assert N_FEATURES == 14, "Feature count drift  master doc requires exactly 14"
 
 MIN_ATTEMPTS_FOR_PREDICT = 10
 
@@ -164,7 +164,7 @@ class RiskForestPredictor:
         except FileNotFoundError:
             self.model = None
             self.feature_names = FEATURE_NAMES
-            LOG.info("RF model not trained yet — predictor in pass-through mode")
+            LOG.info("RF model not trained yet  predictor in pass-through mode")
 
     @property
     def is_ready(self) -> bool:

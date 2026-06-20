@@ -24,6 +24,11 @@ export interface RfMetrics {
   n_test_samples: number;
   class_distribution: Record<string, number>;
   trained_at: string | null;
+  accuracy?: number;
+  n_samples?: number;
+  n_features?: number;
+  cross_validation?: { k?: number; mean?: number; std?: number; scores?: number[] } | null;
+  smote?: { applied?: boolean; before?: Record<string, number>; after?: Record<string, number> } | null;
 }
 export interface AwarenessUplift {
   n_participants: number;

@@ -1,4 +1,4 @@
-"""ThreatFeedEntry model — raw OSINT intel ingested from external feeds."""
+"""ThreatFeedEntry model  raw OSINT intel ingested from external feeds."""
 from __future__ import annotations
 
 from datetime import datetime

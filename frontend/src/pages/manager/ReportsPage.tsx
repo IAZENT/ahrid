@@ -18,7 +18,7 @@ export function ManagerReportsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "ahrid_weekly_summary.csv";
+    a.download = "ahrip_weekly_summary.csv";
     a.click();
     URL.revokeObjectURL(url);
   };

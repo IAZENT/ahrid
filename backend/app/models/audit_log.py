@@ -1,7 +1,7 @@
 """Append-only audit log for sensitive admin / manager actions.
 
 A security-training platform that doesn't log who did what, when, and from
-where can't be defended in court — or in a thesis viva. This table captures:
+where can't be defended in court  or in a thesis viva. This table captures:
 
   * actor_id        the user who performed the action (nullable for system
                     actions like the scheduler)
@@ -76,7 +76,7 @@ def record_action(
     target_id: str | None = None,
     extra: dict | None = None,
 ) -> AuditLog:
-    """Write one audit row. Never raises — failure to audit must NOT break the
+    """Write one audit row. Never raises  failure to audit must NOT break the
     user request. The caller is responsible for ``db.session.commit()`` if it
     wants the row durable, but most call-sites in this codebase commit later
     in the same transaction so we just flush here.

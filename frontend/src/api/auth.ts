@@ -86,4 +86,8 @@ export const authApi = {
       new_password: newPassword,
     });
   },
+
+  async completeTour(): Promise<void> {
+    await apiClient.post("/auth/complete-tour");
+  },
 };

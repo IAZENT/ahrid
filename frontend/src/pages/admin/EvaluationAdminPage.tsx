@@ -94,23 +94,40 @@ export function EvaluationAdminPage() {
             )}
             {rf && (
               <div className="mt-3 space-y-1.5">
+                {rf.accuracy != null && (
+                  <StatRow label="Accuracy" value={`${(rf.accuracy * 100).toFixed(0)}%`} />
+                )}
                 <StatRow label="F1 (weighted)"     value={rf.f1_weighted.toFixed(3)} />
+                {rf.cross_validation?.mean != null && (
+                  <StatRow
+                    label="CV F1 (macro)"
+                    value={`${rf.cross_validation.mean.toFixed(3)}${rf.cross_validation.std != null ? ` \u00b1${rf.cross_validation.std.toFixed(3)}` : ""}`}
+                  />
+                )}
                 <StatRow label="Baseline F1 (rule-based)" value={rf.baseline_f1.toFixed(3)} />
                 <StatRow
                   label="Improvement"
                   value={`${rf.improvement_pp >= 0 ? "+" : ""}${rf.improvement_pp.toFixed(1)} pp`}
                 />
-                <StatRow label="Test samples"      value={String(rf.n_test_samples)} />
-                <div className="mt-3 border-t border-border-subtle pt-2 text-xs">
-                  <span className="text-text-muted">Class distribution:</span>
-                  <ul className="mt-1 grid grid-cols-2 gap-1 tabular-nums">
-                    {Object.entries(rf.class_distribution).map(([k, v]) => (
-                      <li key={k} className="flex justify-between rounded-md border border-border-subtle px-2 py-1">
-                        <span>{k}</span><span className="text-text-muted">{v}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <StatRow label="Training samples" value={String(rf.n_samples ?? rf.n_test_samples)} />
+                {rf.n_features != null && (
+                  <StatRow label="Features" value={String(rf.n_features)} />
+                )}
+                {rf.smote && (
+                  <StatRow label="SMOTE" value={rf.smote.applied ? "Applied" : "Not applied"} />
+                )}
+                {rf.class_distribution && Object.keys(rf.class_distribution).length > 0 && (
+                  <div className="mt-3 border-t border-border-subtle pt-2 text-xs">
+                    <span className="text-text-muted">Class distribution:</span>
+                    <ul className="mt-1 grid grid-cols-2 gap-1 tabular-nums">
+                      {Object.entries(rf.class_distribution).map(([k, v]) => (
+                        <li key={k} className="flex justify-between rounded-md border border-border-subtle px-2 py-1">
+                          <span>{k}</span><span className="text-text-muted">{v}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             )}
           </CardBody>

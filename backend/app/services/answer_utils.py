@@ -18,11 +18,11 @@ MIN_MEANINGFUL_OPTION_CHARS = 12
 
 _STUB_PATTERNS = (
     re.compile(r"^\s*$"),
-    re.compile(r"^[\s.\-–—…]+$"),
+    re.compile(r"^[\s.\-–…]+$"),
     re.compile(r"^\s*(answer|option)\s*[a-d]?\s*$", re.I),
     re.compile(r"^\s*(n/?a|tbd|todo|placeholder|lorem|ipsum)\b", re.I),
     re.compile(r"\.{4,}"),
-    re.compile(r"^answer\s*[—–-]", re.I),
+    re.compile(r"^answer\s*[–-]", re.I),
 )
 
 _FILLER_PHRASES = (
@@ -147,7 +147,7 @@ def is_option_stub(text: str | None, *, min_chars: int = MIN_MEANINGFUL_OPTION_C
         if pattern.search(cleaned):
             return True
     no_prefix = re.sub(
-        r"^(answer|correct\s*answer|option\s*[a-d])\s*[:.\-—]\s*", "", cleaned, flags=re.I,
+        r"^(answer|correct\s*answer|option\s*[a-d])\s*[:.\-]\s*", "", cleaned, flags=re.I,
     )
     if len(no_prefix.strip()) < min_chars:
         return True

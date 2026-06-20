@@ -1,4 +1,4 @@
-"""Scores API — personal risk + cluster (employee view)."""
+"""Scores API  personal risk + cluster (employee view)."""
 from __future__ import annotations
 
 from datetime import datetime, timedelta

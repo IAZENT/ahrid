@@ -73,7 +73,7 @@ def _load_user(user_id: str | None) -> User | None:
 @bp.post("/register")
 @limiter.limit("5/hour")
 def register():
-    """Self-service employee registration into the AHRID organisation.
+    """Self-service employee registration into the AHRIP organisation.
 
     Body: { email, username, password, first_name, last_name, job_role?, department? }
     Always assigns role="employee". Returns access/refresh tokens on success.
@@ -253,6 +253,17 @@ def update_me():
 
     db.session.commit()
     return jsonify({"user": user.to_dict(), "updated": list(changed.keys())}), 200
+
+
+@bp.post("/complete-tour")
+@jwt_required()
+def complete_tour():
+    user = _load_user(get_jwt_identity())
+    if not user or not user.is_active:
+        return jsonify({"error": "user_not_found"}), 404
+    user.tour_completed = True
+    db.session.commit()
+    return jsonify({"tour_completed": True}), 200
 
 
 @bp.post("/change-password")

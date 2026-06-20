@@ -179,7 +179,7 @@ SMISHING_OPTIONS = [
         ],
         "Sharing 2FA codes is never legitimate.",
         "Code-forwarding request; urgency; impersonated colleague.",
-        "Treat one-time codes like passwords — never share them.",
+        "Treat one-time codes like passwords  never share them.",
     ),
 ]
 SMISHING_STEMS = [
@@ -514,7 +514,7 @@ SOC_OPTIONS = [
         ],
         "Internal Wi-Fi is part of the corporate network boundary.",
         "Outsider on internal network; convenience excuse; trust appeal.",
-        "Guests get the guest network — never the staff one.",
+        "Guests get the guest network  never the staff one.",
     ),
 ]
 SOC_STEMS = [

@@ -32,7 +32,7 @@ export function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Card>
+        <Card data-tour="risk-score">
           <CardBody>
             <div className="flex items-center justify-between text-2xs uppercase tracking-wide text-text-muted">
               <span>Current risk</span>
@@ -40,7 +40,7 @@ export function DashboardPage() {
             </div>
             <div className="mt-2 flex items-baseline gap-2">
               <span className="text-3xl font-semibold tabular-nums">
-                {composite !== null ? composite.toFixed(0) : "—"}
+                {composite !== null ? composite.toFixed(0) : ""}
               </span>
               <RiskBadge level={level} />
             </div>
@@ -106,7 +106,7 @@ export function DashboardPage() {
               {recent.map((s) => (
                 <li key={s.session_id} className="flex items-center justify-between py-2">
                   <span>
-                    {s.started_at ? new Date(s.started_at).toLocaleString() : "—"}
+                    {s.started_at ? new Date(s.started_at).toLocaleString() : ""}
                   </span>
                   <span className="tabular-nums text-text-secondary">
                     {s.correct}/{s.total_questions} · {(s.accuracy * 100).toFixed(0)}%

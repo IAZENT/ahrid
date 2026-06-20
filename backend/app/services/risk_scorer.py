@@ -45,7 +45,7 @@ def _level_for(score: float, attempts_count: int) -> str:
 def recalculate_for_user(user_id) -> RiskScore:
     """Idempotent: returns the user's freshly computed RiskScore row.
     
-    Excludes synthetic attempts from scoring — only real user attempts count.
+    Excludes synthetic attempts from scoring  only real user attempts count.
     """
     cat_attempts: dict[str, list[Attempt]] = {c: [] for c in CATEGORIES}
     rows = (
@@ -84,7 +84,7 @@ def recalculate_for_user(user_id) -> RiskScore:
     risk.attempts_count = len(rows)
     risk.calculated_at = datetime.utcnow()
 
-    # SHAP explanation — best effort, never blocks the score recompute.
+    # SHAP explanation  best effort, never blocks the score recompute.
     try:
         from app.services.random_forest_model import (
             FEATURE_NAMES, RiskForestPredictor,

@@ -1,4 +1,4 @@
-"""Admin API (BSc scope) — users, scenarios, threats, stats, retrains.
+"""Admin API (BSc scope)  users, scenarios, threats, stats, retrains.
 
 Removed: invite system, profile-change-request workflow, AI scenario
 generation, multi-tenant org_id scoping, coaching note + hints.
@@ -372,15 +372,32 @@ def admin_stats():
     def _file_stat(key: str) -> dict:
         path_str = current_app.config.get(key)
         if not path_str:
-            return {"trained": False, "last_trained": None, "path": None}
+            return {"trained": False, "last_trained": None, "path": None, "metrics": None}
         path = Path(path_str)
         if not path.exists():
-            return {"trained": False, "last_trained": None, "path": str(path)}
-        return {
+            return {"trained": False, "last_trained": None, "path": str(path), "metrics": None}
+        result: dict = {
             "trained": True,
             "last_trained": datetime.utcfromtimestamp(path.stat().st_mtime).isoformat(),
             "path": str(path),
+            "metrics": None,
         }
+        # Load sibling metrics JSON if present
+        metrics_path = path.with_name(path.stem.replace("_model", "_metrics") + ".json")
+        if not metrics_path.exists():
+            # Fallback: try kmeans_metrics / rf_metrics
+            for suffix in ("kmeans_metrics", "rf_metrics"):
+                candidate = path.with_name(suffix + ".json")
+                if candidate.exists():
+                    metrics_path = candidate
+                    break
+        if metrics_path.exists():
+            try:
+                import json as _json
+                result["metrics"] = _json.loads(metrics_path.read_text())
+            except Exception:
+                pass
+        return result
 
     return jsonify({
         "totals": {

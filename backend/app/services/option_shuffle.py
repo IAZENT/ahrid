@@ -17,7 +17,7 @@ letter (the one stored in ``Scenario.correct_answer``), and grade.
 This means:
 * No DB schema change.
 * No per-presentation row in any table.
-* The token is unforgeable — without the server secret a user cannot
+* The token is unforgeable  without the server secret a user cannot
   re-map letters to game the answer.
 * The token has a short TTL so a leaked token can't be replayed forever.
 
@@ -101,7 +101,7 @@ def shuffle_options(
         "p": perm,
         "exp": int(time.time()) + TOKEN_TTL_SECONDS,
         # Nonce so two tokens for the same scenario in the same second
-        # still compare unequal — useful for server-side dedupe / logs.
+        # still compare unequal  useful for server-side dedupe / logs.
         "n": secrets.token_urlsafe(6),
     }
     payload_b = json.dumps(payload, separators=(",", ":")).encode("utf-8")
@@ -160,7 +160,7 @@ def attach_presentation(
     apply per-attempt shuffling and length-balancing on the four MCQ options.
 
     Length-balancing is deterministic per scenario (seeded by scenario_id)
-    so the *same* scenario always renders with the same option text — only
+    so the *same* scenario always renders with the same option text  only
     the *positions* change between attempts. This keeps the question stable
     while still defeating positional cheating.
 
@@ -171,9 +171,9 @@ def attach_presentation(
         return scenario_dict
     options = scenario_dict.get("options") or {}
     if set(options.keys()) != set(ORIGINAL_LETTERS):
-        return scenario_dict  # malformed — leave alone
+        return scenario_dict  # malformed  leave alone
 
-    # Stage 1 — pad short distractors up toward the longest so an
+    # Stage 1  pad short distractors up toward the longest so an
     # attentive user can't just pick the longest option and win.
     from app.services.answer_utils import balance_options_for_display
 
@@ -181,7 +181,7 @@ def attach_presentation(
     balance_options_for_display(keyed, seed=scenario_dict.get("id"))
     balanced = {k.upper(): keyed[f"option_{k.lower()}"] for k in ORIGINAL_LETTERS}
 
-    # Stage 2 — per-attempt position shuffle + signed token.
+    # Stage 2  per-attempt position shuffle + signed token.
     shuffled, token = shuffle_options(scenario_dict["id"], balanced)
     scenario_dict["options"] = shuffled
     scenario_dict["presentation_token"] = token

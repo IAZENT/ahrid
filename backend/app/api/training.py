@@ -1,4 +1,4 @@
-"""Training API (BSc scope) — adaptive session, history, insights."""
+"""Training API (BSc scope)  adaptive session, history, insights."""
 from __future__ import annotations
 
 import uuid
@@ -61,10 +61,22 @@ def session_start():
     job_filter = request.args.get("job_role_filter", "true").lower() != "false"
     job_role = user.job_role if job_filter else None
 
-    payload = select_next_session(user.id, job_role=job_role, return_meta=True)
+    try:
+        num_questions = int(request.args.get("num_questions", 0)) or None
+    except (TypeError, ValueError):
+        num_questions = None
+
+    payload = select_next_session(
+        user.id, job_role=job_role, num_questions=num_questions, return_meta=True,
+    )
     scenarios = payload["scenarios"]
+    reasons = payload.get("selection_reasons", {})
     session_id = uuid.uuid4()
-    serialised = [attach_presentation(s.to_public_dict()) for s in scenarios]
+    serialised = []
+    for s in scenarios:
+        d = attach_presentation(s.to_public_dict())
+        d["selection_reason"] = reasons.get(str(s.id))
+        serialised.append(d)
     return jsonify({
         "session_id": str(session_id),
         "scenarios": serialised,
@@ -132,7 +144,7 @@ def session_answer(session_id: str):
         body_payload, status = result
         return jsonify(body_payload), status
 
-    # Behavioural telemetry — never blocks response.
+    # Behavioural telemetry  never blocks response.
     try:
         from app.services.telemetry_service import record_event
         record_event(
@@ -337,6 +349,18 @@ def categories():
         }
         for cat in CATEGORIES
     ]), 200
+
+
+@bp.get("/config")
+@jwt_required()
+def config():
+    """Return training session configuration for the frontend."""
+    from app.services.adaptive_engine import SESSION_SIZE
+    return jsonify({
+        "quick_size": 5,
+        "full_size": SESSION_SIZE,
+        "explanation_duration_seconds": 12,
+    }), 200
 
 
 @bp.get("/insights")

@@ -1,6 +1,8 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { useMemo } from "react";
 import { AppShell } from "./AppShell";
+import { OnboardingTour } from "../shared/OnboardingTour";
+import { useAuthStore } from "../../store/authStore";
 
 const ROUTE_TITLES: Array<{ match: RegExp; title: string }> = [
   { match: /\/app\/training/, title: "Training" },
@@ -14,13 +16,16 @@ const ROUTE_TITLES: Array<{ match: RegExp; title: string }> = [
 
 export function AppLayout() {
   const location = useLocation();
+  const tourCompleted = useAuthStore((s) => s.user?.tour_completed);
+  const isDashboard = location.pathname === "/app/dashboard";
   const title = useMemo(() => {
     const hit = ROUTE_TITLES.find((t) => t.match.test(location.pathname));
-    return hit?.title ?? "AHRID";
+    return hit?.title ?? "AHRIP";
   }, [location.pathname]);
 
   return (
     <AppShell title={title}>
+      {!tourCompleted && isDashboard && <OnboardingTour />}
       <Outlet />
     </AppShell>
   );

@@ -1,4 +1,4 @@
-"""Seed the AHRID scenario question bank (BSc demo).
+"""Seed the AHRIP scenario question bank (BSc demo).
 
 This script wipes every existing Scenario row and reseeds a fresh catalogue
 of MCQ training items covering all 8 risk categories. Each question carries
@@ -157,7 +157,7 @@ SCENARIOS = [
         "option_d": "Ask their badge number and continue the call as normal.",
         "explanation": (
             "Real IT teams never request passwords. Always verify by calling "
-            "your known internal number — never trust the inbound channel."
+            "your known internal number  never trust the inbound channel."
         ),
         "red_flags": "Password request; urgency; inbound caller you can't verify.",
         "learning_tip": "Hang up and call IT back on the official number.",
@@ -244,7 +244,7 @@ SCENARIOS = [
         "title": "Printout left on the shared printer",
         "content": (
             "On the shared office printer you find a stack of pages clearly "
-            "marked \"CONFIDENTIAL — payroll\" that no one has collected, and "
+            "marked \"CONFIDENTIAL  payroll\" that no one has collected, and "
             "the area around the printer is currently empty."
         ),
         "category": "physical_security", "difficulty": 2, "correct_answer": "D",
@@ -254,7 +254,7 @@ SCENARIOS = [
         "option_d": "Bring it to HR or the security team for proper handling.",
         "explanation": (
             "Confidential printouts must be controlled, not left in the open. "
-            "Hand them to the function that owns the data — usually HR."
+            "Hand them to the function that owns the data  usually HR."
         ),
         "red_flags": "Confidential label; uncollected printout; unattended area.",
         "learning_tip": "Sensitive paper belongs in a controlled hand, not an open tray.",
@@ -434,7 +434,7 @@ SCENARIOS = [
             "Guests use the guest network, provisioned through the proper desk."
         ),
         "red_flags": "Outsider on internal network; convenience excuse; trust appeal.",
-        "learning_tip": "Guests get the guest network — never the staff one.",
+        "learning_tip": "Guests get the guest network  never the staff one.",
     },
 
     # ────────── DATA HANDLING ──────────

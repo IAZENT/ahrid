@@ -20,20 +20,20 @@ LOG = logging.getLogger(__name__)
 # Human-readable labels for each of the 14 RF features. Keys must match
 # the FEATURE_NAMES list in random_forest_model.py exactly.
 FEATURE_LABELS: dict[str, str] = {
-    "avg_response_time_ms":   "How quickly you answer questions",
-    "phishing_accuracy":      "Phishing email detection accuracy",
-    "smishing_accuracy":      "SMS phishing detection accuracy",
-    "vishing_accuracy":       "Voice phishing detection accuracy",
-    "physical_accuracy":      "Physical security awareness",
-    "password_accuracy":      "Password hygiene knowledge",
-    "usb_accuracy":           "USB baiting awareness",
-    "social_eng_accuracy":    "Social engineering resistance",
-    "data_handling_accuracy": "Data handling practices",
-    "overall_accuracy":       "Overall quiz accuracy",
-    "rushed_rate":            "Proportion of rushed answers",
-    "overconfident_rate":     "Proportion of overconfident answers",
-    "days_since_last_session":"Days since you last trained",
-    "attempts_count":         "Total training attempts",
+    "avg_response_time_ms":        "How quickly you answer questions",
+    "phishing_accuracy":           "Phishing email detection accuracy",
+    "smishing_accuracy":           "SMS phishing detection accuracy",
+    "social_engineering_accuracy": "Social engineering resistance",
+    "password_hygiene_accuracy":   "Password hygiene knowledge",
+    "physical_security_accuracy":  "Physical security awareness",
+    "overall_accuracy":            "Overall quiz accuracy",
+    "fast_attempt_rate":           "Proportion of rushed answers",
+    "overconfident_rate":          "Proportion of overconfident answers",
+    "session_consistency":         "Consistency across training sessions",
+    "job_role_encoded":            "Job role",
+    "total_sessions":              "Total training sessions completed",
+    "days_since_last_session":     "Days since you last trained",
+    "attempts_count":              "Total training attempts",
 }
 
 
@@ -56,7 +56,7 @@ def explain_prediction(
     that as-is so the UI can degrade gracefully.
     """
     try:
-        import shap  # local import — keeps cold-path imports off boot
+        import shap  # local import  keeps cold-path imports off boot
         from app.services.random_forest_model import RiskForestPredictor
 
         predictor = RiskForestPredictor()
@@ -67,7 +67,7 @@ def explain_prediction(
         x = np.asarray(feature_vector, dtype=float).reshape(1, -1)
 
         explainer = shap.TreeExplainer(predictor.model)
-        raw = explainer.shap_values(x)
+        raw = explainer.shap_values(x, check_additivity=False)
 
         # ``raw`` shape varies by sklearn / shap version. We normalise
         # to a 1-D array of length n_features for the predicted class.

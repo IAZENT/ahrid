@@ -1,8 +1,8 @@
 """APScheduler-driven background jobs (BSc scope: 2 jobs only).
 
 Jobs:
-  * threat_ingestion — every 6 hours
-  * risk_recalc      — every 1 hour (no-op placeholder; recalc happens
+  * threat_ingestion  every 6 hours
+  * risk_recalc       every 1 hour (no-op placeholder; recalc happens
                        per-attempt synchronously)
 
 Other heavyweight jobs (RF retrain, KMeans recluster, news ingestion,
@@ -69,7 +69,7 @@ def init_scheduler(app) -> BackgroundScheduler:
 
     if app.config.get("ENABLE_SCHEDULER", False):
         scheduler.start()
-        LOG.info("Scheduler started — threat ingestion every %dh", refresh_hours)
+        LOG.info("Scheduler started  threat ingestion every %dh", refresh_hours)
     else:
         LOG.info("Scheduler initialised but not started (ENABLE_SCHEDULER=False).")
 

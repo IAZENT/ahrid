@@ -14,6 +14,7 @@ import { adminApi, type AdminStats } from "../../api/admin";
 import { LoadingScreen } from "../../components/shared/LoadingSpinner";
 import { Button } from "../../components/ui/Button";
 import { Card, CardBody } from "../../components/ui/Card";
+import { FeaturePrioritization } from "../../components/shared/FeaturePrioritization";
 import { cn } from "../../lib/utils";
 
 type JobStatus = "idle" | "running" | "completed" | "failed";
@@ -48,7 +49,7 @@ function StatusPill({ status }: { status: JobStatus }) {
 }
 
 function fmtTime(iso?: string | null): string {
-  if (!iso) return "—";
+  if (!iso) return "";
   try {
     return new Date(iso).toLocaleTimeString();
   } catch {
@@ -57,7 +58,7 @@ function fmtTime(iso?: string | null): string {
 }
 
 function fmtDuration(start?: string | null, end?: string | null): string {
-  if (!start) return "—";
+  if (!start) return "";
   const startMs = new Date(start).getTime();
   const endMs = end ? new Date(end).getTime() : Date.now();
   const sec = Math.max(0, Math.round((endMs - startMs) / 1000));
@@ -194,12 +195,15 @@ export function AdminDashboardPage() {
           busy={busy === "retrain"}
           summary={
             retrainJob?.result
-              ? "Models retrained successfully — see ML status below."
+              ? "Models retrained successfully  see ML status below."
               : null
           }
           variant="ghost"
         />
       </div>
+
+      {/* Feature prioritization matrix */}
+      <FeaturePrioritization />
 
       {/* ML status */}
       <Card>
@@ -340,8 +344,21 @@ function ModelTile({
   label: string;
   trained?: boolean;
   last_trained_at?: string | null;
-  metrics?: Record<string, unknown>;
+  metrics?: Record<string, unknown> | null;
 }) {
+  const isRf = label.toLowerCase().includes("random");
+  const isKm = label.toLowerCase().includes("kmeans");
+
+  const accuracy = metrics?.accuracy as number | undefined;
+  const nSamples = metrics?.n_samples as number | undefined;
+  const nUsers = metrics?.n_users as number | undefined;
+  const nClusters = metrics?.n_clusters as number | undefined;
+  const silhouette = metrics?.silhouette_score as number | undefined;
+  const clusterSizes = metrics?.cluster_sizes as Record<string, number> | undefined;
+  const cv = metrics?.cross_validation as { mean?: number; std?: number } | undefined;
+  const smote = metrics?.smote as { applied?: boolean } | undefined;
+  const classDist = metrics?.class_distribution as Record<string, number> | undefined;
+
   return (
     <div className="rounded-lg border border-border-subtle bg-bg-elevated/40 p-3">
       <div className="flex items-center justify-between">
@@ -351,15 +368,66 @@ function ModelTile({
       <div className="mt-2 text-2xs text-text-muted">
         Last trained: {last_trained_at ? new Date(last_trained_at).toLocaleString() : "never"}
       </div>
-      {metrics && Object.keys(metrics).length > 0 && (
-        <ul className="mt-2 space-y-0.5 text-2xs text-text-secondary">
-          {Object.entries(metrics).slice(0, 6).map(([k, v]) => (
-            <li key={k} className="flex items-center justify-between gap-2 tabular-nums">
-              <span className="truncate text-text-muted">{k.replace(/_/g, " ")}</span>
-              <span>{typeof v === "number" ? v.toFixed(3) : String(v)}</span>
-            </li>
-          ))}
-        </ul>
+
+      {trained && metrics && (
+        <div className="mt-3 space-y-2">
+          {isRf && accuracy != null && (
+            <div className="flex items-baseline justify-between">
+              <span className="text-2xs text-text-muted">Accuracy</span>
+              <span className="text-sm font-semibold tabular-nums text-text-primary">
+                {(accuracy * 100).toFixed(0)}%
+              </span>
+            </div>
+          )}
+          {isRf && cv?.mean != null && (
+            <div className="flex items-baseline justify-between">
+              <span className="text-2xs text-text-muted">CV F1 (macro)</span>
+              <span className="text-xs tabular-nums text-text-secondary">
+                {cv.mean.toFixed(3)} {cv.std != null ? `\u00b1${cv.std.toFixed(3)}` : ""}
+              </span>
+            </div>
+          )}
+          {isRf && nSamples != null && (
+            <div className="flex items-baseline justify-between">
+              <span className="text-2xs text-text-muted">Training samples</span>
+              <span className="text-xs tabular-nums text-text-secondary">{nSamples}</span>
+            </div>
+          )}
+          {isRf && classDist && (
+            <div className="text-2xs text-text-muted">
+              Classes: {Object.keys(classDist).length} (low/med/high/crit)
+            </div>
+          )}
+          {isRf && smote?.applied != null && (
+            <div className="text-2xs text-text-muted">
+              SMOTE: {smote.applied ? "applied" : "not applied"}
+            </div>
+          )}
+
+          {isKm && nClusters != null && (
+            <div className="flex items-baseline justify-between">
+              <span className="text-2xs text-text-muted">Clusters</span>
+              <span className="text-sm font-semibold tabular-nums text-text-primary">{nClusters}</span>
+            </div>
+          )}
+          {isKm && silhouette != null && (
+            <div className="flex items-baseline justify-between">
+              <span className="text-2xs text-text-muted">Silhouette</span>
+              <span className="text-xs tabular-nums text-text-secondary">{silhouette.toFixed(3)}</span>
+            </div>
+          )}
+          {isKm && nUsers != null && (
+            <div className="flex items-baseline justify-between">
+              <span className="text-2xs text-text-muted">Users clustered</span>
+              <span className="text-xs tabular-nums text-text-secondary">{nUsers}</span>
+            </div>
+          )}
+          {isKm && clusterSizes && (
+            <div className="text-2xs text-text-muted">
+              Sizes: {Object.values(clusterSizes).join(" / ")}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

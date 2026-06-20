@@ -24,7 +24,7 @@ _LURE_TEMPLATES: dict[str, dict] = {
         ),
         "correct": "Don't enter credentials. Verify by typing the brand's known address into the browser yourself.",
         "distractors": [
-            "Enter the credentials — the URL looks close enough to the real site.",
+            "Enter the credentials  the URL looks close enough to the real site.",
             "Forward the link to a colleague to ask whether it's safe.",
             "Reply to the message to ask the sender for confirmation first.",
         ],
@@ -44,14 +44,14 @@ _LURE_TEMPLATES: dict[str, dict] = {
         ),
         "correct": "Stop. Confirm with the supplier through a phone number you already have on file before paying.",
         "distractors": [
-            "Pay it — invoices look legitimate and finance approves them later.",
+            "Pay it  invoices look legitimate and finance approves them later.",
             "Reply to the email asking the sender to resend a clearer copy.",
             "Forward it to your manager and assume they will validate it.",
         ],
         "explanation": (
             "Invoice fraud relies on near-miss supplier identities. Always "
             "verify payment requests through a side channel using contact "
-            "details you already trust — never the ones in the email."
+            "details you already trust  never the ones in the email."
         ),
         "red_flags": "Unexpected invoice; pay-link in email; near-miss sender.",
     },
@@ -64,13 +64,13 @@ _LURE_TEMPLATES: dict[str, dict] = {
         ),
         "correct": "Don't click. Track the parcel via the courier's official site or app instead.",
         "distractors": [
-            "Pay the fee — couriers do charge for redelivery sometimes.",
+            "Pay the fee  couriers do charge for redelivery sometimes.",
             "Reply with your address so the courier can re-attempt.",
             "Click the link to check what the parcel is.",
         ],
         "explanation": (
             "Delivery scams trade on the chance you really are expecting a "
-            "parcel. Always go through the courier's official channel — "
+            "parcel. Always go through the courier's official channel  "
             "never the link or number in the message."
         ),
         "red_flags": "Unsolicited courier ping; small fee request; shortened link.",
@@ -89,7 +89,7 @@ _LURE_TEMPLATES: dict[str, dict] = {
         ],
         "explanation": (
             "Fake IT-support lures bank on authority bias. Real IT will be "
-            "reachable through your established channel — and they would "
+            "reachable through your established channel  and they would "
             "never ask you to disable security tools."
         ),
         "red_flags": "Unsolicited IT ping; pressure to act; ask to disable security.",
@@ -103,7 +103,7 @@ _LURE_TEMPLATES: dict[str, dict] = {
         ),
         "correct": "Pause. Verify by calling the leader on a number you already have, not one in the message.",
         "distractors": [
-            "Comply quickly — leadership requests are time-sensitive.",
+            "Comply quickly  leadership requests are time-sensitive.",
             "Reply asking the leader to confirm by email.",
             "Forward the message to the leader's PA without verifying.",
         ],
@@ -120,7 +120,7 @@ _LURE_TEMPLATES: dict[str, dict] = {
             "A message says you've been selected for a prize and to claim it "
             "at {url}. What should you do?"
         ),
-        "correct": "Delete it. If you didn't enter, you didn't win — assume it's a scam.",
+        "correct": "Delete it. If you didn't enter, you didn't win  assume it's a scam.",
         "distractors": [
             "Click the link to claim the prize before it expires.",
             "Reply asking what the prize is.",

@@ -15,7 +15,7 @@ export function MyScorePage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <Card>
+      <Card data-tour="my-risk-score">
         <CardBody>
           <h2 className="text-md font-semibold text-text-primary">Risk score</h2>
           {isRealScore(me) ? (
@@ -51,9 +51,22 @@ export function MyScorePage() {
             {Object.keys(me.rf_prediction.feature_importances).length > 0 && (
               <div className="mt-3 text-xs text-text-secondary">
                 <strong>Top features driving the prediction:</strong>
-                <ul className="mt-1 list-disc pl-5">
+                <ul className="mt-1 space-y-1">
                   {Object.entries(me.rf_prediction.feature_importances).map(([k, v]) => (
-                    <li key={k}>{k.replace(/_/g, " ")}: {v.toFixed(3)}</li>
+                    <li key={k} className="flex items-center justify-between gap-2">
+                      <span className="truncate text-text-muted">
+                        {k.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <div className="h-1.5 w-16 overflow-hidden rounded-full bg-bg-elevated">
+                          <div
+                            className="h-full rounded-full bg-accent"
+                            style={{ width: `${Math.min(100, v * 100 * 5)}%` }}
+                          />
+                        </div>
+                        <span className="tabular-nums text-text-muted">{v.toFixed(3)}</span>
+                      </div>
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -87,17 +100,17 @@ export function MyScorePage() {
         </Card>
       )}
 
-      <Card>
+      <Card data-tour="category-trend">
         <CardBody>
           <h2 className="text-md font-semibold text-text-primary">8-week trend</h2>
           {(() => {
-            // Only show weeks that actually have data — empty weeks add
+            // Only show weeks that actually have data  empty weeks add
             // visual noise without conveying useful information.
             const weeksWithData = history.filter((b) => b.accuracy != null);
             if (weeksWithData.length === 0) {
               return (
                 <p className="mt-2 text-sm text-text-secondary">
-                  No history yet — complete a training session to see your trend.
+                  No history yet  complete a training session to see your trend.
                 </p>
               );
             }

@@ -1,4 +1,4 @@
-"""Manager API — dashboard, team roster, profiles, reports (single-tenant)."""
+"""Manager API  dashboard, team roster, profiles, reports (single-tenant)."""
 from __future__ import annotations
 
 import csv
@@ -152,7 +152,7 @@ def dashboard():
 @manager_required
 @active_user_required
 def team():
-    # Only employees are trainable targets — admins/managers training
+    # Only employees are trainable targets  admins/managers training
     # themselves was producing self-assigned notifications. The team
     # roster also excludes the requesting user explicitly so an admin
     # who happens to also have role="employee" still cannot click
@@ -396,5 +396,5 @@ def reports_summary():
     return Response(
         csv_bytes,
         mimetype="text/csv",
-        headers={"Content-Disposition": "attachment; filename=ahrid_weekly_summary.csv"},
+        headers={"Content-Disposition": "attachment; filename=ahrip_weekly_summary.csv"},
     )

@@ -1,8 +1,5 @@
 # AHRIP v2  Adaptive Human Risk Intelligence Platform
 
-<img width="1920" height="970" alt="image" src="https://github.com/user-attachments/assets/66cd632d-9c07-454c-9654-fa4986325f67" />
-
-
 A role-aware human-risk dashboard for security awareness training: phishing,
 vishing, smishing, physical security, password hygiene, USB baiting, social
 engineering, and data handling  with adaptive scenario selection, sentiment
@@ -13,11 +10,16 @@ gamification.
 - **Backend:** Python 3.11 · Flask 3 · PostgreSQL · scikit-learn · APScheduler
 - **Frontend:** React 18 · Vite · TypeScript · Tailwind CSS v4 · Recharts · Framer Motion
 - **OSINT:** PhishTank · OpenPhish · AlienVault OTX · URLScan.io
+- **Infra:** Supabase (DB) · Render (API) · Vercel (frontend)
 
 ## Repository Layout
 ```
 backend/    Flask API, ML services, threat ingestion
 frontend/   React + Vite SPA
+AHRIP_v2_Master_Build.md   Source-of-truth build prompts
+PROGRESS.md                Phase-by-phase status
+REMAINING_WORK.md          Detailed task backlog
+THINGS_TO_FIX.md           Open issues / blockers
 ```
 
 ## Local Setup

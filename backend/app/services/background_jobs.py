@@ -94,6 +94,6 @@ def launch(kind: str, app, fn: Callable[[], dict | None]) -> dict:
     else:
         threading.Thread(
             target=_run, args=(kind, job_id, app, fn), daemon=True,
-            name=f"ahrid-{kind}-{job_id[:8]}",
+            name=f"ahrip-{kind}-{job_id[:8]}",
         ).start()
     return get_state(kind)

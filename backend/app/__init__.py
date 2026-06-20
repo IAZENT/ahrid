@@ -73,14 +73,14 @@ def create_app(config_object=None) -> Flask:
         if hasattr(module, "bp"):
             app.register_blueprint(module.bp)
 
-    # Background scheduler — initialised but only auto-starts when ENABLE_SCHEDULER=true.
+    # Background scheduler  initialised but only auto-starts when ENABLE_SCHEDULER=true.
     if not app.config.get("TESTING"):
         from app.services.scheduler import init_scheduler
         init_scheduler(app)
 
     @app.get("/")
     def index():
-        return jsonify({"app": app.config.get("APP_NAME", "AHRID"), "status": "ok"})
+        return jsonify({"app": app.config.get("APP_NAME", "AHRIP"), "status": "ok"})
 
     from werkzeug.exceptions import HTTPException
 

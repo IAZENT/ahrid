@@ -1,4 +1,4 @@
-"""Notification model — minimal: training_assigned + risk_escalation only."""
+"""Notification model  minimal: training_assigned + risk_escalation only."""
 from __future__ import annotations
 
 import json

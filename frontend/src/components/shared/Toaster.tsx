@@ -50,7 +50,7 @@ export const useToastStore = create<ToastState>((set, get) => ({
   clear: () => set({ toasts: [] }),
 }));
 
-/** Imperative helper — call from anywhere (outside React components too). */
+/** Imperative helper  call from anywhere (outside React components too). */
 export const toast = {
   info: (title: string, description?: string) =>
     useToastStore.getState().push({ tone: "info", title, description }),

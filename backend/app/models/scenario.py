@@ -1,4 +1,4 @@
-"""Scenario model — MCQ/TF/identify_threat training items."""
+"""Scenario model  MCQ/TF/identify_threat training items."""
 from __future__ import annotations
 
 from app.extensions import db

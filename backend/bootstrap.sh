@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# AHRID one-command cold-start bootstrap.
+# AHRIP one-command cold-start bootstrap.
 #
 # Brings a fresh checkout from "git clone" → "fully demoable system" with one
 # command. Idempotent: safe to re-run any time.
@@ -55,7 +55,7 @@ if [ -f "migrations/alembic.ini" ]; then
     flask --app app:create_app db upgrade || die "Alembic upgrade failed."
     ok "Migrations applied"
 else
-    warn "No migrations/alembic.ini — falling back to db.create_all() inside seed.py."
+    warn "No migrations/alembic.ini  falling back to db.create_all() inside seed.py."
 fi
 
 # ---------- 3. Domain seed ----------
@@ -70,7 +70,7 @@ ok "ML bootstrap data seeded"
 
 # ---------- 5. OSINT + news ingestion ----------
 if [ "${SKIP_INGESTION:-0}" = "1" ]; then
-    warn "SKIP_INGESTION=1 — skipping threat + news fetch."
+    warn "SKIP_INGESTION=1  skipping threat + news fetch."
 else
     step "Step 5/6: Run threat-feed + cyber-news ingestion (one-shot)"
     python3 - <<'PY' || warn "Ingestion had non-fatal errors (network?). Continuing."
@@ -87,7 +87,7 @@ fi
 
 # ---------- 6. ML training ----------
 if [ "${SKIP_TRAIN:-0}" = "1" ]; then
-    warn "SKIP_TRAIN=1 — skipping ML model training."
+    warn "SKIP_TRAIN=1  skipping ML model training."
 else
     step "Step 6/6: Train Random Forest + KMeans (saves metrics.json)"
     python3 train_models.py || die "train_models.py failed."
@@ -96,7 +96,7 @@ fi
 
 echo
 echo "${GREEN}${BOLD}════════════════════════════════════════════════════════${RESET}"
-echo "${GREEN}${BOLD}  AHRID bootstrap complete.${RESET}"
+echo "${GREEN}${BOLD}  AHRIP bootstrap complete.${RESET}"
 echo "${GREEN}${BOLD}════════════════════════════════════════════════════════${RESET}"
 echo
 echo "  Next steps:"

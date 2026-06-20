@@ -1,4 +1,4 @@
-"""User model — auth, role, KMeans cluster label."""
+"""User model  auth, role, KMeans cluster label."""
 from __future__ import annotations
 
 from datetime import datetime
@@ -46,6 +46,8 @@ class User(db.Model, TimestampMixin):
     cluster_label = db.Column(db.String(50), nullable=True)
     cluster_assigned_at = db.Column(db.DateTime, nullable=True)
 
+    tour_completed = db.Column(db.Boolean, nullable=False, default=False)
+
     attempts = db.relationship(
         "Attempt", back_populates="user", cascade="all, delete-orphan", lazy="dynamic"
     )
@@ -83,6 +85,7 @@ class User(db.Model, TimestampMixin):
             "last_login": self.last_login.isoformat() if self.last_login else None,
             "consent_given": self.consent_given,
             "cluster_label": self.cluster_label,
+            "tour_completed": self.tour_completed,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }
 

@@ -4,7 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Design tokens (dark theme — single mode) ─────────────────── */
+/* ── Design tokens (dark theme  single mode) ─────────────────── */
 :root {
   color-scheme: dark;
 

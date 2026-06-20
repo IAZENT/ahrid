@@ -1,7 +1,7 @@
 /**
  * Transparency policy page (master spec §7.2).
  *
- * Public — accessible to every authenticated role and unauthenticated
+ * Public  accessible to every authenticated role and unauthenticated
  * visitors via a deep link. Pulls the policy text from the backend so
  * an admin can update it without a frontend deploy.
  */
@@ -30,7 +30,7 @@ export function TransparencyPage() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <Card>
+      <Card data-tour="transparency-policy">
         <CardBody>
           <div className="flex items-start gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-md bg-accent/15 text-accent">
@@ -41,7 +41,7 @@ export function TransparencyPage() {
                 Transparency policy
               </h1>
               <p className="mt-1 text-xs text-text-secondary">
-                How AHRID collects, uses, and explains your training data.
+                How AHRIP collects, uses, and explains your training data.
               </p>
             </div>
           </div>

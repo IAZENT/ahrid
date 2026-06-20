@@ -53,7 +53,7 @@ class BaseConfig:
     MIN_USERS_FOR_KMEANS = int(os.environ.get("MIN_USERS_FOR_KMEANS", "3"))
 
     LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
-    APP_NAME = os.environ.get("APP_NAME", "AHRID")
+    APP_NAME = os.environ.get("APP_NAME", "AHRIP")
 
     # When truthy, APScheduler auto-starts: threat ingestion + risk recalc.
     ENABLE_SCHEDULER = os.environ.get("ENABLE_SCHEDULER", "false").lower() in (

@@ -38,7 +38,7 @@ export function AdminPasswordResetsPage() {
           <CardBody>
             <h2 className="text-md font-semibold text-success">Reset token issued</h2>
             <p className="mt-1 text-xs text-text-secondary">
-              Hand this token to the user out-of-band — it will not be shown again.
+              Hand this token to the user out-of-band  it will not be shown again.
             </p>
             <pre className="mt-2 overflow-auto rounded-md border border-border-subtle bg-bg-elevated p-2 text-2xs">
               {token.token}
@@ -62,7 +62,7 @@ export function AdminPasswordResetsPage() {
                   <div>
                     <div>{r.user_email ?? r.user_id.slice(0, 8)}</div>
                     <div className="text-2xs text-text-muted">
-                      filed {r.created_at ? new Date(r.created_at).toLocaleString() : "—"}
+                      filed {r.created_at ? new Date(r.created_at).toLocaleString() : ""}
                     </div>
                   </div>
                   <div className="flex gap-2">

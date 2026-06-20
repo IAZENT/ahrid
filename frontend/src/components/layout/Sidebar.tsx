@@ -14,6 +14,7 @@ interface NavItem {
   label: string;
   icon: LucideIcon;
   roles?: UserRole[];
+  tourKey?: string;
 }
 
 interface NavSection {
@@ -28,15 +29,15 @@ const SECTIONS: NavSection[] = [
     id: "learn",
     label: "Learn",
     items: [
-      { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
-      { to: "/app/training", label: "Training", icon: Target },
+      { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard, tourKey: "tour-nav-dashboard" },
+      { to: "/app/training", label: "Training", icon: Target, tourKey: "tour-nav-training" },
     ],
   },
   {
     id: "progress",
     label: "Progress",
     items: [
-      { to: "/app/my-score", label: "My Score", icon: TrendingUp },
+      { to: "/app/my-score", label: "My Score", icon: TrendingUp, tourKey: "tour-nav-my-score" },
       { to: "/app/history", label: "Session History", icon: History },
       { to: "/app/evaluation", label: "Evaluation", icon: ClipboardList },
       { to: "/app/transparency", label: "Transparency", icon: ScrollText },
@@ -86,12 +87,12 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <aside className="flex h-full w-60 flex-col border-r border-border-subtle bg-bg-overlay">
-      <div className="flex items-center gap-2 px-5 py-5">
+      <div className="flex items-center gap-2 px-5 py-5" data-tour="tour-sidebar-brand">
         <div className="flex h-8 w-8 items-center justify-center rounded-md bg-accent/15 text-accent">
           <Shield className="h-4 w-4" />
         </div>
         <div className="leading-tight">
-          <div className="text-md font-bold tracking-tight text-accent">AHRID</div>
+          <div className="text-md font-bold tracking-tight text-accent">AHRIP</div>
           <div className="text-2xs text-text-muted">Human Risk Intel</div>
         </div>
       </div>
@@ -110,6 +111,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
                     <NavLink
                       to={item.to}
                       onClick={onNavigate}
+                      {...(item.tourKey ? { "data-tour": item.tourKey } : {})}
                       className={({ isActive }) =>
                         cn(
                           "group flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium transition-colors duration-150",

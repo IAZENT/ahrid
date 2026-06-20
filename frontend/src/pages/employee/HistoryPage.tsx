@@ -40,7 +40,7 @@ export function HistoryPage() {
                 {sessions?.map((s) => (
                   <tr key={s.session_id}>
                     <td className="py-2">
-                      {s.started_at ? new Date(s.started_at).toLocaleString() : "—"}
+                      {s.started_at ? new Date(s.started_at).toLocaleString() : ""}
                     </td>
                     <td className="py-2 tabular-nums">{s.duration_seconds.toFixed(0)}s</td>
                     <td className="py-2 tabular-nums">

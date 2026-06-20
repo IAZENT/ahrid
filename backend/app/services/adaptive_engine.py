@@ -1,10 +1,10 @@
 """Adaptive scenario selection + attempt processing (BSc scope).
 
 Simplifications vs. the production build:
-* Thompson Sampling removed — pure mastery-based weighted selection.
-* Sentiment / VADER signals removed — only ``response_time_ms`` is kept
+* Thompson Sampling removed  pure mastery-based weighted selection.
+* Sentiment / VADER signals removed  only ``response_time_ms`` is kept
   as a behavioural proxy on the Attempt row.
-* Free-text grading paths removed — only MCQ / TF / identify_threat.
+* Free-text grading paths removed  only MCQ / TF / identify_threat.
 * Gamification (XP, streaks, badges) removed.
 """
 from __future__ import annotations
@@ -60,6 +60,28 @@ ROLE_CATEGORY_PRIORITY: dict[str, list[str]] = {
     "sales": ["phishing_email", "smishing", "social_engineering"],
     "management": ["vishing", "social_engineering", "phishing_email"],
     "other": ["phishing_email", "password_hygiene", "social_engineering"],
+}
+
+_CATEGORY_DISPLAY: dict[str, str] = {
+    "phishing_email": "phishing email detection",
+    "smishing": "SMS phishing awareness",
+    "vishing": "voice phishing defence",
+    "physical_security": "physical security awareness",
+    "password_hygiene": "password hygiene",
+    "usb_baiting": "USB baiting awareness",
+    "social_engineering": "social engineering resistance",
+    "data_handling": "data handling practices",
+}
+
+_ROLE_DISPLAY: dict[str, str] = {
+    "receptionist": "reception",
+    "accountant": "accounting",
+    "hr": "HR",
+    "it": "IT",
+    "finance": "finance",
+    "sales": "sales",
+    "management": "management",
+    "other": "your",
 }
 
 
@@ -228,23 +250,27 @@ def select_next_session(
     user_id,
     job_role: str | None = None,
     *,
+    num_questions: int | None = None,
     return_meta: bool = False,
 ):
-    """Return up to SESSION_SIZE scenarios using the doc's distribution."""
+    """Return up to num_questions scenarios using the doc's distribution."""
+    session_size = max(1, min(50, num_questions or SESSION_SIZE))
     profile = get_user_profile(user_id)
     job_role = job_role or profile["job_role"]
     eligible = _eligible_for_user(user_id, job_role)
     spacing_hours = _spacing_window_hours_for_user(user_id)
 
     meta: dict = {
-        "session_size": SESSION_SIZE,
+        "session_size": session_size,
         "spacing_window_hours": spacing_hours,
         "threat_slot_used": False,
         "selector": "mastery_weighted",
     }
+    reasons: dict[str, str] = {}  # scenario.id → transparency label
+    role_label = _ROLE_DISPLAY.get(job_role, job_role or "your")
 
     if not eligible:
-        return ({"scenarios": [], "meta": meta}) if return_meta else []
+        return ({"scenarios": [], "meta": meta, "selection_reasons": {}}) if return_meta else []
 
     threat_pool = _recent_threat_scenarios(eligible)
     threat_pick: list[Scenario] = []
@@ -254,6 +280,7 @@ def select_next_session(
         meta["threat_scenario_age_hours"] = round(
             (datetime.utcnow() - threat_pool[0].created_at).total_seconds() / 3600, 1
         )
+        reasons[str(threat_pool[0].id)] = "Based on a real phishing threat detected in the last 48 hours."
 
     seen_ids = _seen_scenario_ids(user_id)
     recent_ids = _seen_in_last_7_days(user_id)
@@ -282,39 +309,65 @@ def select_next_session(
         seen_ids, recent_ids,
     )
 
-    remaining = SESSION_SIZE - len(threat_pick)
+    remaining = session_size - len(threat_pick)
     n_weak = math.ceil(remaining * SCENARIO_SELECTION_RATIO["weakest_category"])
     n_chal = max(1, round(remaining * SCENARIO_SELECTION_RATIO["challenge"]))
     n_other = max(0, remaining - n_weak - n_chal)
 
     taken: set = {s.id for s in threat_pick}
     selection: list[Scenario] = list(threat_pick)
-    selection += _pick(in_weakest, n_weak, taken)
-    selection += _pick(others, n_other, taken)
-    selection += _pick(challenge_pool, n_chal, taken)
 
-    if len(selection) < SESSION_SIZE:
+    weak_picks = _pick(in_weakest, n_weak, taken)
+    cat_display = _CATEGORY_DISPLAY.get(weakest_cat, weakest_cat.replace("_", " "))
+    for s in weak_picks:
+        reasons[str(s.id)] = (
+            f"Targets your weakest area: {cat_display}. "
+            f"Priority for {role_label} role."
+        )
+    selection += weak_picks
+
+    other_picks = _pick(others, n_other, taken)
+    priorities = profile["role_priority_categories"]
+    for s in other_picks:
+        s_cat_display = _CATEGORY_DISPLAY.get(s.category, s.category.replace("_", " "))
+        if s.category in priorities:
+            reasons[str(s.id)] = (
+                f"Selected for your {role_label} role: {s_cat_display}."
+            )
+        else:
+            reasons[str(s.id)] = f"Broadening your awareness: {s_cat_display}."
+    selection += other_picks
+
+    chal_picks = _pick(challenge_pool, n_chal, taken)
+    for s in chal_picks:
+        s_cat_display = _CATEGORY_DISPLAY.get(s.category, s.category.replace("_", " "))
+        reasons[str(s.id)] = (
+            f"Challenge: {s_cat_display} at higher difficulty to stretch your skills."
+        )
+    selection += chal_picks
+
+    if len(selection) < session_size:
         backfill = _prefer_unseen(eligible, seen_ids, recent_ids)
-        selection += _pick(backfill, SESSION_SIZE - len(selection), taken)
+        selection += _pick(backfill, session_size - len(selection), taken)
 
-    # Hard guarantee: every session is exactly SESSION_SIZE questions.
+    # Hard guarantee: every session is exactly session_size questions.
     # If the spacing window has filtered the pool too aggressively (small
     # corpus / heavy use), we relax it and pull from the full active pool,
     # role-filter included but spacing ignored. The user never gets a
     # stub session.
-    if len(selection) < SESSION_SIZE:
+    if len(selection) < session_size:
         relaxed_pool = [
             s for s in Scenario.query.filter_by(is_active=True).all()
             if s.applies_to_role(job_role)
         ]
         relaxed_order = _prefer_unseen(relaxed_pool, seen_ids, recent_ids)
-        selection += _pick(relaxed_order, SESSION_SIZE - len(selection), taken)
+        selection += _pick(relaxed_order, session_size - len(selection), taken)
         meta["spacing_relaxed"] = True
 
     random.shuffle(selection)
-    result = selection[:SESSION_SIZE]
+    result = selection[:session_size]
     meta["delivered_size"] = len(result)
-    return ({"scenarios": result, "meta": meta}) if return_meta else result
+    return ({"scenarios": result, "meta": meta, "selection_reasons": reasons}) if return_meta else result
 
 
 # ---------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-"""SQLAlchemy model registry — importing this module registers every table."""
+"""SQLAlchemy model registry  importing this module registers every table."""
 from app.models.attempt import Attempt
 from app.models.audit_log import AuditLog
 from app.models.awareness_assessment import AwarenessAssessment

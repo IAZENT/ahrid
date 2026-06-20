@@ -3,6 +3,7 @@ import { adminApi, type ScenarioDto } from "../../api/admin";
 import { Button } from "../../components/ui/Button";
 import { Card, CardBody } from "../../components/ui/Card";
 import { LoadingScreen } from "../../components/shared/LoadingSpinner";
+import { ScenarioPipeline } from "../../components/shared/ScenarioPipeline";
 
 export function AdminScenariosPage() {
   const [scenarios, setScenarios] = useState<ScenarioDto[] | null>(null);
@@ -26,6 +27,7 @@ export function AdminScenariosPage() {
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-lg font-semibold">Scenarios</h1>
+      <ScenarioPipeline />
       {error && <Card><CardBody><p className="text-risk-critical">{error}</p></CardBody></Card>}
       <Card>
         <CardBody>

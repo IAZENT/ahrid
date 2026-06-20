@@ -1,6 +1,6 @@
 import { AtSign, Lock, Shield } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/Button";
 import { Card, CardBody } from "../../components/ui/Card";
 import { Input } from "../../components/ui/Input";
@@ -10,15 +10,11 @@ import { defaultLandingForRole } from "../../lib/routing";
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const location = useLocation();
   const { login, loading, error, isAuthenticated } = useAuth();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
 
-  const fromPath = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname;
-
   function computeRedirect(): string {
-    if (fromPath && fromPath !== "/login") return fromPath;
     return defaultLandingForRole(useAuthStore.getState().user?.role);
   }
 
@@ -92,7 +88,7 @@ export function LoginPage() {
         </Card>
 
         <p className="mt-6 text-center text-xs text-text-secondary">
-          New to AHRID?{" "}
+          New to AHRIP?{" "}
           <Link to="/register" className="text-accent hover:underline">
             Create an employee account
           </Link>

@@ -52,13 +52,13 @@ BRAND_TO_CATEGORY: dict[str, str] = {
     "invoice": "invoice_fraud",
 }
 
-# Map our lure_type → AHRID scenario.category (8 categories defined in models).
+# Map our lure_type → AHRIP scenario.category (8 categories defined in models).
 #
 # Each lure offers SEVERAL plausible categories; the final one is chosen
 # deterministically from the URL hash so the *distribution* across the 8
 # categories is roughly even. Previously every lure but two collapsed onto
 # ``phishing_email``, which left the threat-feed pipeline pumping out 80%+
-# phishing scenarios — fine for category 1, useless for the other seven.
+# phishing scenarios  fine for category 1, useless for the other seven.
 LURE_TYPE_CATEGORY_OPTIONS: dict[str, tuple[str, ...]] = {
     "credential_harvest": ("phishing_email", "password_hygiene", "data_handling"),
     "invoice_fraud": ("phishing_email", "social_engineering", "data_handling"),

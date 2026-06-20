@@ -1,4 +1,4 @@
-"""Behavioural profiler — mistake clustering only (BSc scope).
+"""Behavioural profiler  mistake clustering only (BSc scope).
 
 Peer-cohort comparison and motivation profiling were removed because
 they relied on multi-tenant org_id (peer cohort) and gamification

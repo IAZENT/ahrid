@@ -79,11 +79,11 @@ export function AdminThreatFeedPage() {
                   <td className="py-2 max-w-[260px] truncate" title={t.original_url}>
                     {t.original_url}
                   </td>
-                  <td className="py-2">{t.category ?? "—"}</td>
-                  <td className="py-2">{t.lure_type ?? "—"}</td>
+                  <td className="py-2">{t.category ?? ""}</td>
+                  <td className="py-2">{t.lure_type ?? ""}</td>
                   <td className="py-2">{t.was_converted ? "yes" : "no"}</td>
                   <td className="py-2 text-2xs">
-                    {t.ingested_at ? new Date(t.ingested_at).toLocaleString() : "—"}
+                    {t.ingested_at ? new Date(t.ingested_at).toLocaleString() : ""}
                   </td>
                 </tr>
               ))}

@@ -3,6 +3,7 @@ import {
   AlertTriangle,
   ArrowRight,
   CheckCircle2,
+  Info,
   Lightbulb,
   Play,
   RotateCcw,
@@ -18,10 +19,12 @@ import {
   type AnswerResponse,
   type SessionStartResponse,
   type SessionSummary,
+  type TrainingConfig,
 } from "../../api/training";
 import { LoadingScreen } from "../../components/shared/LoadingSpinner";
 import { AnswerOptions } from "../../components/training/AnswerOptions";
 import { CategoryBadge } from "../../components/training/CategoryBadge";
+import { ExplanationTimer } from "../../components/training/ExplanationTimer";
 import { ProgressRing } from "../../components/training/ProgressRing";
 import { VisualScenario } from "../../components/training/VisualScenario";
 import { Button } from "../../components/ui/Button";
@@ -54,9 +57,17 @@ export function TrainingPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [elapsedSec, setElapsedSec] = useState(0);
+  const [explanationReady, setExplanationReady] = useState(false);
+  const [sessionType, setSessionType] = useState<"quick" | "full">("full");
+  const [config, setConfig] = useState<TrainingConfig>({ quick_size: 5, full_size: 20, explanation_duration_seconds: 12 });
 
   const startRef = useRef<number>(0);
   const tickRef = useRef<number | null>(null);
+
+  // Fetch training config on mount
+  useEffect(() => {
+    trainingApi.config().then(setConfig).catch(() => {});
+  }, []);
 
   const start = useCallback(async () => {
     setLoading(true);
@@ -66,7 +77,7 @@ export function TrainingPage() {
     setSelected(null);
     setIndex(0);
     try {
-      const data = await trainingApi.startSession();
+      const data = await trainingApi.startSession(sessionType === "quick" ? config.quick_size : config.full_size);
       setSession(data);
       setScenarios(shuffled(data.scenarios));
       startRef.current = performance.now();
@@ -75,11 +86,21 @@ export function TrainingPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [sessionType, config]);
 
   // Don't auto-start  the user clicks "Start training" below.
 
-  // Per-question timer — reset whenever the active question changes.
+  // When feedback arrives: correct → immediate; incorrect → timer gates it.
+  useEffect(() => {
+    if (!feedback) return;
+    if (feedback.is_correct) {
+      setExplanationReady(true);
+    } else {
+      setExplanationReady(false);
+    }
+  }, [feedback]);
+
+  // Per-question timer  reset whenever the active question changes.
   useEffect(() => {
     if (feedback || summary || !session) return;
     setElapsedSec(0);
@@ -121,6 +142,7 @@ export function TrainingPage() {
   const advance = useCallback(async () => {
     setFeedback(null);
     setSelected(null);
+    setExplanationReady(false);
     if (!session) return;
     if (index + 1 < total) {
       setIndex((i) => i + 1);
@@ -146,16 +168,16 @@ export function TrainingPage() {
         };
         setSelected(map[key]);
       } else if (e.key === "Enter") {
-        if (feedback) void advance();
+        if (feedback && explanationReady) void advance();
         else if (selected) void submit();
       }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [feedback, selected, summary, loading, submit, advance]);
+  }, [feedback, selected, summary, loading, submit, advance, explanationReady]);
 
   const correctSoFar = useMemo(() => {
-    // Conservative: backend tracks truth — this is just the in-page tally.
+    // Conservative: backend tracks truth  this is just the in-page tally.
     if (!feedback) return null;
     return feedback.is_correct;
   }, [feedback]);
@@ -176,7 +198,7 @@ export function TrainingPage() {
     );
   }
 
-  // Pre-session landing — explicit Start so the user knows when the timer
+  // Pre-session landing  explicit Start so the user knows when the timer
   // begins. Previously the page auto-started, which surprised users and
   // also began timing before they had read the question.
   if (!session) {
@@ -197,6 +219,33 @@ export function TrainingPage() {
                 model and the timer starts only when you press Start.
               </p>
             </div>
+
+            {/* Session type selector */}
+            <div data-tour="session-selector" className="flex w-full max-w-sm gap-3">
+              <button
+                onClick={() => setSessionType("quick")}
+                className={`flex-1 rounded-lg border px-4 py-3 text-left transition-all ${
+                  sessionType === "quick"
+                    ? "border-accent bg-accent/10 ring-2 ring-accent/40"
+                    : "border-border-subtle bg-bg-surface hover:border-border-strong"
+                }`}
+              >
+                <div className="text-sm font-semibold text-text-primary">Quick</div>
+                <div className="mt-0.5 text-xs text-text-muted">{config.quick_size} questions</div>
+              </button>
+              <button
+                onClick={() => setSessionType("full")}
+                className={`flex-1 rounded-lg border px-4 py-3 text-left transition-all ${
+                  sessionType === "full"
+                    ? "border-accent bg-accent/10 ring-2 ring-accent/40"
+                    : "border-border-subtle bg-bg-surface hover:border-border-strong"
+                }`}
+              >
+                <div className="text-sm font-semibold text-text-primary">Full</div>
+                <div className="mt-0.5 text-xs text-text-muted">{config.full_size} questions</div>
+              </button>
+            </div>
+
             <Button size="lg" onClick={start}>
               <Play className="h-3.5 w-3.5" />
               Start training
@@ -323,6 +372,12 @@ export function TrainingPage() {
         >
           <Card>
             <CardBody className="space-y-4">
+              {scenario.selection_reason && (
+                <div className="flex items-start gap-2 rounded-md border border-accent/20 bg-accent/5 px-3 py-2 text-xs text-accent">
+                  <Info className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
+                  <span>{scenario.selection_reason}</span>
+                </div>
+              )}
               <div>
                 <h2 className="text-lg font-semibold text-text-primary">
                   {scenario.title}
@@ -397,6 +452,14 @@ export function TrainingPage() {
                     <span>{feedback.learning_tip}</span>
                   </div>
                 )}
+                {!correctSoFar && !explanationReady && (
+                  <div className="flex justify-center pt-2">
+                    <ExplanationTimer
+                      duration={config.explanation_duration_seconds}
+                      onComplete={() => setExplanationReady(true)}
+                    />
+                  </div>
+                )}
               </CardBody>
             </Card>
           </motion.div>
@@ -410,7 +473,7 @@ export function TrainingPage() {
           {feedback ? "continue" : "submit"}.
         </span>
         {feedback ? (
-          <Button onClick={advance}>
+          <Button onClick={advance} disabled={!explanationReady}>
             {index + 1 < total ? (
               <>
                 Next <ArrowRight className="h-3.5 w-3.5" />

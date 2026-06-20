@@ -1,4 +1,4 @@
-"""System Usability Scale (SUS) — standard 10-item instrument. Master spec §6.2."""
+"""System Usability Scale (SUS)  standard 10-item instrument. Master spec §6.2."""
 from __future__ import annotations
 
 from datetime import datetime

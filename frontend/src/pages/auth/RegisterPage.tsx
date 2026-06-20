@@ -72,10 +72,10 @@ export function RegisterPage() {
           </div>
           <div>
             <h1 className="text-2xl font-semibold tracking-tight text-text-primary">
-              Join AHRID
+              Join AHRIP
             </h1>
             <p className="mt-1 text-sm text-text-secondary">
-              Register as an employee in the AHRID organisation.
+              Register as an employee in the AHRIP organisation.
             </p>
           </div>
         </div>
@@ -111,7 +111,7 @@ export function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 leftIcon={<AtSign className="h-4 w-4" />}
-                placeholder="you@ahrid.local"
+                placeholder="you@ahrip.local"
               />
 
               <Input
@@ -197,7 +197,7 @@ export function RegisterPage() {
         </Card>
 
         <p className="mt-6 text-center text-xs text-text-secondary">
-          You will be registered as an employee in the AHRID organisation.
+          You will be registered as an employee in the AHRIP organisation.
         </p>
       </div>
     </div>

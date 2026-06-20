@@ -101,13 +101,13 @@ export function ManagerTeamPage() {
             <tbody className="divide-y divide-border-subtle">
               {(team ?? []).map((u) => (
                 <tr key={u.user_id}>
-                  <td className="py-2">{u.job_role ?? "—"}</td>
-                  <td className="py-2">{u.department ?? "—"}</td>
+                  <td className="py-2">{u.job_role ?? ""}</td>
+                  <td className="py-2">{u.department ?? ""}</td>
                   <td className="py-2"><RiskBadge level={u.risk_level as RiskLevel} /></td>
-                  <td className="py-2">{u.cluster_label ?? "—"}</td>
-                  <td className="py-2">{u.weakest_category ?? "—"}</td>
+                  <td className="py-2">{u.cluster_label ?? ""}</td>
+                  <td className="py-2">{u.weakest_category ?? ""}</td>
                   <td className="py-2">
-                    {u.last_active ? new Date(u.last_active).toLocaleDateString() : "—"}
+                    {u.last_active ? new Date(u.last_active).toLocaleDateString() : ""}
                   </td>
                   {canAssign && (
                     <td className="py-2 text-right">

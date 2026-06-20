@@ -1,4 +1,4 @@
-"""Notifications API — list / count / read / delete for the logged-in user."""
+"""Notifications API  list / count / read / delete for the logged-in user."""
 from __future__ import annotations
 
 from datetime import datetime

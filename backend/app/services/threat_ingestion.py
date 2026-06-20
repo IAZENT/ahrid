@@ -101,7 +101,7 @@ def _normalise(url: str) -> str:
 def validate_url(url: str) -> bool:
     """Return True if the URL is structurally valid for processing.
 
-    No HTTP HEAD probes — phishing URLs are expected to go offline fast,
+    No HTTP HEAD probes  phishing URLs are expected to go offline fast,
     so network validation killed all conversions in the previous pipeline.
     """
     if not url or not isinstance(url, str):
@@ -125,7 +125,7 @@ def validate_url(url: str) -> bool:
 
 
 # ---------------------------------------------------------------------------
-# Fetchers — each returns ``list[RawThreat]`` and never raises.
+# Fetchers  each returns ``list[RawThreat]`` and never raises.
 # ---------------------------------------------------------------------------
 def _fetch_phishstats(feed_url: str) -> list[RawThreat]:
     """Fetch a phishing URL list.
@@ -143,7 +143,7 @@ def _fetch_phishstats(feed_url: str) -> list[RawThreat]:
         resp = requests.get(
             feed_url,
             timeout=FETCH_TIMEOUT,
-            headers={"User-Agent": "AHRID/2.0"},
+            headers={"User-Agent": "AHRIP/2.0"},
         )
         resp.raise_for_status()
         text = resp.text
@@ -158,7 +158,7 @@ def _fetch_phishstats(feed_url: str) -> list[RawThreat]:
         if "," in first_non_comment and any(
             first_non_comment.startswith(p) for p in ("\"", "20")
         ):
-            # CSV path — column index 2 is the URL in PhishStats schema.
+            # CSV path  column index 2 is the URL in PhishStats schema.
             reader = csv.reader(io.StringIO(text))
             for row in reader:
                 if not row or row[0].startswith("#"):
@@ -166,7 +166,7 @@ def _fetch_phishstats(feed_url: str) -> list[RawThreat]:
                 if len(row) >= 3 and row[2].strip().strip('"').startswith("http"):
                     out.append(RawThreat(source="phishstats", url=row[2].strip().strip('"')))
         else:
-            # Plain-text path — every non-comment, non-blank http(s) line.
+            # Plain-text path  every non-comment, non-blank http(s) line.
             for line in text.splitlines():
                 line = line.strip()
                 if line and not line.startswith("#") and line.startswith("http"):
@@ -197,7 +197,7 @@ def _fetch_otx(api_key: str | None) -> list[RawThreat]:
     """Fetch phishing indicators from AlienVault OTX.
 
     Free-tier-friendly strategy: hit ``/pulses/subscribed`` first (which IS
-    populated by default — every OTX account auto-subscribes to a curated
+    populated by default  every OTX account auto-subscribes to a curated
     set), then if it returns nothing fall back to ``/pulses/activity`` (the
     public timeline that needs no subscriptions). Both endpoints return
     pulses with inlined indicator arrays. We then filter by phishing-related
@@ -207,7 +207,7 @@ def _fetch_otx(api_key: str | None) -> list[RawThreat]:
         LOG.info("OTX: skipped (no API key)")
         return []
 
-    headers = {"X-OTX-API-KEY": api_key, "User-Agent": "AHRID/2.0"}
+    headers = {"X-OTX-API-KEY": api_key, "User-Agent": "AHRIP/2.0"}
     phish_kw = (
         "phish", "credential", "smish", "vish", "scam", "fraud",
         "lure", "spoof", "imperson",
@@ -263,7 +263,7 @@ def _fetch_otx(api_key: str | None) -> list[RawThreat]:
         except Exception as exc:
             LOG.warning("OTX[%s] fetch failed: %s", label, exc)
 
-    # Dedupe by URL — both endpoints can return the same pulses.
+    # Dedupe by URL  both endpoints can return the same pulses.
     seen: set[str] = set()
     deduped: list[RawThreat] = []
     for r in out:
@@ -276,11 +276,11 @@ def _fetch_otx(api_key: str | None) -> list[RawThreat]:
 
 
 _URLSCAN_QUERIES = (
-    # Most precise — paid keys hit this without 403; free keys often allowed too.
+    # Most precise  paid keys hit this without 403; free keys often allowed too.
     'task.tags:"phishing"',
-    # Verdict-based — covers anything URLScan's own classifier flagged.
+    # Verdict-based  covers anything URLScan's own classifier flagged.
     "verdicts.overall.malicious:true",
-    # Broad fallback — pages whose URL screams "credential capture".
+    # Broad fallback  pages whose URL screams "credential capture".
     'page.url:"login" OR page.url:"verify" OR page.url:"account"',
 )
 
@@ -296,7 +296,7 @@ def _fetch_urlscan(api_key: str | None) -> list[RawThreat]:
         LOG.info("URLScan: skipped (no API key)")
         return []
 
-    headers = {"API-Key": api_key, "User-Agent": "AHRID/2.0"}
+    headers = {"API-Key": api_key, "User-Agent": "AHRIP/2.0"}
     for query in _URLSCAN_QUERIES:
         try:
             LOG.info("URLScan: trying query %r", query)
@@ -374,7 +374,7 @@ class ThreatIngestionService:
                 LOG.warning("Source %s raised: %s", name, exc)
         return out
 
-    # --- Stage 2 (structural only — no HEAD probes) -------------------------
+    # --- Stage 2 (structural only  no HEAD probes) -------------------------
     def validate_urls(self, raws: Iterable[RawThreat]) -> tuple[list[RawThreat], int]:
         """Structural validation only. No HTTP requests to phishing URLs."""
         valid: list[RawThreat] = []
@@ -437,7 +437,7 @@ class ThreatIngestionService:
             db.session.add_all(new_entries)
             db.session.flush()
 
-        # Stage 4 + 5 + 6 — produce up to MAX_NEW_SCENARIOS_PER_RUN scenarios.
+        # Stage 4 + 5 + 6  produce up to MAX_NEW_SCENARIOS_PER_RUN scenarios.
         # We process *just-fetched* entries first, then top up the same budget
         # from previously-ingested entries that were never converted (e.g.
         # because earlier runs hit their cap). Without this, the unconverted

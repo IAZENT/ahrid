@@ -1,4 +1,4 @@
-"""Evaluation API — HAIS-Q awareness, SUS, RF metrics, awareness uplift.
+"""Evaluation API  HAIS-Q awareness, SUS, RF metrics, awareness uplift.
 
 Master spec §6.3-§6.5. All employee-facing routes require an authenticated
 session; admin-only routes additionally require ``admin_required``.
@@ -194,6 +194,11 @@ def rf_metrics():
         "n_test_samples": n_test,
         "class_distribution": class_distribution,
         "trained_at": raw.get("trained_at"),
+        "accuracy": raw.get("accuracy"),
+        "n_samples": raw.get("n_samples"),
+        "n_features": raw.get("n_features"),
+        "cross_validation": raw.get("cross_validation"),
+        "smote": raw.get("smote"),
     }), 200
 
 
@@ -260,7 +265,7 @@ def sus_summary():
 # ───────────────────────── transparency policy ─────────────────────────
 
 DEFAULT_POLICY = """\
-AHRID Transparency Notice
+AHRIP Transparency Notice
 
 What data is collected:
   Your quiz responses and response times during training sessions.
@@ -283,6 +288,6 @@ Data retention:
 
 @bp.get("/transparency-policy", strict_slashes=False)
 def transparency_policy():
-    """Public endpoint — no auth required (Master spec §7)."""
+    """Public endpoint  no auth required (Master spec §7)."""
     text = current_app.config.get("TRANSPARENCY_POLICY", DEFAULT_POLICY)
     return jsonify({"policy": text}), 200

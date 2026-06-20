@@ -1,4 +1,4 @@
-"""Attempt model — immutable record of a user's response to a scenario.
+"""Attempt model  immutable record of a user's response to a scenario.
 
 Behavioural signal kept: ``response_time_ms`` only (per BSc scope reduction).
 """

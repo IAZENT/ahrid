@@ -59,9 +59,17 @@ export interface CategoryDto {
   description: string;
 }
 
+export interface TrainingConfig {
+  quick_size: number;
+  full_size: number;
+  explanation_duration_seconds: number;
+}
+
 export const trainingApi = {
-  async startSession(): Promise<SessionStartResponse> {
-    const { data } = await apiClient.get<SessionStartResponse>("/training/session/start");
+  async startSession(numQuestions?: number): Promise<SessionStartResponse> {
+    const params: Record<string, string> = {};
+    if (numQuestions) params.num_questions = String(numQuestions);
+    const { data } = await apiClient.get<SessionStartResponse>("/training/session/start", { params });
     return data;
   },
   async submitAnswer(
@@ -102,6 +110,10 @@ export const trainingApi = {
   },
   async categories(): Promise<CategoryDto[]> {
     const { data } = await apiClient.get<CategoryDto[]>("/training/categories");
+    return data;
+  },
+  async config(): Promise<TrainingConfig> {
+    const { data } = await apiClient.get<TrainingConfig>("/training/config");
     return data;
   },
   async insights(): Promise<{ mistakes: unknown }> {

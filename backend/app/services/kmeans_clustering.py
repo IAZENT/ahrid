@@ -36,12 +36,18 @@ FEATURE_NAMES: list[str] = [
 N_FEATURES = len(FEATURE_NAMES)
 assert N_FEATURES == 6, "KMeans feature contract drift"
 
-N_CLUSTERS = 5
+N_CLUSTERS_DEFAULT = 5
 MIN_ATTEMPTS_FOR_CLUSTER = 5
+MIN_USERS_FOR_CLUSTERING = 3
 
 # Below this median response time we treat an attempt as "fast/rushed"
-# (the title's behavioural-proxy signal — BSc replacement for VADER).
+# (the title's behavioural-proxy signal  BSc replacement for VADER).
 FAST_RESPONSE_MS = 4000
+
+# Winsorization cap for avg_response_time_ms before clustering math only
+# (display values stay raw). Stops a single very-slow user from anchoring
+# their own KMeans cluster instead of joining the nearest archetype.
+RESPONSE_TIME_CLIP_PERCENTILE = 95
 
 
 def _per_category_accuracy(attempts: list[Attempt]) -> list[float]:
@@ -155,24 +161,31 @@ def train_kmeans(
             rows.append(vec)
             kept_ids.append(uid)
 
-    if len(rows) < N_CLUSTERS:
+    n_users = len(rows)
+    if n_users < MIN_USERS_FOR_CLUSTERING:
         LOG.warning(
-            "KMeans training skipped — only %d eligible users (need ≥ %d).",
-            len(rows), N_CLUSTERS,
+            "KMeans training skipped  only %d eligible users (need >= %d).",
+            n_users, MIN_USERS_FOR_CLUSTERING,
         )
         return None
 
+    n_clusters = min(N_CLUSTERS_DEFAULT, max(2, n_users // 2))
+
     X = np.vstack(rows)
+    rt_clip = float(np.percentile(X[:, 0], RESPONSE_TIME_CLIP_PERCENTILE))
+    X_clustering = X.copy()
+    X_clustering[:, 0] = np.clip(X_clustering[:, 0], None, rt_clip)
+
     scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
-    kmeans = KMeans(n_clusters=N_CLUSTERS, random_state=42, n_init=10)
+    X_scaled = scaler.fit_transform(X_clustering)
+    kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
     kmeans.fit(X_scaled)
 
     labels = kmeans.labels_
-    cluster_sizes = {int(c): int((labels == c).sum()) for c in range(N_CLUSTERS)}
+    cluster_sizes = {int(c): int((labels == c).sum()) for c in range(n_clusters)}
 
     silhouette: float | None = None
-    if len(set(labels)) >= 2 and X.shape[0] > N_CLUSTERS:
+    if len(set(labels)) >= 2 and X.shape[0] > n_clusters:
         try:
             silhouette = float(silhouette_score(X_scaled, labels))
         except Exception as exc:  # noqa: BLE001
@@ -182,7 +195,8 @@ def train_kmeans(
         "scaler": scaler,
         "model": kmeans,
         "feature_names": FEATURE_NAMES,
-        "n_clusters": N_CLUSTERS,
+        "n_clusters": n_clusters,
+        "rt_clip": rt_clip,
         "trained_at": datetime.utcnow().isoformat(),
     }
     out_path = _resolve_model_path(model_path or _default_model_path())
@@ -194,7 +208,7 @@ def train_kmeans(
         "trained_at": datetime.utcnow().isoformat(timespec="seconds") + "Z",
         "n_users": int(X.shape[0]),
         "n_features": int(X.shape[1]),
-        "n_clusters": N_CLUSTERS,
+        "n_clusters": n_clusters,
         "inertia": float(kmeans.inertia_),
         "silhouette_score": silhouette,
         "cluster_sizes": cluster_sizes,
@@ -226,6 +240,7 @@ class UserClusterer:
         self.scaler: Any = None
         self.model: Any = None
         self.feature_names: list[str] = FEATURE_NAMES
+        self.rt_clip: float | None = None
         self.load()
 
     def load(self) -> None:
@@ -234,11 +249,12 @@ class UserClusterer:
             self.scaler = bundle["scaler"]
             self.model = bundle["model"]
             self.feature_names = bundle.get("feature_names", FEATURE_NAMES)
+            self.rt_clip = bundle.get("rt_clip")
             LOG.info("Loaded KMeans bundle from %s", self.model_path)
         except FileNotFoundError:
             self.scaler = None
             self.model = None
-            LOG.info("KMeans bundle not found — clusterer in pass-through mode")
+            LOG.info("KMeans bundle not found  clusterer in pass-through mode")
 
     @property
     def is_ready(self) -> bool:
@@ -250,7 +266,10 @@ class UserClusterer:
         vec = build_feature_vector_for_user(user_id)
         if vec is None:
             return None
-        scaled = self.scaler.transform(vec.reshape(1, -1))
+        vec_clustering = vec.copy()
+        if self.rt_clip is not None:
+            vec_clustering[0] = min(vec_clustering[0], self.rt_clip)
+        scaled = self.scaler.transform(vec_clustering.reshape(1, -1))
         return int(self.model.predict(scaled)[0])
 
 

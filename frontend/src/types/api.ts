@@ -16,6 +16,7 @@ export interface User {
   is_active: boolean;
   is_verified: boolean;
   consent_given: boolean;
+  tour_completed: boolean;
   created_at: string | null;
   last_login: string | null;
 }
@@ -35,6 +36,8 @@ export interface ScenarioPublic {
   tf_statement?: string | null;
   /** HMAC-signed token issued at session start. Echo back with the answer. */
   presentation_token?: string;
+  /** Transparency label explaining why the adaptive engine selected this scenario. */
+  selection_reason?: string | null;
 }
 
 export interface RiskScoreDto {

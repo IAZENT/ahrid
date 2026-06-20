@@ -47,11 +47,15 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
-# --- Markdown -------------------------------------------------------------
+# --- Markdown / text notes -------------------------------------------------
 *.md
+!README.md
 *.txt
+!requirements.txt
+!requirements-dev.txt
 
 # --- Misc -----------------------------------------------------------------
 .windsurf/
+.claude/
 *.bak
 *.tmp

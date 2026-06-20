@@ -42,7 +42,7 @@ export function ShapExplanationPanel({ explanation }: Props) {
               Why your risk score looks this way
             </h2>
             <p className="mt-1 text-xs text-text-secondary">
-              These are the strongest factors influencing the model's prediction —
+              These are the strongest factors influencing the model's prediction 
               based only on your training behaviour, never on identity or role.
             </p>
           </div>

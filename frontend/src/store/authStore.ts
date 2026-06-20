@@ -15,8 +15,8 @@ interface AuthState {
   clear: () => void;
 }
 
-const REFRESH_STORAGE_KEY = "ahrid_rt";
-const USER_STORAGE_KEY = "ahrid_user";
+const REFRESH_STORAGE_KEY = "ahrip_rt";
+const USER_STORAGE_KEY = "ahrip_user";
 
 function readPersisted(): { refreshToken: string | null; user: User | null } {
   if (typeof window === "undefined") return { refreshToken: null, user: null };
@@ -64,7 +64,7 @@ export const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: "ahrid-auth-session",
+      name: "ahrip-auth-session",
       storage: createJSONStorage(() => ({
         getItem: () => null,
         setItem: () => undefined,

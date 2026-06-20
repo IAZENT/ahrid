@@ -113,9 +113,9 @@ export function AdminUsersPage() {
               {(users ?? []).map((u) => (
                 <tr key={u.id}>
                   <td className="py-2">{u.email}</td>
-                  <td className="py-2">{u.username ?? "—"}</td>
+                  <td className="py-2">{u.username ?? ""}</td>
                   <td className="py-2">{u.role}</td>
-                  <td className="py-2">{u.job_role ?? "—"}</td>
+                  <td className="py-2">{u.job_role ?? ""}</td>
                   <td className="py-2">{u.is_active ? "yes" : "no"}</td>
                 </tr>
               ))}
