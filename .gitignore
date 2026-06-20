@@ -54,6 +54,7 @@ Thumbs.db
 *.txt
 !requirements.txt
 !requirements-dev.txt
+!runtime.txt
 
 # --- Misc -----------------------------------------------------------------
 .windsurf/
