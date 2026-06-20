@@ -1,0 +1,1 @@
+["avg_response_time_ms", "phishing_accuracy", "smishing_accuracy", "social_engineering_accuracy", "password_hygiene_accuracy", "physical_security_accuracy", "overall_accuracy", "fast_attempt_rate", "overconfident_rate", "session_consistency", "job_role_encoded", "total_sessions", "days_since_last_session", "attempts_count"]

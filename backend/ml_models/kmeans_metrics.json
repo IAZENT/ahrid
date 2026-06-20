@@ -1,0 +1,24 @@
+{
+  "trained_at": "2026-06-20T16:32:33Z",
+  "n_users": 1057,
+  "n_features": 6,
+  "n_clusters": 5,
+  "inertia": 2547.0345258725283,
+  "silhouette_score": 0.23041573719902209,
+  "cluster_sizes": {
+    "0": 245,
+    "1": 220,
+    "2": 173,
+    "3": 184,
+    "4": 235
+  },
+  "min_attempts_per_user": 5,
+  "feature_names": [
+    "avg_response_time_ms",
+    "overall_accuracy",
+    "accuracy_variance",
+    "fast_attempt_rate",
+    "total_sessions",
+    "session_consistency"
+  ]
+}

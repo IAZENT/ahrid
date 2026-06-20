@@ -1,0 +1,95 @@
+{
+  "trained_at": "2026-06-20T16:27:22Z",
+  "n_samples": 1056,
+  "n_test_samples": 212,
+  "n_features": 14,
+  "accuracy": 0.8867924528301887,
+  "class_distribution": {
+    "1": 167,
+    "3": 136,
+    "2": 185,
+    "0": 568
+  },
+  "classification_report": {
+    "0": {
+      "precision": 0.9557522123893806,
+      "recall": 0.9473684210526315,
+      "f1-score": 0.9515418502202643,
+      "support": 114.0
+    },
+    "1": {
+      "precision": 0.7428571428571429,
+      "recall": 0.7647058823529411,
+      "f1-score": 0.7536231884057971,
+      "support": 34.0
+    },
+    "2": {
+      "precision": 0.8157894736842105,
+      "recall": 0.8378378378378378,
+      "f1-score": 0.8266666666666667,
+      "support": 37.0
+    },
+    "3": {
+      "precision": 0.8846153846153846,
+      "recall": 0.8518518518518519,
+      "f1-score": 0.8679245283018868,
+      "support": 27.0
+    },
+    "accuracy": 0.8867924528301887,
+    "macro avg": {
+      "precision": 0.8497535533865297,
+      "recall": 0.8504409982738155,
+      "f1-score": 0.8499390583986537,
+      "support": 212.0
+    },
+    "weighted avg": {
+      "precision": 0.8881213253795444,
+      "recall": 0.8867924528301887,
+      "f1-score": 0.8873565484043625,
+      "support": 212.0
+    }
+  },
+  "feature_names": [
+    "avg_response_time_ms",
+    "phishing_accuracy",
+    "smishing_accuracy",
+    "social_engineering_accuracy",
+    "password_hygiene_accuracy",
+    "physical_security_accuracy",
+    "overall_accuracy",
+    "fast_attempt_rate",
+    "overconfident_rate",
+    "session_consistency",
+    "job_role_encoded",
+    "total_sessions",
+    "days_since_last_session",
+    "attempts_count"
+  ],
+  "smote": {
+    "applied": true,
+    "k_neighbors": 5,
+    "before": {
+      "2": 148,
+      "3": 109,
+      "0": 454,
+      "1": 133
+    },
+    "after": {
+      "2": 454,
+      "3": 454,
+      "0": 454,
+      "1": 454
+    }
+  },
+  "cross_validation": {
+    "k": 3,
+    "metric": "f1_macro",
+    "scores": [
+      0.8538,
+      0.7715,
+      0.819
+    ],
+    "mean": 0.8148,
+    "std": 0.0337
+  }
+}

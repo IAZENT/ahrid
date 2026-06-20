@@ -13,8 +13,9 @@ backend/.env.*
 *.sqlite3-journal
 *.db
 backend/ahrip_dev.sqlite3
-backend/ml_models/*.pkl
-backend/ml_models/*.json
+# Trained model artefacts ARE tracked deliberately so deploys (Render free
+# tier has an ephemeral filesystem) ship with ready-to-use models instead
+# of needing a DB-backed retrain step right after every deploy.
 
 # --- Python ---------------------------------------------------------------
 __pycache__/
