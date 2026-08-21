@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Figure B3 – URL Difficulty Decision Tree</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Times New Roman', serif; background: #fff; padding: 32px; }
+  h3 { font-size: 13px; font-weight: bold; text-align: center; margin-bottom: 4px; color: #1a1a2e; }
+  .subtitle { font-size: 11px; text-align: center; color: #555; margin-bottom: 20px; font-style: italic; }
+  svg { display: block; margin: 0 auto; }
+  .note { font-size: 10px; color: #555; text-align: center; margin-top: 14px; font-style: italic;
+          line-height: 1.6; width: 700px; margin-left: auto; margin-right: auto; }
+</style>
+</head>
+<body>
+<h3>Figure B3. URL Difficulty Classification Decision Tree</h3>
+<p class="subtitle">Structural heuristics applied in priority order · first-match wins · evaluated per ingested URL</p>
+
+<svg width="760" height="660" viewBox="0 0 760 660">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#555"/>
+    </marker>
+    <marker id="arr-green" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#2e7d32"/>
+    </marker>
+    <marker id="arr-orange" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#e65100"/>
+    </marker>
+    <marker id="arr-red" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#b71c1c"/>
+    </marker>
+  </defs>
+
+  <!-- ── STYLES ── -->
+  <!-- Decision diamonds / boxes: dark blue -->
+  <!-- Level 1 outcome: green  -->
+  <!-- Level 2 outcome: orange -->
+  <!-- Level 3 outcome: red    -->
+
+  <!-- ════════════════════════════════════════════
+       NODE 1 — Root decision
+  ════════════════════════════════════════════ -->
+  <rect x="205" y="16" width="350" height="64" rx="8" fill="#1e4d9e"/>
+  <text font-family="Times New Roman" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle" x="380" y="38">Non-HTTPS scheme?</text>
+  <text font-family="Times New Roman" font-size="9.5" fill="rgba(255,255,255,0.85)" text-anchor="middle" x="380" y="54">http:// · ftp:// · data://</text>
+  <text font-family="Times New Roman" font-size="9.5" fill="rgba(255,255,255,0.85)" text-anchor="middle" x="380" y="68">OR free-hosting TLD (.tk · .ml · .ga · .cf · .gq)</text>
+
+  <!-- YES → left → Level 1 -->
+  <line x1="205" y1="48" x2="110" y2="48" stroke="#555" stroke-width="1.5"/>
+  <line x1="110" y1="48" x2="110" y2="162" stroke="#555" stroke-width="1.5" marker-end="url(#arr-green)"/>
+  <text font-family="Times New Roman" font-size="10" font-style="italic" fill="#2e7d32" text-anchor="middle" x="157" y="43">YES</text>
+
+  <!-- OUTCOME L1-A -->
+  <rect x="28" y="162" width="165" height="76" rx="8" fill="#2e7d32"/>
+  <text font-family="Times New Roman" font-size="11" font-weight="bold" fill="#fff" text-anchor="middle" x="110" y="184">Level 1 — Obvious</text>
+  <text font-family="Times New Roman" font-size="9" fill="rgba(255,255,255,0.9)" text-anchor="middle" x="110" y="200">10 XP · non-HTTPS</text>
+  <text font-family="Times New Roman" font-size="9" fill="rgba(255,255,255,0.9)" text-anchor="middle" x="110" y="214">or free-hosting TLD</text>
+  <text font-family="Times New Roman" font-size="9" fill="rgba(255,255,255,0.9)" text-anchor="middle" x="110" y="228">→ immediately suspicious</text>
+
+  <!-- NO → down -->
+  <line x1="380" y1="80" x2="380" y2="150" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text font-family="Times New Roman" font-size="10" font-style="italic" fill="#555" x="385" y="118">NO</text>
+
+  <!-- ════════════════════════════════════════════
+       NODE 2 — Typosquat / free-platform?
+  ════════════════════════════════════════════ -->
+  <rect x="205" y="150" width="350" height="64" rx="8" fill="#1e4d9e"/>
+  <text font-family="Times New Roman" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle" x="380" y="172">Known typosquat pattern?</text>
+  <text font-family="Times New Roman" font-size="9.5" fill="rgba(255,255,255,0.85)" text-anchor="middle" x="380" y="188">paypa1 · g00gle · micros0ft · arnazon</text>
+  <text font-family="Times New Roman" font-size="9.5" fill="rgba(255,255,255,0.85)" text-anchor="middle" x="380" y="202">OR free-platform host: blogspot · weebly · 000webhost</text>
+
+  <!-- YES → right → Level 1 -->
+  <line x1="555" y1="182" x2="647" y2="182" stroke="#555" stroke-width="1.5"/>
+  <line x1="647" y1="182" x2="647" y2="218" stroke="#555" stroke-width="1.5" marker-end="url(#arr-green)"/>
+  <text font-family="Times New Roman" font-size="10" font-style="italic" fill="#2e7d32" x="562" y="177">YES</text>
+
+  <!-- OUTCOME L1-B -->
+  <rect x="566" y="218" width="165" height="76" rx="8" fill="#2e7d32"/>
+  <text font-family="Times New Roman" font-size="11" font-weight="bold" fill="#fff" text-anchor="middle" x="648" y="240">Level 1 — Obvious</text>
+  <text font-family="Times New Roman" font-size="9" fill="rgba(255,255,255,0.9)" text-anchor="middle" x="648" y="256">10 XP · known</text>
+  <text font-family="Times New Roman" font-size="9" fill="rgba(255,255,255,0.9)" text-anchor="middle" x="648" y="270">typosquat or</text>
+  <text font-family="Times New Roman" font-size="9" fill="rgba(255,255,255,0.9)" text-anchor="middle" x="648" y="284">free-platform match</text>
+
+  <!-- NO → down -->
+  <line x1="380" y1="214" x2="380" y2="282" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text font-family="Times New Roman" font-size="10" font-style="italic" fill="#555" x="385" y="252">NO</text>
+
+  <!-- ════════════════════════════════════════════
+       NODE 3 — Advanced signals?
+  ════════════════════════════════════════════ -->
+  <rect x="205" y="282" width="350" height="64" rx="8" fill="#1e4d9e"/>
+  <text font-family="Times New Roman" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle" x="380" y="304">Advanced signals present?</text>
+  <text font-family="Times New Roman" font-size="9.5" fill="rgba(255,255,255,0.85)" text-anchor="middle" x="380" y="320">Subdomain-brand attack · cloud infra abuse</text>
+  <text font-family="Times New Roman" font-size="9.5" fill="rgba(255,255,255,0.85)" text-anchor="middle" x="380" y="334">amazonaws · vercel · azurewebsites · netlify · IDN encoding</text>
+
+  <!-- YES → right → Level 3 -->
+  <line x1="555" y1="314" x2="647" y2="314" stroke="#555" stroke-width="1.5"/>
+  <line x1="647" y1="314" x2="647" y2="350" stroke="#555" stroke-width="1.5" marker-end="url(#arr-red)"/>
+  <text font-family="Times New Roman" font-size="10" font-style="italic" fill="#b71c1c" x="562" y="309">YES</text>
+
+  <!-- OUTCOME L3 -->
+  <rect x="566" y="350" width="165" height="84" rx="8" fill="#b71c1c"/>
+  <text font-family="Times New Roman" font-size="11" font-weight="bold" fill="#fff" text-anchor="middle" x="648" y="373">Level 3 — Advanced</text>
+  <text font-family="Times New Roman" font-size="9" fill="rgba(255,255,255,0.9)" text-anchor="middle" x="648" y="390">25 XP · sophisticated</text>
+  <text font-family="Times New Roman" font-size="9" fill="rgba(255,255,255,0.9)" text-anchor="middle" x="648" y="404">evasion technique:</text>
+  <text font-family="Times New Roman" font-size="9" fill="rgba(255,255,255,0.9)" text-anchor="middle" x="648" y="418">cloud abuse · IDN</text>
+
+  <!-- NO → down -->
+  <line x1="380" y1="346" x2="380" y2="414" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text font-family="Times New Roman" font-size="10" font-style="italic" fill="#555" x="385" y="384">NO</text>
+
+  <!-- ════════════════════════════════════════════
+       NODE 4 — Known brand in URL?
+  ════════════════════════════════════════════ -->
+  <rect x="205" y="414" width="350" height="64" rx="8" fill="#1e4d9e"/>
+  <text font-family="Times New Roman" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle" x="380" y="436">Known brand in URL?</text>
+  <text font-family="Times New Roman" font-size="9.5" fill="rgba(255,255,255,0.85)" text-anchor="middle" x="380" y="452">Brand name in path, query string,</text>
+  <text font-family="Times New Roman" font-size="9.5" fill="rgba(255,255,255,0.85)" text-anchor="middle" x="380" y="466">or subdomain of a non-brand domain</text>
+
+  <!-- YES → left → Level 2 -->
+  <line x1="205" y1="446" x2="110" y2="446" stroke="#555" stroke-width="1.5"/>
+  <line x1="110" y1="446" x2="110" y2="492" stroke="#555" stroke-width="1.5" marker-end="url(#arr-orange)"/>
+  <text font-family="Times New Roman" font-size="10" font-style="italic" fill="#e65100" text-anchor="middle" x="157" y="441">YES</text>
+
+  <!-- OUTCOME L2-A -->
+  <rect x="28" y="492" width="165" height="84" rx="8" fill="#e65100"/>
+  <text font-family="Times New Roman" font-size="11" font-weight="bold" fill="#fff" text-anchor="middle" x="110" y="514">Level 2 — Subtle</text>
+  <text font-family="Times New Roman" font-size="9" fill="rgba(255,255,255,0.9)" text-anchor="middle" x="110" y="530">15 XP · brand name</text>
+  <text font-family="Times New Roman" font-size="9" fill="rgba(255,255,255,0.9)" text-anchor="middle" x="110" y="544">embedded in path or</text>
+  <text font-family="Times New Roman" font-size="9" fill="rgba(255,255,255,0.9)" text-anchor="middle" x="110" y="558">lookalike subdomain</text>
+
+  <!-- NO → down → Level 2 default -->
+  <line x1="380" y1="478" x2="380" y2="546" stroke="#555" stroke-width="1.5" marker-end="url(#arr-orange)"/>
+  <text font-family="Times New Roman" font-size="10" font-style="italic" fill="#555" x="385" y="516">NO</text>
+
+  <!-- OUTCOME L2-DEFAULT -->
+  <rect x="248" y="546" width="265" height="84" rx="8" fill="#e65100"/>
+  <!-- diagonal stripe overlay to mark as fallback -->
+  <text font-family="Times New Roman" font-size="11" font-weight="bold" fill="#fff" text-anchor="middle" x="380" y="570">Level 2 — Default Fallback</text>
+  <text font-family="Times New Roman" font-size="9" fill="rgba(255,255,255,0.9)" text-anchor="middle" x="380" y="588">15 XP · no specific signal matched</text>
+  <text font-family="Times New Roman" font-size="9" fill="rgba(255,255,255,0.9)" text-anchor="middle" x="380" y="602">HTTPS + legitimate-looking domain</text>
+  <text font-family="Times New Roman" font-size="9" fill="rgba(255,255,255,0.9)" text-anchor="middle" x="380" y="616">requires careful inspection</text>
+  <!-- fallback badge -->
+  <rect x="310" y="623" width="140" height="14" rx="7" fill="rgba(0,0,0,0.25)"/>
+  <text font-family="Times New Roman" font-size="8" fill="#fff" text-anchor="middle" x="380" y="633">default · no further checks</text>
+
+  <!-- ════════════════════════════════════════════
+       LEGEND
+  ════════════════════════════════════════════ -->
+  <rect x="18" y="14" width="130" height="76" rx="6" fill="#f8f9ff" stroke="#d0d0d0" stroke-width="1"/>
+  <text font-family="Times New Roman" font-size="9" font-weight="bold" fill="#1a1a2e" x="28" y="30">Legend</text>
+  <rect x="28" y="37" width="12" height="12" rx="2" fill="#1e4d9e"/>
+  <text font-family="Times New Roman" font-size="9" fill="#333" x="46" y="48">Decision node</text>
+  <rect x="28" y="55" width="12" height="12" rx="2" fill="#2e7d32"/>
+  <text font-family="Times New Roman" font-size="9" fill="#333" x="46" y="66">Level 1 (10 XP)</text>
+  <rect x="28" y="73" width="12" height="12" rx="2" fill="#e65100"/>
+  <text font-family="Times New Roman" font-size="9" fill="#333" x="46" y="84">Level 2 (15 XP)</text>
+  <!-- Level 3 legend needs to go below but box is short - add to right -->
+  <rect x="566" y="14" width="130" height="44" rx="6" fill="#f8f9ff" stroke="#d0d0d0" stroke-width="1"/>
+  <rect x="576" y="25" width="12" height="12" rx="2" fill="#b71c1c"/>
+  <text font-family="Times New Roman" font-size="9" fill="#333" x="594" y="36">Level 3 (25 XP)</text>
+  <rect x="576" y="43" width="12" height="12" rx="2" fill="#1e4d9e"/>
+  <text font-family="Times New Roman" font-size="9" fill="#333" x="594" y="54">First-match wins</text>
+
+</svg>
+
+<p class="note">
+  Checks are applied top-to-bottom in priority order; the first matching rule terminates evaluation.
+  Level 1 (Obvious) signals include non-HTTPS schemes, free-hosting TLDs, and known typosquat character substitutions.
+  Level 3 (Advanced) signals cover cloud infrastructure abuse and IDN homograph encoding — techniques that evade visual inspection.
+  Level 2 (Subtle) is both an explicit outcome (brand-embedding attack) and the default fallback when no other signal is matched.
+  IDN = Internationalised Domain Name · XP = Experience Points awarded on correct answer.
+</p>
+</body>
+</html>

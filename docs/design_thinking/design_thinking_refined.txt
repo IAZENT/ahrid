@@ -1,0 +1,347 @@
+================================================================================
+AHRIP - DESIGN THINKING DELIVERABLES (REFINED)
+Context: Kathmandu-based employees (Himalayan Finance Ltd, Putalisadak)
+================================================================================
+
+CORRECTED SYSTEM REALITY (BSc build - verified from source code)
+----------------------------------------------------------------
+What EMPLOYEE actually sees on opening the webapp:
+- Dashboard: composite risk score number + colored badge, sessions completed count, weeks-with-activity trend
+- Training: adaptive 20-question MCQ session, per-question timer, category badge, difficulty 1-3, progress bar. Explanation + mastery % shown after each answer. No XP, no levels, no badges, no streaks, no leaderboard.
+- My Score: detailed risk breakdown by category, SHAP explanation, Random Forest prediction + confidence, behavioural archetype label, 8-week accuracy history
+- History: past session results with accuracy
+- Profile: personal details, job role, department
+- Evaluation: self-assessment form
+- Transparency: how the risk model works
+
+What ADMIN actually sees:
+- Admin Panel: total users, active scenarios, threats ingested (24h), attempts (24h), RF model status, background job controls (Ingest Feed / Retrain Models)
+- Users: create, edit, deactivate, assign roles/job_roles
+- Scenarios: CRUD for training items (MCQ, T/F, identify_threat)
+- Threat Feeds: ingested phishing URLs, brand targets, conversion status
+- Password Resets: approve/reject employee reset requests
+- Evaluation Admin: view evaluation responses
+
+What MANAGER actually sees:
+- Team Overview: avg risk, high/critical count, sessions/week, trend direction + %
+- Team: individual member profiles, job role, risk level, weakest category, sessions this week, last active. Can assign targeted training.
+- Clusters: K-Means archetype distribution with labels + colours
+- Reports: aggregated analytics, CSV export
+
+Key backend facts (verified):
+- SESSION_SIZE = 20. No gamification (XP/streaks/badges) in this build.
+- Adaptive engine = mastery-weighted selection, NOT Thompson Sampling here.
+- Has target_roles field on scenarios + applies_to_role() logic.
+- Has ROLE_CATEGORY_PRIORITY mapping per job role.
+- Has spaced repetition via RISK_LEVEL_TO_SPACING_HOURS.
+- Notifications: only training_assigned and risk_escalation.
+- Categories: phishing_email, smishing, vishing, physical_security, password_hygiene, usb_baiting, social_engineering, data_handling.
+
+================================================================================
+1. EMPATHY MAP
+================================================================================
+
+Persona: Suman Shrestha, 28, Accountant at Himalayan Finance Ltd, Putalisadak.
+Uses Tally, Excel, NIC Asia Bank portal daily. Commutes from Lalitpur on microbus.
+Monthly reconciliation crunch: 25th-5th. Works in open-plan office.
+
+SEES:
+- AHRIP dashboard showing a risk score number (e.g., 67) and a colored badge ("medium")
+- "Sessions completed" card showing a low number because he only does mandatory sessions
+- Training page with 20-question progress bar, timer counting seconds, category badge
+- Scenario cards with generic titles like "Bank security alert email" - not NIC Asia specific
+- "My Score" page with Random Forest prediction, SHAP bars, and a cluster label he doesn't understand
+- Colleagues in the open-plan office clicking through training during lunch break
+
+SAYS:
+- "I finished my 20 questions for this week, done."
+- "This says my risk score is 67 - what does that even mean for my actual job?"
+- "Why am I getting a question about USB baiting? I only process invoices in Tally."
+- "Can I do this later? Month-end reconciliation is due and my manager is asking for the VAT report."
+- "The system says my weakest category is phishing_email, but it didn't tell me why this specific question was picked."
+
+THINKS:
+- "I answered all 20 questions but I don't actually feel safer at work."
+- "Why is there a question about physical tailgating? I sit at a desk all day."
+- "The timer is running while my phone rings - I'm not even reading the scenario."
+- "My risk score dropped but I still almost clicked a suspicious link in Outlook last week."
+- "I see 'mastery 45%' after a wrong answer, but I can just click Next and forget it."
+- "The cluster label says 'casual_rusher' - that's embarrassing if my manager sees it."
+
+DOES:
+- Clicks "Start training" and speeds through 20 MCQs during his 30-minute lunch break
+- Selects answers quickly without reading the full scenario content
+- Skips reading the explanation card after wrong answers to save time
+- Opens training during month-end, gets interrupted by Tally alerts, returns to find the timer advanced
+- Checks "My Score" once after first session, sees "unknown" risk level, never returns
+- Ignores the SHAP explanation panel because it feels like math homework
+
+FEELS:
+- Frustrated that 20 questions interrupt actual accounting deadlines
+- Anxious about the visible risk score - what if his manager sees it in Team view?
+- Bored by generic scenarios that don't relate to invoice fraud or fake payment confirmations
+- Mildly curious when the mastery % changes, but no lasting motivation
+- Confused by the difference between composite risk score, RF prediction, and cluster archetype
+- Relieved when the 20-question session finally ends
+
+KEY INSIGHT:
+Suman completes the mandatory 20-question sessions but does not engage with the learning content.
+The gap between "completing training" and "understanding security" is where real vulnerability lives.
+The system tracks his responses and updates a risk score, but there is no mechanism that forces
+him to actually read and retain explanations. The timer, lack of role-specific context, and
+absence of comprehension-linked rewards all enable speed-rushing.
+
+================================================================================
+2. FIVE WHYS
+================================================================================
+
+1. Why do employees at Himalayan Finance complete AHRIP training sessions, yet fail to retain cybersecurity knowledge in daily work?
+   -> Because training feels like a checkbox task - Suman rushes through 20 MCQs during lunch to satisfy the requirement, without deeply reading scenarios or explanations.
+
+2. Why does Suman treat it as a checkbox?
+   -> Because scenarios are not visibly connected to his accounting role - he sees generic "bank security alert" emails, not fake NIC Asia Bank payment confirmations or eSewa invoice fraud that matches his actual daily work.
+
+3. Why doesn't role relevance feel visible to Suman?
+   -> Because although the backend has target_roles and ROLE_CATEGORY_PRIORITY, the frontend scenario card shows no label explaining why this question was chosen for him. He sees a random card with a category badge and difficulty number, but zero context linking it to his job.
+
+4. Why is there no post-session reinforcement?
+   -> Because once a scenario is answered, it enters the spaced-repetition window but the employee never sees it again until the system silently allows it. There is no active review prompt, no micro-quiz, no reminder of past mistakes. Knowledge is tested once and decays.
+
+5. Why does AHRIP not close the reinforcement loop?
+   -> Because the system's primary success metric is the Random Forest composite risk score - it is optimised to move a measurable number, not to build lasting behavioural habits. More sessions = more data = better model. The system rewards completion volume (attempts feed the risk model), not comprehension depth.
+
+ROOT CAUSE:
+AHRIP optimises for measurable outputs (risk scores, completion counts, model accuracy) rather
+than lasting behavioural change. Without visible personalisation on the UI, post-session
+reinforcement, comprehension-linked session design, and role-context communication, employees
+learn to complete training - not to think securely.
+
+================================================================================
+3. POEMS OBSERVATION
+================================================================================
+
+PEOPLE:
+- Suman Shrestha (accountant) completing 20-question training at his desk during lunch, phone ringing
+- Anita Maharjan (receptionist) answering phones while trying to finish her session
+- Rajesh Tamang (IT admin) monitoring admin dashboard remotely from Bhaktapur, triggering threat ingestion
+- Deepa Adhikari (HR) reviewing team compliance in meeting room via manager dashboard
+- Manager checking Team Overview for high-risk users and weakest categories
+
+OBJECTS:
+- Admin dashboard: KPI strip (users, active, scenarios, threats/24h, attempts/24h, RF model status), ingestion/retrain job cards, ML model status tiles
+- Employee dashboard: risk score card, sessions completed card, trend card, "Start session" CTA
+- Training interface: progress rail, question counter, category badge, difficulty label, timer, 4 answer options (A-D), feedback card with Correct/Incorrect, mastery %, explanation, red flags, learning tip
+- My Score page: composite score, SHAP explanation panel, RF prediction panel, cluster archetype card, 8-week history list
+- Manager Team page: user roster with risk level, weakest category, sessions this week, last active
+- Phishing simulations: visual_html rendered in sandboxed iframe (fake login pages, SMS screenshots)
+
+ENVIRONMENT:
+- Open-plan office at Putalisadak, Kathmandu - frequent interruptions (colleagues, phone calls)
+- Remote home setup (staff from Lalitpur, Bhaktapur) with family distractions, slow internet during load-shedding hours
+- Mobile use during Kathmandu commute (microbus/tempo) - 20 questions too long for this context
+- Competing attention: Tally, Excel, NIC Asia portal, phone calls, month-end reconciliation
+- Peak banking hours (9-11 AM, month-end 25th-5th) create cognitive overload
+- No air conditioning in summer; fans create noise distraction in open-plan office
+
+MESSAGES:
+- "Adaptive training tailored to your role and recent activity" (Dashboard subtitle - but no evidence shown)
+- "Start an adaptive 20-question session tailored to your weakest category" (Dashboard CTA)
+- "Session complete: 14/20 correct · 180s · 4 categories covered" (Session summary)
+- "Focus area: Your weakest category was phishing_email" (Summary card)
+- "Risk level raised to high - Your composite score is now 72. Review your weak categories." (Notification)
+- "New training assignment: Manager wants you to practise: phishing_email, data_handling." (Notification)
+- "Not enough attempts yet to compute a risk score." (My Score - new hire experience)
+
+SERVICES:
+- Mastery-weighted adaptive scenario selection engine (BSc scope)
+- OSINT threat feed pipeline (Phishing.Database and AlienVault OTX)
+- Random Forest risk classifier + K-Means behavioural clustering
+- SHAP explainability for risk score interpretation
+- Spaced repetition via RISK_LEVEL_TO_SPACING_HOURS
+- Notification service (training_assigned, risk_escalation)
+- Option shuffle + presentation token for anti-cheating
+
+FRICTION POINTS OBSERVED:
+- Suman answers fast -> difficulty stays low (no promotion because he isn't actually mastering) -> no challenge
+- Timer advances during interruptions (phone rings, colleague asks question) - no pause mechanism
+- No explanation of WHY a specific scenario was selected for him personally
+- New hires see "unknown" risk level and message "Not enough attempts" - no onboarding guidance
+- Month-end reconciliation period: zero training engagement for 3-5 days, then 20-question backlog feels overwhelming
+- Admin sees user count and model status but cannot see per-user risk breakdown without clicking into Manager view
+- Manager sees weakest_category string but no actionable coaching recommendation generated
+
+OPPORTUNITIES:
+- Show transparent adaptive reasoning on each scenario card: "Selected because accountants often face invoice fraud."
+- Add micro-reflection after wrong answers (one-sentence prompt, not just explanation display)
+- Pause timer during detected inactivity / tab-switching
+- Reward reasoning quality via mastery multiplier, not just correctness
+- Offer 5-question micro-sessions as alternative to 20-question standard
+- Schedule notifications outside peak reconciliation hours
+- Add Kathmandu-localised scenarios: fake NIC Asia payment alerts, eSewa refund scams, fake NRB letters
+
+================================================================================
+4. POV STATEMENT
+================================================================================
+
+Suman Shrestha, a 28-year-old accountant at Himalayan Finance Ltd in Kathmandu
+using AHRIP for mandatory security awareness training, needs training scenarios
+that feel directly relevant to his finance role, visible reasoning for why each
+question was chosen, and reinforcement of missed concepts over time - because he
+currently treats training as a checkbox task, speeding through 20 generic MCQs
+during lunch without internalising the content, leaving him genuinely vulnerable
+to role-specific threats like fake invoice payment requests and NIC Asia Bank
+phishing emails despite being technically "compliant" on the dashboard.
+
+================================================================================
+PART 2: PROBLEM IDENTIFICATION & SOLUTION GENERATION
+================================================================================
+
+================================================================================
+PROBLEM 1: Employees rush through training without reading content
+================================================================================
+User perspective: Suman sees 20 MCQ scenarios, selects answers fast to finish
+quickly. The timer shows seconds ticking. He gets a mastery % update regardless
+of whether he read the explanation. The system records an attempt and feeds the
+risk model - completion is counted, understanding is not.
+
+10 FEASIBLE SOLUTIONS:
+1. Add minimum read-time per scenario (e.g., 10s before submit button enables)
+2. Show a one-sentence comprehension check after the explanation card
+3. Weight mastery update by time-spent-reading, not just correctness
+4. Introduce "reflection prompt" after wrong answers requiring typed one-sentence response
+5. Reduce session length from 20 to 10 questions but add depth per question
+6. Display scenario relevance tag: "Why this matters for your accounting role: ..."
+7. Require viewing the full explanation for 5 seconds before advancing to next question
+8. Add session quality rating: flag sessions completed under 3 minutes for manager review
+9. Show "learning quality score" alongside accuracy to differentiate engagement
+10. Surface previously-missed scenarios first in next session with "Retry this concept" label
+
+BEST 2 SOLUTIONS:
+-> (A) Add minimum engagement timer (10s) + require explanation viewing before advancing.
+   Simple frontend change in TrainingPage.tsx, directly prevents speed-rushing.
+-> (B) Surface previously-missed scenarios with "Retry: you missed this on [date]" label.
+   Uses existing spaced-repetition backend logic; adds visible reinforcement loop.
+
+================================================================================
+PROBLEM 2: Scenarios feel generic and disconnected from employee's actual role
+================================================================================
+User perspective: Suman is an accountant but gets questions about USB baiting
+and physical tailgating. The backend has target_roles and ROLE_CATEGORY_PRIORITY,
+but he never sees WHY a scenario was picked. He doesn't see why a social engineering
+question about badge access matters to someone who processes invoices in Tally all day.
+
+10 FEASIBLE SOLUTIONS:
+1. Surface "target_roles" info in the scenario card UI as a relevance tag
+2. Prioritize role-matched scenarios higher in the adaptive selection (already partially done; expose it)
+3. Add Kathmandu-specific scenario packs (fake NIC Asia payment alerts, eSewa refund SMS, fake NRB audit letters)
+4. Show "Selected for you: invoice fraud risk in your accounting role" label on each card
+5. Allow employees to rate scenario relevance after each session (1-5 stars, feedback loop)
+6. Let admin create department-specific scenario collections
+7. Add a "relevance match %" metric visible to managers showing role-match rate per employee
+8. Generate contextualised scenario introductions via LLM at serve-time: "As an accountant, you often receive..."
+9. Allow employees to choose a focus area before starting a session (e.g., "Invoice fraud this week")
+10. Create visual_html templates mimicking actual Nepali financial interfaces (NIC Asia login, eSewa wallet)
+
+BEST 2 SOLUTIONS:
+-> (A) Show transparent adaptive reasoning on each scenario card: one label line.
+   Uses existing target_roles data; minimal frontend change, maximum perceived relevance.
+-> (B) Create Kathmandu-localised, role-specific scenario packs with real Nepali brand visuals.
+   High impact on engagement; seed_scenarios.py can be extended with Nepal-specific content.
+
+================================================================================
+PROBLEM 3: Admin and Manager cannot interpret or act on risk scores meaningfully
+================================================================================
+Admin perspective: Rajesh sees a user's composite risk score of 67 on the manager
+dashboard but doesn't know WHICH category is driving it up or what specific action
+to take. The admin Users page shows email, role, job, active - but no risk score,
+no weakest category, no one-click coaching action.
+
+10 FEASIBLE SOLUTIONS:
+1. Add per-category risk breakdown visible on admin user detail page
+2. Show SHAP feature importance summary for each high-risk user on manager team page
+3. Generate automated coaching recommendation per high-risk user: "Assign: phishing_email, data_handling"
+4. Add "weakest category" and "risk score" columns to the admin users table
+5. Create one-click "assign remedial training" button on manager team page using existing assign-training API
+6. Show historical risk trend (last 4 weeks) for each user on manager hover/expand
+7. Add risk_escalation notification to admin inbox, not just employee
+8. Display cluster archetype description + intervention text on manager team page (already partially there; expand)
+9. Export risk report per department as CSV for management review (reports API exists; add filtering)
+10. Add natural-language summary: "User X struggles with phishing_email - 3 wrong answers in last 2 sessions"
+
+BEST 2 SOLUTIONS:
+-> (A) Add weakest_category + risk_score columns to admin Users page + manager Team page.
+   Uses existing backend data; turns raw roster into actionable intelligence.
+-> (B) Add one-click "Assign remedial training" button on manager Team page with auto-selected
+   categories based on weakest areas. Uses existing /manager/team/<id>/assign-training endpoint;
+   turns insight into direct action.
+
+================================================================================
+PROBLEM 4: New employees are confused by multiple metrics (risk score, RF prediction, cluster)
+================================================================================
+User perspective: A new hire at Himalayan Finance sees three labels on their first
+day: Dashboard says "Current risk: - (unknown)", My Score says "Not enough attempts
+yet to compute a risk score", and after 3 sessions they see "composite_score: 72",
+"RF predicted_risk_level: medium", and "archetype_label: casual_rusher". They don't
+understand the relationship. "Am I doing well or badly?"
+
+10 FEASIBLE SOLUTIONS:
+1. Add first-login onboarding walkthrough with tooltip explanations for each dashboard element
+2. Combine into a single "Security Readiness" score shown prominently (invert risk so higher = better)
+3. Add contextual label on dashboard: "Risk score = vulnerability detected from your answers"
+4. Show a visual relationship diagram between composite score, RF prediction, and cluster on My Score
+5. Rename "Risk Score" to "Security Awareness Score" and invert (higher = better) to align intuition
+6. Add a brief tutorial/walkthrough for first-time users before first session
+7. Show "Your accuracy is improving but risk is still elevated because..." dynamic explanation
+8. Use color coding consistently (green = safe/positive for ALL metrics)
+9. Display simplified risk score only after 3+ sessions; show "Building your profile..." before
+10. Add "What does this mean?" expandable helper text under each metric on My Score
+
+BEST 2 SOLUTIONS:
+-> (A) Add first-login onboarding walkthrough with tooltip explanations for dashboard elements.
+   Low effort, addresses confusion at the source before bad mental models form.
+-> (B) Rename and reframe: show "Security Awareness Score" (inverted risk, 0-100, higher = better)
+   as the PRIMARY metric on the dashboard. Aligns mental model with "improving" direction.
+
+================================================================================
+PROBLEM 5: Training engagement drops to zero during peak work periods
+================================================================================
+User perspective: During month-end reconciliation (25th-5th), Suman has zero
+bandwidth for a 20-question session. Tally is open, invoices are piling up, VAT
+reports are due, and the manager is asking for numbers. He skips training for
+3-5 days, then faces a 20-question backlog that feels overwhelming. There is no
+micro-session option, no streak to maintain, and no pause mechanism.
+
+10 FEASIBLE SOLUTIONS:
+1. Offer 5-question "micro sessions" as an alternative to 20-question standard sessions
+2. Allow employees to set "busy hours" where notifications are suppressed
+3. Auto-detect low-engagement periods and reduce session recommendation frequency
+4. Schedule training reminders based on individual activity patterns (avoid 9-11 AM, month-end)
+5. Introduce "session pause" - save progress and resume later without losing place
+6. Allow managers to set department-wide "blackout windows" for training (e.g., month-end)
+7. Provide month-end-specific ultra-short scenarios (2-min invoice fraud focus)
+8. Reduce session size to 10 questions during detected peak periods (configurable per department)
+9. Offer optional weekend catch-up sessions with "focus mode" (only weakest category)
+10. Add a "Save for later" bookmark on scenarios so employees can preview and return
+
+BEST 2 SOLUTIONS:
+-> (A) Offer 5-question micro-sessions as a permanent alternative alongside 20-question standard.
+   Minimal backend change (parameterise SESSION_SIZE); maintains learning continuity during busy periods.
+-> (B) Add session pause/resume so employees can answer 5 questions, pause, and finish later.
+   Uses existing session_id tracking; removes the "all-or-nothing" barrier that kills engagement.
+
+================================================================================
+CORRELATION MAP: Design Thinking Tasks <-> Problems
+================================================================================
+
+Empathy Map (Thinks/Feels)  -> Problem 1 (rushing), Problem 4 (metric confusion)
+Empathy Map (Sees/Does)     -> Problem 2 (generic scenarios), Problem 5 (peak periods)
+Five Whys (Root Cause)      -> Problem 1, Problem 2 (optimised for output not learning)
+Five Whys (Why 2, Why 3)  -> Problem 2 (role irrelevance invisible), Problem 3 (admin action gap)
+POEMS (Environment)         -> Problem 5 (peak periods, interruptions, 20-question too long)
+POEMS (Friction Points)     -> Problem 1 (fast answers), Problem 3 (admin/manager needs), Problem 4 (new hire confusion)
+POEMS (Messages)            -> Problem 4 (confusing metrics), Problem 2 (generic "adaptive" claim)
+POV Statement               -> All problems (holistic user need statement)
+
+================================================================================
+END OF DOCUMENT
+================================================================================

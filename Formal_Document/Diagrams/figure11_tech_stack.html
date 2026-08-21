@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 11 — AHRID Technology Stack</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #ffffff;
+    color: #2c2c2a;
+    padding: 2rem;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  #stack-wrap { padding: 0.5rem 0; }
+  .fig-caption {
+    font-size: 11px;
+    color: #5F5E5A;
+    margin: 10px 0 0;
+    line-height: 1.7;
+  }
+  .fig-caption strong { color: #2c2c2a; font-weight: 500; }
+</style>
+</head>
+<body>
+<div id="stack-wrap"></div>
+<p class="fig-caption">
+  <strong>Figure 11.</strong>
+  AHRID five-layer technology stack. Each layer communicates exclusively with its immediate neighbours via defined interfaces: the React SPA issues authenticated Axios requests to the Flask REST API; the API delegates to the Service Layer (adaptive engine, SHAP explainer, OSINT ingestion); the Service Layer reads trained artefacts from the ML Pipeline and persists results via SQLAlchemy ORM to PostgreSQL. APScheduler drives background threat-feed refresh (6-hour interval) and risk recalculation independently of the request cycle. Deployment: Vercel (frontend) and Render (backend + database).
+</p>
+<script>
+(function(){
+const NS='http://www.w3.org/2000/svg';
+function e(tag,a={}){const n=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(a))n.setAttribute(k,String(v));return n;}
+function r(x,y,w,h,rx,f,s,sw=1){return e('rect',{x,y,width:w,height:h,rx,fill:f,stroke:s,'stroke-width':sw});}
+function tx(x,y,str,fill,sz=11,fw='400',anchor='middle'){
+  const n=e('text',{x,y,fill,'font-size':sz,'font-weight':fw,'text-anchor':anchor,'font-family':'system-ui,sans-serif'});
+  n.textContent=str;return n;
+}
+function chip(cx,y,label,f,s,t,w=110){
+  const x=cx-w/2;
+  const g=e('g');
+  g.append(r(x,y,w,22,4,f,s,0.5));
+  g.append(tx(cx,y+14,label,t,8,'500'));
+  return g;
+}
+function arr(x1,y1,x2,y2,c='#888780'){
+  const g=e('g');
+  g.append(e('line',{x1,y1,x2,y2,stroke:c,'stroke-width':1.5}));
+  const ang=Math.atan2(y2-y1,x2-x1),len=6;
+  g.append(e('polygon',{
+    points:`${x2},${y2} ${x2-len*Math.cos(ang-Math.PI/6)},${y2-len*Math.sin(ang-Math.PI/6)} ${x2-len*Math.cos(ang+Math.PI/6)},${y2-len*Math.sin(ang+Math.PI/6)}`,
+    fill:c
+  }));
+  return g;
+}
+
+const W=700, CX=350;
+const svg=e('svg',{role:'img','aria-label':'AHRID five-layer technology stack','style':'width:100%;display:block;'});
+const svgT=e('title');svgT.textContent='AHRID Technology Stack — Figure 11';svg.append(svgT);
+
+const layers=[
+  {
+    label:'Layer 1 — Presentation',
+    sub:'React 18 SPA  \xb7  TypeScript  \xb7  Vite  \xb7  Vercel',
+    f:'#E6F1FB', s:'#185FA5', t:'#042C53',
+    chips:[
+      {l:'React 18',f:'#bfd9f5',s:'#185FA5',t:'#042C53'},
+      {l:'TypeScript',f:'#bfd9f5',s:'#185FA5',t:'#042C53'},
+      {l:'Tailwind CSS',f:'#bfd9f5',s:'#185FA5',t:'#042C53'},
+      {l:'Recharts',f:'#bfd9f5',s:'#185FA5',t:'#042C53'},
+      {l:'Zustand',f:'#bfd9f5',s:'#185FA5',t:'#042C53'},
+    ]
+  },
+  {
+    label:'Layer 2 — API Gateway',
+    sub:'Flask 3.1  \xb7  JWT Auth  \xb7  Rate Limiting  \xb7  CORS  \xb7  Render',
+    f:'#EBF4FF', s:'#378ADD', t:'#042C53',
+    chips:[
+      {l:'Flask 3.1',f:'#c5dff8',s:'#378ADD',t:'#042C53'},
+      {l:'Flask-JWT-Extended',f:'#c5dff8',s:'#378ADD',t:'#042C53'},
+      {l:'Flask-Limiter',f:'#c5dff8',s:'#378ADD',t:'#042C53'},
+      {l:'Flask-CORS',f:'#c5dff8',s:'#378ADD',t:'#042C53'},
+      {l:'Gunicorn',f:'#c5dff8',s:'#378ADD',t:'#042C53'},
+    ]
+  },
+  {
+    label:'Layer 3 — Service Layer',
+    sub:'Adaptive Engine  \xb7  SHAP Explainer  \xb7  OSINT Ingestion  \xb7  APScheduler',
+    f:'#E1F5EE', s:'#0F6E56', t:'#04342C',
+    chips:[
+      {l:'Adaptive Engine',f:'#9FE1CB',s:'#0F6E56',t:'#04342C'},
+      {l:'SHAP Explainer',f:'#9FE1CB',s:'#0F6E56',t:'#04342C'},
+      {l:'Threat Ingestion',f:'#9FE1CB',s:'#0F6E56',t:'#04342C'},
+      {l:'APScheduler',f:'#9FE1CB',s:'#0F6E56',t:'#04342C'},
+      {l:'Risk Scorer',f:'#9FE1CB',s:'#0F6E56',t:'#04342C'},
+    ]
+  },
+  {
+    label:'Layer 4 — ML Pipeline',
+    sub:'scikit-learn  \xb7  SHAP  \xb7  pandas  \xb7  numpy  \xb7  joblib',
+    f:'#EEEDFE', s:'#534AB7', t:'#26215C',
+    chips:[
+      {l:'K-Means (k=5)',f:'#cccaf9',s:'#534AB7',t:'#26215C'},
+      {l:'Random Forest',f:'#cccaf9',s:'#534AB7',t:'#26215C'},
+      {l:'SMOTE',f:'#cccaf9',s:'#534AB7',t:'#26215C'},
+      {l:'SHAP TreeExplainer',f:'#cccaf9',s:'#534AB7',t:'#26215C'},
+      {l:'scikit-learn 1.5',f:'#cccaf9',s:'#534AB7',t:'#26215C'},
+    ]
+  },
+  {
+    label:'Layer 5 — Data & Persistence',
+    sub:'PostgreSQL (prod)  \xb7  SQLite (dev)  \xb7  SQLAlchemy  \xb7  Alembic',
+    f:'#F1EFE8', s:'#888780', t:'#2C2C2A',
+    chips:[
+      {l:'PostgreSQL',f:'#dddbd0',s:'#888780',t:'#2C2C2A'},
+      {l:'SQLAlchemy ORM',f:'#dddbd0',s:'#888780',t:'#2C2C2A'},
+      {l:'Flask-Migrate',f:'#dddbd0',s:'#888780',t:'#2C2C2A'},
+      {l:'Phishing.Database',f:'#dddbd0',s:'#888780',t:'#2C2C2A'},
+      {l:'AlienVault OTX',f:'#dddbd0',s:'#888780',t:'#2C2C2A'},
+    ]
+  },
+];
+
+const LH=82, GAP=14, PX=30, PW=640;
+let y=12;
+layers.forEach((layer,i)=>{
+  // layer box
+  svg.append(r(PX,y,PW,LH,6,layer.f,layer.s,1.5));
+  svg.append(tx(CX,y+16,layer.label,layer.t,11,'600'));
+  svg.append(tx(CX,y+30,layer.sub,layer.t,8,'400'));
+
+  // chips row
+  const chipW=108, chipGap=5, totalW=5*chipW+4*chipGap;
+  const chipX0=CX-totalW/2;
+  layer.chips.forEach((c,j)=>{
+    const cx=chipX0+j*(chipW+chipGap)+chipW/2;
+    svg.append(chip(cx,y+40,c.l,c.f,c.s,c.t,chipW));
+  });
+
+  // arrow between layers
+  if(i<layers.length-1){
+    const ay=y+LH;
+    svg.append(arr(CX,ay,CX,ay+GAP));
+  }
+  y+=LH+GAP;
+});
+
+// OSINT external box (right side, connected to Layer 3)
+const extY=12+2*(LH+GAP)+LH/2-18;
+const extX=PX+PW+12;
+const extW=80;
+svg.append(r(extX,extY,extW,36,4,'#FFF3E0','#E65100',0.8));
+svg.append(tx(extX+extW/2,extY+13,'OSINT Feeds','#4E2000',8,'600'));
+svg.append(tx(extX+extW/2,extY+25,'6-hr refresh','#4E2000',7,'400'));
+// dashed line from OSINT to layer 3
+const lx=PX+PW, ly=12+2*(LH+GAP)+LH/2;
+svg.append(e('line',{x1:extX,y1:ly,x2:lx,y2:ly,stroke:'#E65100','stroke-width':1,'stroke-dasharray':'5 3'}));
+
+const totalH=y-GAP+12;
+svg.setAttribute('viewBox',`0 0 ${W+100} ${totalH}`);
+svg.setAttribute('width',W+100);
+document.getElementById('stack-wrap').append(svg);
+})();
+</script>
+</body>
+</html>

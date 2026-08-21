@@ -17,7 +17,7 @@ import numpy as np
 
 LOG = logging.getLogger(__name__)
 
-# Human-readable labels for each of the 14 RF features. Keys must match
+# Human-readable labels for each of the 18 RF features. Keys must match
 # the FEATURE_NAMES list in random_forest_model.py exactly.
 FEATURE_LABELS: dict[str, str] = {
     "avg_response_time_ms":        "How quickly you answer questions",
@@ -26,6 +26,9 @@ FEATURE_LABELS: dict[str, str] = {
     "social_engineering_accuracy": "Social engineering resistance",
     "password_hygiene_accuracy":   "Password hygiene knowledge",
     "physical_security_accuracy":  "Physical security awareness",
+    "vishing_accuracy":            "Voice phishing (vishing) resistance",
+    "data_handling_accuracy":      "Data handling and privacy awareness",
+    "usb_baiting_accuracy":        "USB / removable media threat awareness",
     "overall_accuracy":            "Overall quiz accuracy",
     "fast_attempt_rate":           "Proportion of rushed answers",
     "overconfident_rate":          "Proportion of overconfident answers",
@@ -34,6 +37,7 @@ FEATURE_LABELS: dict[str, str] = {
     "total_sessions":              "Total training sessions completed",
     "days_since_last_session":     "Days since you last trained",
     "attempts_count":              "Total training attempts",
+    "cluster_label":               "Behavioural archetype (K-Means cluster)",
 }
 
 

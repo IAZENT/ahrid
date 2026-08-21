@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Figure B1 – OSINT Pipeline Flow</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Times New Roman', serif; background: #fff; padding: 32px; }
+  h3 { font-size: 13px; font-weight: bold; text-align: center; margin-bottom: 4px; color: #1a1a2e; }
+  .subtitle { font-size: 11px; text-align: center; color: #555; margin-bottom: 28px; font-style: italic; }
+  .pipeline { display: flex; flex-direction: column; align-items: center; width: 680px; margin: 0 auto; }
+
+  /* Source row */
+  .sources { display: flex; gap: 24px; margin-bottom: 0; }
+  .source-box {
+    width: 180px; padding: 10px 14px; border-radius: 6px; text-align: center;
+    font-size: 11px; font-weight: bold; color: #fff;
+  }
+  .src-a { background: #1a3a6e; }
+  .src-b { background: #2a5298; }
+
+  .merge-line {
+    display: flex; align-items: flex-start; gap: 0;
+    width: 384px; /* span between two source centers */
+    height: 32px; position: relative; margin-top: 0;
+  }
+
+  /* Stage boxes */
+  .stage {
+    width: 300px; padding: 11px 18px; border-radius: 6px;
+    text-align: center; position: relative;
+  }
+  .stage-title { font-size: 12px; font-weight: bold; margin-bottom: 3px; }
+  .stage-desc { font-size: 10px; color: rgba(255,255,255,0.85); line-height: 1.4; }
+
+  .arrow { font-size: 20px; color: #555; line-height: 1; margin: 2px 0; }
+
+  .s1 { background: #1e4d9e; color: #fff; }
+  .s2 { background: #2456ab; color: #fff; }
+  .s3 { background: #2a5fb7; color: #fff; }
+  .s4 { background: #3068c4; color: #fff; }
+  .s5 { background: #3872d0; color: #fff; }
+  .s6 { background: #4a88e0; color: #fff; }
+  .s7 { background: #1a6e3e; color: #fff; }
+
+  .badge {
+    position: absolute; left: -40px; top: 50%; transform: translateY(-50%);
+    width: 28px; height: 28px; border-radius: 50%; background: #fff;
+    border: 2px solid currentColor; font-size: 11px; font-weight: bold;
+    display: flex; align-items: center; justify-content: center;
+    color: #1a3a6e;
+  }
+
+  .note { font-size: 10px; color: #555; text-align: center; margin-top: 22px; font-style: italic; width: 580px; line-height: 1.5; }
+
+  svg.merge { display: block; }
+</style>
+</head>
+<body>
+<h3>Figure B1. Seven-Stage OSINT Threat Ingestion Pipeline</h3>
+<p class="subtitle">Automated pipeline converting live phishing intelligence into adaptive training scenarios</p>
+
+<div class="pipeline">
+
+  <!-- Sources -->
+  <div class="sources">
+    <div class="source-box src-a">📡 Phishing.Database<br><span style="font-weight:normal;font-size:10px;">GitHub · daily update<br>active phishing URLs</span></div>
+    <div class="source-box src-b">🔭 AlienVault OTX<br><span style="font-weight:normal;font-size:10px;">Pulse feed · tagged IoCs<br>brand + lure metadata</span></div>
+  </div>
+
+  <!-- Merge -->
+  <svg width="384" height="36" viewBox="0 0 384 36" class="merge">
+    <line x1="90" y1="0" x2="90" y2="18" stroke="#555" stroke-width="1.5"/>
+    <line x1="294" y1="0" x2="294" y2="18" stroke="#555" stroke-width="1.5"/>
+    <line x1="90" y1="18" x2="294" y2="18" stroke="#555" stroke-width="1.5"/>
+    <line x1="192" y1="18" x2="192" y2="36" stroke="#555" stroke-width="1.5"/>
+    <polygon points="187,30 197,30 192,36" fill="#555"/>
+  </svg>
+
+  <!-- Stage 1 -->
+  <div class="stage s1" style="position:relative;">
+    <div class="badge" style="color:#1e4d9e;">1</div>
+    <div class="stage-title">Fetch</div>
+    <div class="stage-desc">HTTP GET from both feeds · rate-limited · paginated · retry on failure</div>
+  </div>
+  <div class="arrow">▼</div>
+
+  <!-- Stage 2 -->
+  <div class="stage s2" style="position:relative;">
+    <div class="badge" style="color:#2456ab;">2</div>
+    <div class="stage-title">Validate</div>
+    <div class="stage-desc">URL format check · scheme normalisation · minimum field presence · malformed entries dropped</div>
+  </div>
+  <div class="arrow">▼</div>
+
+  <!-- Stage 3 -->
+  <div class="stage s3" style="position:relative;">
+    <div class="badge" style="color:#2a5fb7;">3</div>
+    <div class="stage-title">Deduplicate</div>
+    <div class="stage-desc">SHA-1(URL) fingerprint · cross-feed dedup · skip already-ingested entries</div>
+  </div>
+  <div class="arrow">▼</div>
+
+  <!-- Stage 4 -->
+  <div class="stage s4" style="position:relative;">
+    <div class="badge" style="color:#3068c4;">4</div>
+    <div class="stage-title">Classify</div>
+    <div class="stage-desc">Keyword detection → lure_type · SHA-1 hash routing → scenario category<br>brand impersonation extraction → target_brand</div>
+  </div>
+  <div class="arrow">▼</div>
+
+  <!-- Stage 5 -->
+  <div class="stage s5" style="position:relative;">
+    <div class="badge" style="color:#3872d0;">5</div>
+    <div class="stage-title">Difficulty Assignment</div>
+    <div class="stage-desc">URL structural analysis: scheme · TLD · subdomain · domain homoglyphs<br>→ Level 1 (Obvious) / Level 2 (Subtle) / Level 3 (Advanced)</div>
+  </div>
+  <div class="arrow">▼</div>
+
+  <!-- Stage 6 -->
+  <div class="stage s6" style="position:relative;">
+    <div class="badge" style="color:#4a88e0;">6</div>
+    <div class="stage-title">Scenario Generation</div>
+    <div class="stage-desc">LLM-templated narrative · red_flags extracted · MCQ options generated<br>learning_tip appended · explanation drafted · role targeting assigned</div>
+  </div>
+  <div class="arrow">▼</div>
+
+  <!-- Stage 7 -->
+  <div class="stage s7" style="position:relative;">
+    <div class="badge" style="color:#1a6e3e;">7</div>
+    <div class="stage-title">Store</div>
+    <div class="stage-desc">ThreatFeedEntry record written · Scenario record written (is_active=True)<br>was_converted flagged · ingested_at timestamp recorded</div>
+  </div>
+
+  <p class="note">
+    The pipeline runs on a scheduled cron job and can also be triggered manually via <em>POST /api/v1/admin/threats/run-ingestion</em>.
+    All URLs are sanitised (scheme replaced, PII stripped) before storage to comply with IPA 2075 §6 data minimisation.
+  </p>
+</div>
+</body>
+</html>

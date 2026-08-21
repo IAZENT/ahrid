@@ -91,8 +91,12 @@ def prepare_training_data():
 def train_random_forest(X, y, model_path: Path) -> dict:
     from collections import Counter
     from sklearn.ensemble import RandomForestClassifier
-    from sklearn.metrics import accuracy_score, classification_report
+    from sklearn.metrics import (
+        accuracy_score, classification_report,
+        average_precision_score, cohen_kappa_score,
+    )
     from sklearn.model_selection import train_test_split, cross_val_score
+    from sklearn.preprocessing import label_binarize
 
     class_dist = dict(Counter(int(v) for v in y))
     min_class_count = min(class_dist.values()) if class_dist else 0
@@ -138,6 +142,26 @@ def train_random_forest(X, y, model_path: Path) -> dict:
     accuracy = float(accuracy_score(y_test, y_pred))
     report = classification_report(y_test, y_pred, output_dict=True, zero_division=0)
 
+    # Cohen's Kappa — agreement beyond chance
+    kappa = float(cohen_kappa_score(y_test, y_pred))
+
+    # PR-AUC (macro) — one-vs-rest across all risk classes
+    classes = sorted(set(y.tolist()))
+    y_test_bin = label_binarize(y_test, classes=classes)
+    y_proba = model.predict_proba(X_test)
+    pr_auc = float(average_precision_score(y_test_bin, y_proba, average="macro"))
+
+    # Rule-based baseline: overall_accuracy is index 9 in the 18-feature vector
+    OVERALL_ACC_IDX = 9
+    y_baseline = np.where(X_test[:, OVERALL_ACC_IDX] < 0.5, 2, 0)
+    baseline_f1_report = classification_report(y_test, y_baseline, output_dict=True, zero_division=0)
+    baseline_f1 = float(baseline_f1_report.get("macro avg", {}).get("f1-score", 0.0))
+    rf_f1 = float(report.get("macro avg", {}).get("f1-score", 0.0))
+
+    print(f"  Cohen's Kappa : {kappa:.4f}")
+    print(f"  PR-AUC (macro): {pr_auc:.4f}")
+    print(f"  RF F1 (macro) : {rf_f1:.4f}  |  Baseline F1: {baseline_f1:.4f}  |  Gap: {rf_f1 - baseline_f1:+.4f}")
+
     cv_scores = None
     cv_folds = min(3, min_class_count) if can_stratify else 2
     if len(y) >= cv_folds and min_class_count >= 2:
@@ -156,6 +180,14 @@ def train_random_forest(X, y, model_path: Path) -> dict:
         "n_test_samples": int(X_test.shape[0]),
         "n_features": int(X.shape[1]),
         "accuracy": accuracy,
+        "cohen_kappa": round(kappa, 4),
+        "pr_auc_macro": round(pr_auc, 4),
+        "f1_macro": round(rf_f1, 4),
+        "baseline": {
+            "rule": "overall_accuracy < 0.5 → high_risk else low_risk",
+            "f1_macro": round(baseline_f1, 4),
+            "f1_improvement_over_baseline": round(rf_f1 - baseline_f1, 4),
+        },
         "class_distribution": class_dist,
         "classification_report": report,
         "feature_names": RF_FEATURE_NAMES,
@@ -178,20 +210,23 @@ def main() -> None:
         from flask import current_app
         rf_path = Path(current_app.config.get("RF_MODEL_PATH", "ml_models/risk_rf_model.pkl"))
 
+        # K-Means must run first — cluster_label is the 18th RF feature.
+        print("=== Stage 1: K-Means clustering ===")
+        kmeans_result = train_kmeans()
+        if kmeans_result is None:
+            print("KMeans: not enough users to cluster — skipping.")
+        else:
+            n = reassign_all_users()
+            print(f"KMeans: trained + assigned {n} users (inertia={kmeans_result['inertia']:.3f}).")
+
+        print("=== Stage 2: Random Forest classification ===")
         X, y = prepare_training_data()
         if X is None:
             print(f"RF: not enough labelled users (need ≥{MIN_ATTEMPTS_FOR_USER} attempts each).")
         elif len(set(y.tolist())) < 2:
-            print("RF: only one risk class present  skipping.")
+            print("RF: only one risk class present — skipping.")
         else:
             train_random_forest(X, y, rf_path)
-
-        kmeans_result = train_kmeans()
-        if kmeans_result is None:
-            print("KMeans: not enough users to cluster  skipping.")
-        else:
-            n = reassign_all_users()
-            print(f"KMeans: trained + assigned {n} users (inertia={kmeans_result['inertia']:.3f}).")
 
 
 if __name__ == "__main__":

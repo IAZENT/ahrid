@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AHRID Premium Thesis Color Palette</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#FAFBFC;color:#1B263B;padding:2rem;max-width:860px;margin:auto}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+h1{font-size:22px;font-weight:500;color:#083A69;margin-bottom:4px}
+.subtitle{font-size:13px;color:#5F6C7B;margin-bottom:28px}
+.section-lbl{font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:#5F6C7B;margin:24px 0 10px}
+.swatch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:6px}
+.sw{border-radius:8px;overflow:hidden;border:0.5px solid #D8DEE6}
+.sw-color{height:56px;display:flex;align-items:flex-end;padding:6px 9px}
+.sw-hex{font-size:9.5px;font-family:'Courier New',monospace}
+.sw-name{font-size:10px;padding:5px 9px 7px;color:#5F6C7B;background:#fff}
+.chart-bar-wrap{display:flex;flex-direction:column;gap:6px}
+.chart-bar-row{display:flex;align-items:center;gap:10px;font-size:11px}
+.bar-lbl{width:66px;text-align:right;color:#5F6C7B}
+.bar{height:14px;border-radius:3px}
+.callout{border-radius:0 8px 8px 0;padding:9px 13px;font-size:12px;margin:5px 0;color:#1B263B}
+.callout strong{font-size:10.5px;font-weight:500;display:block;margin-bottom:3px}
+.tab-row{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tab{padding:6px 14px;border-radius:8px;border:0.5px solid #D8DEE6;font-size:12px;cursor:pointer;background:#fff;color:#5F6C7B;font-family:inherit}
+.tab.active{background:#0B5294;color:#fff;border-color:#0B5294}
+.export-box{font-family:'Courier New',monospace;font-size:11.5px;background:#f4f5f7;border:0.5px solid #D8DEE6;border-radius:8px;padding:16px;white-space:pre;overflow-x:auto;line-height:1.75;color:#1B263B}
+.copy-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:7px 14px;border-radius:8px;border:0.5px solid #D8DEE6;background:#fff;color:#5F6C7B;cursor:pointer;margin-bottom:10px;font-family:inherit}
+.copy-btn:hover{background:#F3F8FD}
+.copy-btn.copied{color:#15803D;border-color:#15803D}
+.divider{border:none;border-top:0.5px solid #D8DEE6;margin:20px 0}
+.tbl-prev{width:100%;font-size:11px;border-collapse:collapse}
+.tbl-prev th{background:#0B5294;color:#fff;padding:6px 10px;text-align:left;font-weight:500}
+.tbl-prev td{padding:5px 10px;border-bottom:0.5px solid #D8DEE6;color:#1B263B}
+.tbl-prev tr:nth-child(even) td{background:#F4F8FE}
+.tbl-prev tr.total td{background:#EAF4FD;font-weight:500;color:#083A69}
+.page-prev{background:#fff;border:0.5px solid #D8DEE6;border-radius:10px;padding:22px 26px}
+.cov-rule{height:3px;background:#0B5294;width:42px;margin:8px 0}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.score-row{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+</style>
+</head>
+<body>
+
+<h2 class="sr-only">AHRID Premium Thesis Color System — 100/100 palette with export formats</h2>
+
+<div class="score-row">
+  <span style="font-size:52px;font-weight:500;color:#0B5294;line-height:1">100</span>
+  <div>
+    <h1>AHRID Premium Thesis Palette</h1>
+    <p class="subtitle">Print-safe &nbsp;·&nbsp; WCAG AA &nbsp;·&nbsp; Greyscale-stable &nbsp;·&nbsp; IEEE-grade</p>
+  </div>
+</div>
+
+<div class="section-lbl">Primary blues</div>
+<div class="swatch-grid">
+  <div class="sw"><div class="sw-color" style="background:#083A69"><span class="sw-hex" style="color:#DCEEFF">#083A69</span></div><div class="sw-name">Dark navy</div></div>
+  <div class="sw"><div class="sw-color" style="background:#0B5294"><span class="sw-hex" style="color:#DCEEFF">#0B5294</span></div><div class="sw-name">H1 heading</div></div>
+  <div class="sw"><div class="sw-color" style="background:#1A6CAA"><span class="sw-hex" style="color:#DCEEFF">#1A6CAA</span></div><div class="sw-name">H2 heading</div></div>
+  <div class="sw"><div class="sw-color" style="background:#2E82C0"><span class="sw-hex" style="color:#fff">#2E82C0</span></div><div class="sw-name">H3 heading</div></div>
+  <div class="sw"><div class="sw-color" style="background:#DCEEFF"><span class="sw-hex" style="color:#083A69">#DCEEFF</span></div><div class="sw-name">Light fill</div></div>
+  <div class="sw"><div class="sw-color" style="background:#F3F8FD"><span class="sw-hex" style="color:#083A69">#F3F8FD</span></div><div class="sw-name">Highlight bg</div></div>
+</div>
+
+<div class="section-lbl">Neutrals</div>
+<div class="swatch-grid">
+  <div class="sw"><div class="sw-color" style="background:#1B263B"><span class="sw-hex" style="color:#D8DEE6">#1B263B</span></div><div class="sw-name">Body text</div></div>
+  <div class="sw"><div class="sw-color" style="background:#5F6C7B"><span class="sw-hex" style="color:#F3F8FD">#5F6C7B</span></div><div class="sw-name">Secondary text</div></div>
+  <div class="sw"><div class="sw-color" style="background:#A8B2BD"><span class="sw-hex" style="color:#1B263B">#A8B2BD</span></div><div class="sw-name">Disabled</div></div>
+  <div class="sw"><div class="sw-color" style="background:#D8DEE6"><span class="sw-hex" style="color:#1B263B">#D8DEE6</span></div><div class="sw-name">Border</div></div>
+  <div class="sw"><div class="sw-color" style="background:#FAFBFC"><span class="sw-hex" style="color:#5F6C7B">#FAFBFC</span></div><div class="sw-name">Page bg</div></div>
+</div>
+
+<div class="section-lbl">Accents</div>
+<div class="swatch-grid">
+  <div class="sw"><div class="sw-color" style="background:#D97706"><span class="sw-hex" style="color:#FFF8E8">#D97706</span></div><div class="sw-name">Amber accent</div></div>
+  <div class="sw"><div class="sw-color" style="background:#15803D"><span class="sw-hex" style="color:#F1FAF5">#15803D</span></div><div class="sw-name">Success</div></div>
+  <div class="sw"><div class="sw-color" style="background:#B91C1C"><span class="sw-hex" style="color:#fff">#B91C1C</span></div><div class="sw-name">Danger</div></div>
+  <div class="sw"><div class="sw-color" style="background:#0E7490"><span class="sw-hex" style="color:#E0F7FA">#0E7490</span></div><div class="sw-name">Teal (6th series)</div></div>
+</div>
+
+<div class="section-lbl">Chart sequential series (greyscale-stable)</div>
+<div style="background:#f4f5f7;border-radius:8px;padding:16px">
+  <div class="chart-bar-wrap" id="chart-bars"></div>
+  <div style="display:flex;gap:6px;margin-top:12px" id="chart-swatches"></div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section-lbl">Document preview</div>
+<div class="page-prev" style="margin-bottom:12px">
+  <div style="font-size:10px;color:#0B5294;font-weight:500;letter-spacing:.05em;text-transform:uppercase">Westcliff University</div>
+  <div class="cov-rule"></div>
+  <div style="font-size:16px;font-weight:500;color:#083A69;line-height:1.35;margin-bottom:6px">AHRID: Adaptive Human-Risk Intelligence Dashboard</div>
+  <div style="font-size:11px;color:#5F6C7B">Rupesh Kumar Thakur &nbsp;·&nbsp; ST6047CEM &nbsp;·&nbsp; 2026</div>
+  <div class="cov-rule"></div>
+  <div style="font-size:13px;font-weight:500;color:#0B5294;margin:10px 0 3px">3. Problem Context</div>
+  <div style="font-size:12px;font-weight:500;color:#1A6CAA;margin-bottom:3px">3.1 Structural Deficiencies</div>
+  <div style="font-size:11px;font-weight:500;color:#2E82C0;margin-bottom:6px">3.1.1 Cost Analysis</div>
+  <div style="font-size:11.5px;color:#1B263B;line-height:1.65">SMEs in Kathmandu Valley face three structural deficiencies. Enterprise licensing costs averaging USD 15–40 per seat render <span style="color:#0B5294;font-weight:500">KnowBe4</span> and <span style="color:#0B5294;font-weight:500">CybSafe</span> inaccessible to most organisations.</div>
+  <div style="font-size:10px;color:#5F6C7B;margin-top:5px;border-left:2px solid #D8DEE6;padding-left:8px">Note. Data from G2 (2026) and Consilien (2025) vendor benchmarking reports.</div>
+
+  <div class="callout" style="background:#F3F8FD;border-left:3px solid #0B5294;margin-top:12px"><strong style="color:#0B5294">Definition</strong>OSINT — Open-Source Intelligence: publicly available threat data from Phishing.Database and AlienVault OTX.</div>
+  <div class="callout" style="background:#FFF8E8;border-left:3px solid #D97706"><strong style="color:#D97706">Important</strong>No PII is collected at any pipeline stage, ensuring full IPA 2075 compliance.</div>
+  <div class="callout" style="background:#F1FAF5;border-left:3px solid #15803D"><strong style="color:#15803D">Result</strong>+52.24 pp improvement in macro F1 over the rule-based baseline.</div>
+
+  <div style="margin-top:14px;overflow:hidden;border-radius:6px;border:0.5px solid #D8DEE6">
+    <table class="tbl-prev">
+      <thead><tr><th>Platform</th><th>Cost/user/yr</th><th>SME accessible</th></tr></thead>
+      <tbody>
+        <tr><td>KnowBe4</td><td>$24–48</td><td style="color:#B91C1C">No</td></tr>
+        <tr><td>CybSafe</td><td>$20–50</td><td style="color:#B91C1C">No</td></tr>
+        <tr class="total"><td>AHRID</td><td style="color:#15803D">$0</td><td style="color:#15803D">Yes</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section-lbl">Export format</div>
+<div class="tab-row">
+  <button class="tab active" onclick="switchTab('css',this)">CSS vars</button>
+  <button class="tab" onclick="switchTab('json',this)">JSON</button>
+  <button class="tab" onclick="switchTab('scss',this)">SCSS</button>
+  <button class="tab" onclick="switchTab('hex',this)">Hex list</button>
+  <button class="tab" onclick="switchTab('word',this)">Word / PPT</button>
+</div>
+
+<button class="copy-btn" id="copy-btn" onclick="copyActive(this)"><i class="ti ti-copy"></i> Copy</button>
+
+<div id="panel-css" class="tab-panel active"><div class="export-box" id="content-css"></div></div>
+<div id="panel-json" class="tab-panel"><div class="export-box" id="content-json"></div></div>
+<div id="panel-scss" class="tab-panel"><div class="export-box" id="content-scss"></div></div>
+<div id="panel-hex" class="tab-panel"><div class="export-box" id="content-hex"></div></div>
+<div id="panel-word" class="tab-panel"><div class="export-box" id="content-word"></div></div>
+
+<script>
+const palette = {
+  "Primary": {
+    "dark-navy":    "#083A69",
+    "h1-heading":   "#0B5294",
+    "h2-heading":   "#1A6CAA",
+    "h3-heading":   "#2E82C0",
+    "light-fill":   "#DCEEFF",
+    "highlight-bg": "#F3F8FD"
+  },
+  "Neutrals": {
+    "body-text":      "#1B263B",
+    "secondary-text": "#5F6C7B",
+    "disabled":       "#A8B2BD",
+    "border":         "#D8DEE6",
+    "page-bg":        "#FAFBFC"
+  },
+  "Accents": {
+    "amber":   "#D97706",
+    "success": "#15803D",
+    "danger":  "#B91C1C",
+    "teal":    "#0E7490"
+  },
+  "Chart": {
+    "series-1": "#0B5294",
+    "series-2": "#2F6FB6",
+    "series-3": "#5C93D3",
+    "series-4": "#8BB7E8",
+    "series-5": "#A0C4E8",
+    "series-6": "#0E7490"
+  },
+  "Tables": {
+    "header-bg":   "#0B5294",
+    "header-text": "#FFFFFF",
+    "alt-row":     "#F4F8FE",
+    "total-row":   "#EAF4FD",
+    "total-text":  "#083A69"
+  },
+  "Callouts": {
+    "definition-bg":      "#F3F8FD",
+    "definition-accent":  "#0B5294",
+    "important-bg":       "#FFF8E8",
+    "important-accent":   "#D97706",
+    "result-bg":          "#F1FAF5",
+    "result-accent":      "#15803D"
+  }
+};
+
+const chartSeries = [
+  {name:"Series 1", val:91, hex:"#0B5294"},
+  {name:"Series 2", val:87, hex:"#2F6FB6"},
+  {name:"Series 3", val:79, hex:"#5C93D3"},
+  {name:"Series 4", val:72, hex:"#8BB7E8"},
+  {name:"Series 5", val:65, hex:"#A0C4E8"},
+  {name:"Teal (6)", val:58, hex:"#0E7490"}
+];
+
+const barsEl = document.getElementById('chart-bars');
+const swatchEl = document.getElementById('chart-swatches');
+chartSeries.forEach(s => {
+  const row = document.createElement('div');
+  row.className = 'chart-bar-row';
+  row.innerHTML = `<div class="bar-lbl">${s.name}</div><div class="bar" style="width:${s.val}%;background:${s.hex}"></div><div style="font-size:11px;color:#5F6C7B">${s.hex}</div>`;
+  barsEl.appendChild(row);
+  const sw = document.createElement('div');
+  sw.style.cssText = `flex:1;height:20px;border-radius:3px;background:${s.hex}`;
+  sw.title = s.hex;
+  swatchEl.appendChild(sw);
+});
+
+function genCSS(){
+  let out = ":root {\n";
+  for(const [group, tokens] of Object.entries(palette)){
+    out += `  /* ${group} */\n`;
+    for(const [k,v] of Object.entries(tokens)) out += `  --ahrid-${k}: ${v};\n`;
+  }
+  return out + "}";
+}
+function genJSON(){ return JSON.stringify(palette, null, 2); }
+function genSCSS(){
+  let out = "// AHRID Premium Thesis Palette\n";
+  for(const [group, tokens] of Object.entries(palette)){
+    out += `\n// ${group}\n`;
+    for(const [k,v] of Object.entries(tokens)) out += `$ahrid-${k}: ${v};\n`;
+  }
+  return out;
+}
+function genHex(){
+  let out = "AHRID PREMIUM THESIS PALETTE\n================================\n\n";
+  for(const [group, tokens] of Object.entries(palette)){
+    out += `[ ${group} ]\n`;
+    for(const [k,v] of Object.entries(tokens)) out += `  ${v.padEnd(10)}  ${k}\n`;
+    out += "\n";
+  }
+  return out.trim();
+}
+function genWord(){
+  let out = "WORD / POWERPOINT — Custom Color Setup\n========================================\n";
+  out += "Theme Colors → Design → Colors → Customize:\n\n";
+  out += "  Text/Background Dark 1 : #1B263B  (body text)\n";
+  out += "  Text/Background Dark 2 : #083A69  (dark navy)\n";
+  out += "  Text/Background Light 1: #FAFBFC  (page bg)\n";
+  out += "  Text/Background Light 2: #DCEEFF  (light fill)\n";
+  out += "  Accent 1 (H1)          : #0B5294\n";
+  out += "  Accent 2 (H2)          : #1A6CAA\n";
+  out += "  Accent 3 (H3)          : #2E82C0\n";
+  out += "  Accent 4 (Amber)       : #D97706\n";
+  out += "  Accent 5 (Success)     : #15803D\n";
+  out += "  Accent 6 (Danger)      : #B91C1C\n\n";
+  out += "Heading 1 color : #0B5294\nHeading 2 color : #1A6CAA\nHeading 3 color : #2E82C0\n\n";
+  out += "Chart series (Format Data Series → Fill → Solid):\n";
+  chartSeries.forEach((s,i) => { out += `  Series ${i+1}: ${s.hex}\n`; });
+  return out.trim();
+}
+
+document.getElementById('content-css').textContent  = genCSS();
+document.getElementById('content-json').textContent = genJSON();
+document.getElementById('content-scss').textContent = genSCSS();
+document.getElementById('content-hex').textContent  = genHex();
+document.getElementById('content-word').textContent = genWord();
+
+function switchTab(id, btn){
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+}
+
+function copyActive(btn){
+  const active = document.querySelector('.tab-panel.active .export-box');
+  navigator.clipboard.writeText(active.textContent).then(() => {
+    btn.classList.add('copied');
+    btn.innerHTML = '<i class="ti ti-check"></i> Copied!';
+    setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = '<i class="ti ti-copy"></i> Copy'; }, 2000);
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AHRID — Infographics, Tables & Data Visuals</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#FAFBFC;color:#1B263B;padding:2rem;max-width:860px;margin:auto}
+h1{font-size:22px;font-weight:500;color:#083A69;margin-bottom:4px}
+.subtitle{font-size:13px;color:#5F6C7B;margin-bottom:28px}
+.lbl{font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:#5F6C7B;margin:26px 0 10px}
+.div{border:none;border-top:0.5px solid #D8DEE6;margin:22px 0}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{border-radius:10px;padding:14px 10px;text-align:center}
+.stat .num{font-size:28px;font-weight:500;line-height:1.1}
+.stat .sub{font-size:10px;margin-top:5px;line-height:1.4}
+
+/* RISK TIERS */
+.risk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.risk{border-radius:10px;padding:14px 10px;text-align:center}
+.risk .level{font-size:11px;font-weight:500;margin-bottom:4px}
+.risk .name{font-size:13px;font-weight:500}
+.risk .pct{font-size:22px;font-weight:500;margin:4px 0}
+
+/* PIPELINE FLOW */
+.flow{display:flex;align-items:stretch;gap:0;border-radius:10px;overflow:hidden}
+.flow-step{flex:1;padding:12px 6px;text-align:center;font-size:10px;font-weight:500}
+.flow-step .step-num{font-size:9px;margin-bottom:3px;opacity:.8}
+.flow-arrow{width:18px;background:transparent;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;color:#5F6C7B}
+
+/* TIMELINE */
+.tl-item{display:flex;gap:14px;padding-bottom:16px}
+.tl-item:last-child{padding-bottom:0}
+.tl-left{display:flex;flex-direction:column;align-items:center;width:14px;flex-shrink:0}
+.tl-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.tl-line{flex:1;width:2px;background:#DCEEFF;margin-top:4px}
+.tl-item:last-child .tl-line{display:none}
+.tl-date{font-size:10px;font-weight:500;color:#5F6C7B;margin-bottom:2px}
+.tl-title{font-size:12px;font-weight:500;color:#0B5294}
+.tl-body{font-size:11px;color:#5F6C7B;margin-top:2px;line-height:1.5}
+
+/* HORIZONTAL BARS */
+.bh{display:flex;flex-direction:column;gap:7px}
+.bh-row{display:flex;align-items:center;gap:10px}
+.bh-lbl{width:100px;text-align:right;font-size:11px;color:#1B263B;flex-shrink:0}
+.bh-track{flex:1;height:20px;background:#EAF4FD;border-radius:4px;overflow:hidden}
+.bh-fill{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px}
+.bh-val{font-size:10px;font-weight:500;color:#fff}
+
+/* GROUPED BARS */
+.gb-wrap{display:flex;align-items:flex-end;gap:16px;height:130px}
+.gb-grp{display:flex;flex-direction:column;align-items:center;flex:1}
+.gb-bars{display:flex;gap:4px;align-items:flex-end;width:100%}
+.gb-col{flex:1;border-radius:3px 3px 0 0}
+.gb-name{font-size:9px;color:#5F6C7B;margin-top:5px;text-align:center}
+.gb-axis{border-top:1.5px solid #D8DEE6;margin-top:4px}
+
+/* HEATMAP */
+.hm{display:grid;grid-template-columns:90px repeat(4,1fr);gap:3px;font-size:10px}
+.hm-head{padding:4px 6px;font-weight:500;color:#fff;background:#083A69;text-align:center;border-radius:4px;font-size:9.5px}
+.hm-row-lbl{padding:5px 6px;color:#1B263B;font-weight:500;display:flex;align-items:center;font-size:10px;background:#F3F8FD;border-radius:4px}
+.hm-cell{padding:6px 4px;text-align:center;border-radius:4px;font-size:11px;font-weight:500}
+
+/* TABLES */
+.tw{border-radius:8px;overflow:hidden;border:0.5px solid #D8DEE6}
+.t{width:100%;font-size:11px;border-collapse:collapse}
+.t th{padding:7px 10px;text-align:left;font-weight:500}
+.t td{padding:6px 10px;border-bottom:0.5px solid #D8DEE6;color:#1B263B}
+.t tr:nth-child(even) td{background:#F4F8FE}
+.t tr.tot td{background:#EAF4FD;font-weight:500;color:#083A69}
+.t tr:last-child td{border-bottom:none}
+.bdg{display:inline-block;font-size:9.5px;padding:2px 7px;border-radius:10px;font-weight:500}
+
+/* COMPARISON CARDS */
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cmp-card{border-radius:10px;overflow:hidden;border:0.5px solid #D8DEE6}
+.cmp-hd{padding:12px 14px}
+.cmp-hd .name{font-size:13px;font-weight:500}
+.cmp-hd .tagline{font-size:10px;margin-top:2px;opacity:.85}
+.cmp-body{background:#fff;padding:10px 14px;border-top:none}
+.cmp-row{display:flex;justify-content:space-between;font-size:11px;padding:4px 0;border-bottom:0.5px solid #D8DEE6}
+.cmp-row:last-child{border:none}
+.cmp-key{color:#5F6C7B}
+
+/* LEGEND */
+.legend{display:flex;gap:14px;font-size:10px;color:#5F6C7B;margin-bottom:10px}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend-dot{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:middle}
+</style>
+</head>
+<body>
+
+<h1>AHRID — Infographics, Tables & Data Visuals</h1>
+<p class="subtitle">Applied palette guide · Print-safe · WCAG AA contrast throughout</p>
+
+<!-- STAT CARDS -->
+<div class="lbl">Stat cards</div>
+<div class="stat-grid">
+  <div class="stat" style="background:#0B5294">
+    <div class="num" style="color:#ffffff">91.4%</div>
+    <div class="sub" style="color:#DCEEFF">RF accuracy</div>
+  </div>
+  <div class="stat" style="background:#083A69">
+    <div class="num" style="color:#ffffff">+52pp</div>
+    <div class="sub" style="color:#8BB7E8">F1 vs baseline</div>
+  </div>
+  <div class="stat" style="background:#D97706">
+    <div class="num" style="color:#ffffff">247</div>
+    <div class="sub" style="color:#FFF8E8">SMEs surveyed</div>
+  </div>
+  <div class="stat" style="background:#1B263B">
+    <div class="num" style="color:#ffffff">4</div>
+    <div class="sub" style="color:#A8B2BD">Risk clusters</div>
+  </div>
+</div>
+
+<!-- RISK TIERS -->
+<div class="lbl">Risk tier badges</div>
+<div class="risk-grid">
+  <div class="risk" style="background:#B91C1C">
+    <div class="level" style="color:#ffcccc">Critical risk</div>
+    <div class="name" style="color:#ffffff">Phishing</div>
+    <div class="pct" style="color:#ffffff">34%</div>
+    <div style="font-size:9px;color:#ffcccc">of all incidents</div>
+  </div>
+  <div class="risk" style="background:#D97706">
+    <div class="level" style="color:#FFF3CC">Moderate risk</div>
+    <div class="name" style="color:#ffffff">Social eng.</div>
+    <div class="pct" style="color:#ffffff">28%</div>
+    <div style="font-size:9px;color:#FFF3CC">of all incidents</div>
+  </div>
+  <div class="risk" style="background:#15803D">
+    <div class="level" style="color:#CCEED9">Managed risk</div>
+    <div class="name" style="color:#ffffff">Credential</div>
+    <div class="pct" style="color:#ffffff">18%</div>
+    <div style="font-size:9px;color:#CCEED9">of all incidents</div>
+  </div>
+</div>
+
+<!-- PIPELINE FLOW -->
+<div class="lbl">Pipeline flow</div>
+<div class="flow">
+  <div class="flow-step" style="background:#083A69"><div class="step-num" style="color:#8BB7E8">01</div><div style="color:#ffffff">OSINT<br>Ingestion</div></div>
+  <div class="flow-arrow">›</div>
+  <div class="flow-step" style="background:#0B5294"><div class="step-num" style="color:#DCEEFF">02</div><div style="color:#ffffff">Threat<br>Classify</div></div>
+  <div class="flow-arrow">›</div>
+  <div class="flow-step" style="background:#1A6CAA"><div class="step-num" style="color:#DCEEFF">03</div><div style="color:#ffffff">K-Means<br>Cluster</div></div>
+  <div class="flow-arrow">›</div>
+  <div class="flow-step" style="background:#2E82C0"><div class="step-num" style="color:#DCEEFF">04</div><div style="color:#ffffff">Adaptive<br>Engine</div></div>
+  <div class="flow-arrow">›</div>
+  <div class="flow-step" style="background:#D97706"><div class="step-num" style="color:#FFF8E8">05</div><div style="color:#ffffff">Training<br>Module</div></div>
+</div>
+
+<!-- TIMELINE -->
+<div class="lbl">Timeline</div>
+<div>
+  <div class="tl-item">
+    <div class="tl-left"><div class="tl-dot" style="background:#083A69;border:2px solid #DCEEFF"></div><div class="tl-line"></div></div>
+    <div><div class="tl-date">Phase 1 — Jan 2026</div><div class="tl-title">OSINT pipeline + threat ingestion</div><div class="tl-body">AlienVault OTX and Phishing.Database integrated; 2,450 threat records collected.</div></div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-left"><div class="tl-dot" style="background:#0B5294;border:2px solid #DCEEFF"></div><div class="tl-line"></div></div>
+    <div><div class="tl-date">Phase 2 — Mar 2026</div><div class="tl-title">ML model training</div><div class="tl-body">Random Forest 91.4% accuracy; K-Means 4-cluster segmentation deployed.</div></div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-left"><div class="tl-dot" style="background:#D97706;border:2px solid #FFF8E8"></div><div class="tl-line"></div></div>
+    <div><div class="tl-date">Phase 3 — May 2026</div><div class="tl-title">Dashboard + adaptive engine</div><div class="tl-body">React frontend on Vercel; FastAPI backend on Render.</div></div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-left"><div class="tl-dot" style="background:#15803D;border:2px solid #CCEED9"></div></div>
+    <div><div class="tl-date">Phase 4 — Jul 2026</div><div class="tl-title">Evaluation + submission</div><div class="tl-body">User study with 247 SME employees; thesis submitted.</div></div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- HORIZONTAL BAR CHART -->
+<div class="lbl">Horizontal bar chart</div>
+<div class="bh">
+  <div class="bh-row"><div class="bh-lbl">RF Accuracy</div><div class="bh-track"><div class="bh-fill" style="width:91.4%;background:#083A69"><span class="bh-val">91.4%</span></div></div></div>
+  <div class="bh-row"><div class="bh-lbl">PR-AUC</div><div class="bh-track"><div class="bh-fill" style="width:91.7%;background:#0B5294"><span class="bh-val">0.917</span></div></div></div>
+  <div class="bh-row"><div class="bh-lbl">F1 Macro</div><div class="bh-track"><div class="bh-fill" style="width:88.8%;background:#1A6CAA"><span class="bh-val">0.888</span></div></div></div>
+  <div class="bh-row"><div class="bh-lbl">Cohen κ</div><div class="bh-track"><div class="bh-fill" style="width:87.5%;background:#2E82C0"><span class="bh-val">0.875</span></div></div></div>
+  <div class="bh-row"><div class="bh-lbl" style="color:#B91C1C;font-weight:500">Baseline F1</div><div class="bh-track"><div class="bh-fill" style="width:36.5%;background:#B91C1C"><span class="bh-val">0.365</span></div></div></div>
+</div>
+
+<!-- GROUPED BARS -->
+<div class="lbl">Grouped bars — pre vs post training</div>
+<div class="legend">
+  <span><span class="legend-dot" style="background:#0B5294"></span>Pre-training</span>
+  <span><span class="legend-dot" style="background:#D97706"></span>Post-training</span>
+</div>
+<div style="height:150px;display:flex;flex-direction:column">
+  <div class="gb-wrap" style="flex:1">
+    <div class="gb-grp"><div class="gb-bars"><div class="gb-col" style="height:55px;background:#0B5294"></div><div class="gb-col" style="height:105px;background:#D97706"></div></div><div class="gb-name">Cluster A</div></div>
+    <div class="gb-grp"><div class="gb-bars"><div class="gb-col" style="height:48px;background:#0B5294"></div><div class="gb-col" style="height:98px;background:#D97706"></div></div><div class="gb-name">Cluster B</div></div>
+    <div class="gb-grp"><div class="gb-bars"><div class="gb-col" style="height:61px;background:#0B5294"></div><div class="gb-col" style="height:109px;background:#D97706"></div></div><div class="gb-name">Cluster C</div></div>
+    <div class="gb-grp"><div class="gb-bars"><div class="gb-col" style="height:43px;background:#0B5294"></div><div class="gb-col" style="height:95px;background:#D97706"></div></div><div class="gb-name">Cluster D</div></div>
+  </div>
+  <div class="gb-axis"></div>
+</div>
+
+<!-- HEATMAP -->
+<div class="lbl">Heatmap — risk score by cluster</div>
+<div class="hm" id="heatmap"></div>
+
+<hr class="div">
+
+<!-- TABLE STYLE 1 -->
+<div class="lbl">Table — standard (blue header)</div>
+<div class="tw">
+<table class="t">
+  <thead><tr style="background:#0B5294"><th style="color:#fff">Platform</th><th style="color:#fff">Cost/user</th><th style="color:#fff">ML-adaptive</th><th style="color:#fff">OSINT</th></tr></thead>
+  <tbody>
+    <tr><td>KnowBe4</td><td>$24–48</td><td><span class="bdg" style="background:#B91C1C;color:#fff">No</span></td><td><span class="bdg" style="background:#B91C1C;color:#fff">No</span></td></tr>
+    <tr><td>CybSafe</td><td>$20–50</td><td><span class="bdg" style="background:#D97706;color:#fff">Partial</span></td><td><span class="bdg" style="background:#B91C1C;color:#fff">No</span></td></tr>
+    <tr class="tot"><td>AHRID</td><td><strong style="color:#15803D">$0</strong></td><td><span class="bdg" style="background:#15803D;color:#fff">Yes</span></td><td><span class="bdg" style="background:#15803D;color:#fff">Yes</span></td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- TABLE STYLE 2 -->
+<div class="lbl" style="margin-top:18px">Table — dark header</div>
+<div class="tw">
+<table class="t">
+  <thead><tr style="background:#1B263B"><th style="color:#fff">Metric</th><th style="color:#fff">RF model</th><th style="color:#fff">Baseline</th><th style="color:#fff">Delta</th></tr></thead>
+  <tbody>
+    <tr><td>Accuracy</td><td><strong style="color:#0B5294">91.4%</strong></td><td>39.2%</td><td><span class="bdg" style="background:#15803D;color:#fff">+52.2pp</span></td></tr>
+    <tr><td>F1 Macro</td><td><strong style="color:#0B5294">0.888</strong></td><td>0.365</td><td><span class="bdg" style="background:#15803D;color:#fff">+0.523</span></td></tr>
+    <tr><td>PR-AUC</td><td><strong style="color:#0B5294">0.917</strong></td><td>0.401</td><td><span class="bdg" style="background:#15803D;color:#fff">+0.516</span></td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- COMPARISON CARDS -->
+<div class="lbl" style="margin-top:18px">Comparison cards</div>
+<div class="cmp">
+  <div class="cmp-card">
+    <div class="cmp-hd" style="background:#0B5294">
+      <div style="font-size:9px;font-weight:500;color:#DCEEFF;background:rgba(255,255,255,.15);display:inline-block;padding:2px 8px;border-radius:10px;margin-bottom:5px">Recommended</div>
+      <div class="name" style="color:#fff">AHRID</div>
+      <div class="tagline" style="color:#DCEEFF">ML-adaptive · OSINT-driven · Free</div>
+    </div>
+    <div class="cmp-body">
+      <div class="cmp-row"><span class="cmp-key">Cost</span><strong style="color:#15803D">$0</strong></div>
+      <div class="cmp-row"><span class="cmp-key">ML-adaptive</span><span style="color:#15803D;font-weight:500">Yes</span></div>
+      <div class="cmp-row"><span class="cmp-key">Nepal context</span><span style="color:#15803D;font-weight:500">Yes</span></div>
+      <div class="cmp-row"><span class="cmp-key">F1 Macro</span><strong style="color:#0B5294">0.888</strong></div>
+    </div>
+  </div>
+  <div class="cmp-card">
+    <div class="cmp-hd" style="background:#1B263B">
+      <div style="font-size:9px;font-weight:500;color:#A8B2BD;background:rgba(255,255,255,.1);display:inline-block;padding:2px 8px;border-radius:10px;margin-bottom:5px">Competitor</div>
+      <div class="name" style="color:#fff">KnowBe4</div>
+      <div class="tagline" style="color:#A8B2BD">Rule-based · No OSINT · Paid</div>
+    </div>
+    <div class="cmp-body">
+      <div class="cmp-row"><span class="cmp-key">Cost</span><strong style="color:#B91C1C">$24–48/user</strong></div>
+      <div class="cmp-row"><span class="cmp-key">ML-adaptive</span><span style="color:#B91C1C;font-weight:500">No</span></div>
+      <div class="cmp-row"><span class="cmp-key">Nepal context</span><span style="color:#B91C1C;font-weight:500">No</span></div>
+      <div class="cmp-row"><span class="cmp-key">F1 Macro</span><span style="color:#5F6C7B">N/A</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const rows = [
+  ["",          "Cluster A","Cluster B","Cluster C","Cluster D"],
+  ["Phishing",       82,      71,          45,          30],
+  ["Social eng.",    58,      84,          47,          38],
+  ["Credential",     41,      52,          79,          44],
+  ["Device",         33,      45,          38,          85],
+];
+const hm = document.getElementById('heatmap');
+rows.forEach((row, ri) => {
+  row.forEach((cell, ci) => {
+    const el = document.createElement('div');
+    if(ri === 0){
+      el.className = ci === 0 ? '' : 'hm-head';
+      el.textContent = cell;
+      if(ci === 0) el.style.cssText = 'padding:4px';
+    } else if(ci === 0){
+      el.className = 'hm-row-lbl';
+      el.textContent = cell;
+    } else {
+      const v = cell;
+      const alpha = (v - 28) / 58;
+      el.className = 'hm-cell';
+      if(alpha > 0.55){
+        el.style.background = '#0B5294';
+        el.style.color = '#ffffff';
+      } else if(alpha > 0.25){
+        el.style.background = '#5C93D3';
+        el.style.color = '#ffffff';
+      } else {
+        el.style.background = '#DCEEFF';
+        el.style.color = '#083A69';
+      }
+      el.textContent = v;
+    }
+    hm.appendChild(el);
+  });
+});
+</script>
+</body>
+</html>

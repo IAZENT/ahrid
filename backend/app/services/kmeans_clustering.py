@@ -40,14 +40,16 @@ N_CLUSTERS_DEFAULT = 5
 MIN_ATTEMPTS_FOR_CLUSTER = 5
 MIN_USERS_FOR_CLUSTERING = 3
 
-# Below this median response time we treat an attempt as "fast/rushed"
-# (the title's behavioural-proxy signal  BSc replacement for VADER).
-FAST_RESPONSE_MS = 4000
+# Below this response time we treat an attempt as "fast/rushed".
+# Calibrated to minimum honest read+decide time for the shortest scenario.
+FAST_RESPONSE_MS = 20_000
 
-# Winsorization cap for avg_response_time_ms before clustering math only
-# (display values stay raw). Stops a single very-slow user from anchoring
-# their own KMeans cluster instead of joining the nearest archetype.
+# Winsorization caps applied before clustering math only (display values stay raw).
+# avg_response_time_ms: stops a very-slow user anchoring their own cluster.
+# fast_attempt_rate: stops a single rushed user (32σ outlier observed in data)
+#   collapsing a cluster to n=1 regardless of random_state.
 RESPONSE_TIME_CLIP_PERCENTILE = 95
+FAST_RATE_CLIP_PERCENTILE = 99
 
 
 def _per_category_accuracy(attempts: list[Attempt]) -> list[float]:
@@ -173,8 +175,10 @@ def train_kmeans(
 
     X = np.vstack(rows)
     rt_clip = float(np.percentile(X[:, 0], RESPONSE_TIME_CLIP_PERCENTILE))
+    far_clip = float(np.percentile(X[:, 3], FAST_RATE_CLIP_PERCENTILE))
     X_clustering = X.copy()
     X_clustering[:, 0] = np.clip(X_clustering[:, 0], None, rt_clip)
+    X_clustering[:, 3] = np.clip(X_clustering[:, 3], None, far_clip)
 
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X_clustering)
@@ -197,6 +201,7 @@ def train_kmeans(
         "feature_names": FEATURE_NAMES,
         "n_clusters": n_clusters,
         "rt_clip": rt_clip,
+        "far_clip": far_clip,
         "trained_at": datetime.utcnow().isoformat(),
     }
     out_path = _resolve_model_path(model_path or _default_model_path())
@@ -241,6 +246,7 @@ class UserClusterer:
         self.model: Any = None
         self.feature_names: list[str] = FEATURE_NAMES
         self.rt_clip: float | None = None
+        self.far_clip: float | None = None
         self.load()
 
     def load(self) -> None:
@@ -250,6 +256,7 @@ class UserClusterer:
             self.model = bundle["model"]
             self.feature_names = bundle.get("feature_names", FEATURE_NAMES)
             self.rt_clip = bundle.get("rt_clip")
+            self.far_clip = bundle.get("far_clip")
             LOG.info("Loaded KMeans bundle from %s", self.model_path)
         except FileNotFoundError:
             self.scaler = None
@@ -269,6 +276,8 @@ class UserClusterer:
         vec_clustering = vec.copy()
         if self.rt_clip is not None:
             vec_clustering[0] = min(vec_clustering[0], self.rt_clip)
+        if self.far_clip is not None:
+            vec_clustering[3] = min(vec_clustering[3], self.far_clip)
         scaled = self.scaler.transform(vec_clustering.reshape(1, -1))
         return int(self.model.predict(scaled)[0])
 

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Figure A2 – RF Feature Importance Ranking</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Times New Roman', serif; background: #fff; padding: 32px; }
+  h3 { font-size: 13px; font-weight: bold; text-align: center; margin-bottom: 4px; color: #1a1a2e; }
+  .subtitle { font-size: 11px; text-align: center; color: #555; margin-bottom: 28px; font-style: italic; }
+  .chart { width: 700px; margin: 0 auto; }
+  .row { display: flex; align-items: center; margin-bottom: 10px; }
+  .label { width: 220px; font-size: 11px; text-align: right; padding-right: 10px; color: #222; white-space: nowrap; }
+  .label em { font-style: italic; color: #666; font-size: 10px; }
+  .bar-wrap { flex: 1; background: #f0f0f0; border-radius: 3px; height: 22px; position: relative; }
+  .bar { height: 100%; border-radius: 3px; display: flex; align-items: center; padding-left: 6px; }
+  .bar span { font-size: 10.5px; font-weight: bold; color: #fff; white-space: nowrap; }
+  .pct { width: 48px; text-align: right; font-size: 11px; color: #333; padding-left: 8px; }
+  .divider { border: none; border-top: 1px dashed #ccc; margin: 14px 0 10px 220px; }
+  .note { font-size: 10px; color: #555; text-align: center; margin-top: 20px; font-style: italic; }
+  .axis-label { font-size: 10px; color: #888; text-align: right; width: 220px; padding-right: 10px; margin-bottom: 6px; }
+  .axis-row { display: flex; align-items: center; }
+  .axis-ticks { flex: 1; display: flex; justify-content: space-between; padding: 0 0 4px 0; border-bottom: 1px solid #ddd; }
+  .axis-ticks span { font-size: 9px; color: #aaa; }
+</style>
+</head>
+<body>
+<h3>Figure A2. Random Forest Feature Importance Ranking (Top 10 of 18 Features)</h3>
+<p class="subtitle">Mean Decrease in Impurity (MDI) — RandomForestClassifier (n_estimators=200)</p>
+
+<div class="chart">
+  <!-- axis -->
+  <div class="axis-row">
+    <div class="axis-label"></div>
+    <div class="axis-ticks">
+      <span>0%</span><span>5%</span><span>10%</span><span>15%</span><span>20%</span><span>25%</span><span>30%</span><span>35%</span>
+    </div>
+    <div class="pct"></div>
+  </div>
+
+  <!-- Rows: value/31 * 100 = % of max for bar width (max=31%) -->
+  <!-- 31% → 100% width of bar-wrap -->
+
+  <div class="row">
+    <div class="label">overall_accuracy</div>
+    <div class="bar-wrap">
+      <div class="bar" style="width:100%; background: #1a3a6e;">
+        <span>Composite behavioural score</span>
+      </div>
+    </div>
+    <div class="pct">31.0%</div>
+  </div>
+
+  <div class="row">
+    <div class="label">avg_response_time_ms</div>
+    <div class="bar-wrap">
+      <div class="bar" style="width:53.5%; background: #1e4d9e;">
+        <span>Response latency</span>
+      </div>
+    </div>
+    <div class="pct">16.6%</div>
+  </div>
+
+  <div class="row">
+    <div class="label">fast_attempt_rate</div>
+    <div class="bar-wrap">
+      <div class="bar" style="width:30.6%; background: #2563c4;">
+        <span>Impulsive clicks</span>
+      </div>
+    </div>
+    <div class="pct">9.5%</div>
+  </div>
+
+  <div class="row">
+    <div class="label">vishing_accuracy</div>
+    <div class="bar-wrap">
+      <div class="bar" style="width:17.4%; background: #3478d4;">
+        <span></span>
+      </div>
+    </div>
+    <div class="pct">5.4%</div>
+  </div>
+
+  <div class="row">
+    <div class="label">phishing_accuracy</div>
+    <div class="bar-wrap">
+      <div class="bar" style="width:16.1%; background: #4a8fde;">
+        <span></span>
+      </div>
+    </div>
+    <div class="pct">5.0%</div>
+  </div>
+
+  <div class="row">
+    <div class="label">password_hygiene_accuracy</div>
+    <div class="bar-wrap">
+      <div class="bar" style="width:14.8%; background: #5fa0e6;">
+        <span></span>
+      </div>
+    </div>
+    <div class="pct">4.6%</div>
+  </div>
+
+  <div class="row">
+    <div class="label">usb_baiting_accuracy</div>
+    <div class="bar-wrap">
+      <div class="bar" style="width:13.2%; background: #74b1ed;">
+        <span></span>
+      </div>
+    </div>
+    <div class="pct">4.1%</div>
+  </div>
+
+  <div class="row">
+    <div class="label">smishing_accuracy</div>
+    <div class="bar-wrap">
+      <div class="bar" style="width:12.6%; background: #89c1f2;">
+        <span></span>
+      </div>
+    </div>
+    <div class="pct">3.9%</div>
+  </div>
+
+  <div class="row">
+    <div class="label">data_handling_accuracy</div>
+    <div class="bar-wrap">
+      <div class="bar" style="width:11.9%; background: #9ecef5;">
+        <span></span>
+      </div>
+    </div>
+    <div class="pct">3.7%</div>
+  </div>
+
+  <div class="row">
+    <div class="label">physical_security_accuracy</div>
+    <div class="bar-wrap">
+      <div class="bar" style="width:10.6%; background: #b3daf8;">
+        <span></span>
+      </div>
+    </div>
+    <div class="pct">3.3%</div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="row" style="opacity:0.55;">
+    <div class="label"><em>remaining 8 features</em></div>
+    <div class="bar-wrap">
+      <div class="bar" style="width:52%; background: #d0e8fc; border: 1px dashed #aac8ee;">
+      </div>
+    </div>
+    <div class="pct" style="font-size:10px; color:#888;">20.9%</div>
+  </div>
+
+  <p class="note">
+    Top 3 features (overall_accuracy, avg_response_time_ms, fast_attempt_rate) account for 57.1% of total importance,
+    confirming that holistic behavioural patterns and response speed dominate risk classification over any single category score.<br>
+    Full 18-feature table: Table A3. cluster_label (rank 18, MDI=0.8%) is omitted from this chart for clarity.
+  </p>
+</div>
+</body>
+</html>

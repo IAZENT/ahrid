@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Table C1 – REST API Endpoints</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Times New Roman', serif; background: #fff; padding: 32px; }
+  h3 { font-size: 13px; font-weight: bold; text-align: center; margin-bottom: 4px; color: #1a1a2e; }
+  .subtitle { font-size: 11px; text-align: center; color: #555; margin-bottom: 20px; font-style: italic; }
+  .wrap { width: 760px; margin: 0 auto; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+  th { background: #1a1a2e; color: #fff; padding: 7px 9px; text-align: left; font-weight: bold; border: 1px solid #1a1a2e; }
+  td { padding: 5px 9px; border: 1px solid #d8d8d8; vertical-align: top; line-height: 1.4; }
+
+  .group-header td {
+    font-weight: bold; font-size: 11px; color: #fff; padding: 5px 9px;
+    border-top: 2px solid #333; letter-spacing: 0.3px;
+  }
+  .gh-auth   .group-header td { background: #1a3a6e; border-color: #1a3a6e; }
+  .gh-train  .group-header td { background: #1e4d9e; border-color: #1e4d9e; }
+  .gh-scores .group-header td { background: #2563c4; border-color: #2563c4; }
+  .gh-notif  .group-header td { background: #4a88e0; border-color: #4a88e0; }
+  .gh-mgr    .group-header td { background: #2e7d32; border-color: #2e7d32; }
+  .gh-eval   .group-header td { background: #5c4d9a; border-color: #5c4d9a; }
+  .gh-admin  .group-header td { background: #8b1a1a; border-color: #8b1a1a; }
+  .gh-health .group-header td { background: #555;    border-color: #555; }
+
+  .row-auth   { background: #f0f4ff; }
+  .row-train  { background: #f2f5ff; }
+  .row-scores { background: #eef3ff; }
+  .row-notif  { background: #f0f6ff; }
+  .row-mgr    { background: #f0f8f0; }
+  .row-eval   { background: #f3f0fc; }
+  .row-admin  { background: #fff2f2; }
+  .row-health { background: #f5f5f5; }
+
+  .method {
+    display: inline-block; padding: 1px 5px; border-radius: 3px;
+    font-size: 9px; font-weight: bold; color: #fff; font-family: 'Courier New', monospace;
+    white-space: nowrap;
+  }
+  .get    { background: #2e7d32; }
+  .post   { background: #1565c0; }
+  .patch  { background: #e65100; }
+  .delete { background: #b71c1c; }
+
+  .auth-level {
+    display: inline-block; padding: 1px 5px; border-radius: 3px;
+    font-size: 9px; color: #333; background: #eee; border: 1px solid #ccc;
+    white-space: nowrap;
+  }
+  .auth-pub   { background: #fff8e1; border-color: #f9c74f; color: #7b4f00; }
+  .auth-jwt   { background: #e8f0fe; border-color: #4a6cf7; color: #1a3a6e; }
+  .auth-mgr   { background: #e6f4ea; border-color: #34a853; color: #1a5c2a; }
+  .auth-admin { background: #fce4e4; border-color: #e53935; color: #8b1a1a; }
+
+  .path { font-family: 'Courier New', monospace; font-size: 9.5px; color: #1a1a2e; }
+
+  .note { font-size: 10px; color: #555; text-align: center; margin-top: 12px; font-style: italic; line-height: 1.5; }
+
+  .legend { display: flex; gap: 10px; justify-content: center; margin: 8px 0 12px; flex-wrap: wrap; }
+  .leg { font-size: 9.5px; display: flex; align-items: center; gap: 4px; color: #444; }
+</style>
+</head>
+<body>
+<h3>Table C1. Complete REST API Endpoint Reference</h3>
+<p class="subtitle">All 61 registered endpoints · base prefix: <code style="font-size:10px">/api/v1/</code> · verified from live Flask URL map · eight blueprints</p>
+
+<div class="wrap">
+
+<div class="legend">
+  <div class="leg"><span class="method get">GET</span> Read</div>
+  <div class="leg"><span class="method post">POST</span> Create/Action</div>
+  <div class="leg"><span class="method patch">PATCH</span> Update</div>
+  <div class="leg"><span class="method delete">DEL</span> Delete</div>
+  <span style="margin-left:8px;font-size:9.5px;color:#999;">Auth levels:</span>
+  <div class="leg"><span class="auth-level auth-pub">Public</span></div>
+  <div class="leg"><span class="auth-level auth-jwt">Bearer JWT</span></div>
+  <div class="leg"><span class="auth-level auth-mgr">Manager JWT</span></div>
+  <div class="leg"><span class="auth-level auth-admin">Admin JWT</span></div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:6%">#</th>
+      <th style="width:9%">Method</th>
+      <th style="width:38%">Path (relative to /api/v1/)</th>
+      <th style="width:14%">Auth Level</th>
+      <th style="width:33%">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <!-- AUTH -->
+    <tr class="group-header gh-auth"><td colspan="5">/auth — Authentication &amp; Profile (9 routes)</td></tr>
+    <tr class="row-auth"><td>1</td><td><span class="method post">POST</span></td><td class="path">/auth/register</td><td><span class="auth-level auth-pub">Public</span></td><td>Register new employee account; returns access + refresh JWT pair</td></tr>
+    <tr class="row-auth"><td>2</td><td><span class="method post">POST</span></td><td class="path">/auth/login</td><td><span class="auth-level auth-pub">Public</span></td><td>Authenticate credentials; returns JWT pair with role claim</td></tr>
+    <tr class="row-auth"><td>3</td><td><span class="method post">POST</span></td><td class="path">/auth/refresh</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Issue new access token (15 min) using valid refresh token (30 days)</td></tr>
+    <tr class="row-auth"><td>4</td><td><span class="method post">POST</span></td><td class="path">/auth/logout</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Revoke current token jti; inserts into server-side blocklist</td></tr>
+    <tr class="row-auth"><td>5</td><td><span class="method get">GET</span></td><td class="path">/auth/me</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Return authenticated user profile and current role</td></tr>
+    <tr class="row-auth"><td>6</td><td><span class="method patch">PATCH</span></td><td class="path">/auth/me</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Update profile fields (display name, department, avatar)</td></tr>
+    <tr class="row-auth"><td>7</td><td><span class="method post">POST</span></td><td class="path">/auth/change-password</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Change password (requires current password confirmation)</td></tr>
+    <tr class="row-auth"><td>8</td><td><span class="method post">POST</span></td><td class="path">/auth/forgot-password</td><td><span class="auth-level auth-pub">Public</span></td><td>Submit password-reset request; queued for admin approval</td></tr>
+    <tr class="row-auth"><td>9</td><td><span class="method post">POST</span></td><td class="path">/auth/reset-password</td><td><span class="auth-level auth-pub">Public</span></td><td>Consume admin-issued reset token to set new password</td></tr>
+    <tr class="row-auth"><td>10</td><td><span class="method post">POST</span></td><td class="path">/auth/complete-tour</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Mark onboarding tour as completed for the authenticated user</td></tr>
+
+    <!-- TRAINING -->
+    <tr class="group-header gh-train"><td colspan="5">/training — Adaptive Training Sessions (9 routes)</td></tr>
+    <tr class="row-train"><td>11</td><td><span class="method get">GET</span></td><td class="path">/training/session/start</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Adaptive engine selects next scenario; creates session record</td></tr>
+    <tr class="row-train"><td>12</td><td><span class="method post">POST</span></td><td class="path">/training/session/&lt;id&gt;/answer</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Submit answer; returns correct option, explanation, XP awarded</td></tr>
+    <tr class="row-train"><td>13</td><td><span class="method get">GET</span></td><td class="path">/training/session/&lt;id&gt;/summary</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Session result summary with SHAP-derived personalised feedback</td></tr>
+    <tr class="row-train"><td>14</td><td><span class="method get">GET</span></td><td class="path">/training/session/&lt;id&gt;/detail</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Full session record including question, options, and response</td></tr>
+    <tr class="row-train"><td>15</td><td><span class="method get">GET</span></td><td class="path">/training/history</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Paginated list of completed scenario attempts for current user</td></tr>
+    <tr class="row-train"><td>16</td><td><span class="method get">GET</span></td><td class="path">/training/sessions</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>List of training sessions with status and timestamps</td></tr>
+    <tr class="row-train"><td>17</td><td><span class="method get">GET</span></td><td class="path">/training/categories</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>All 8 scenario categories with per-category accuracy for current user</td></tr>
+    <tr class="row-train"><td>18</td><td><span class="method get">GET</span></td><td class="path">/training/config</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Adaptive engine configuration (mastery threshold, XP curve)</td></tr>
+    <tr class="row-train"><td>19</td><td><span class="method get">GET</span></td><td class="path">/training/insights</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>SHAP-derived top-3 personalised risk insights for current user</td></tr>
+
+    <!-- SCORES -->
+    <tr class="group-header gh-scores"><td colspan="5">/scores — Risk Scores &amp; Clustering (3 routes)</td></tr>
+    <tr class="row-scores"><td>20</td><td><span class="method get">GET</span></td><td class="path">/scores/me</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Current behavioural risk score, risk class, and SHAP explanation</td></tr>
+    <tr class="row-scores"><td>21</td><td><span class="method get">GET</span></td><td class="path">/scores/me/history</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Time-series risk score history for trend visualisation</td></tr>
+    <tr class="row-scores"><td>22</td><td><span class="method get">GET</span></td><td class="path">/scores/me/cluster</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>K-Means archetype label, cluster description, and peer comparison</td></tr>
+
+    <!-- NOTIFICATIONS -->
+    <tr class="group-header gh-notif"><td colspan="5">/notifications — In-App Notifications (5 routes)</td></tr>
+    <tr class="row-notif"><td>23</td><td><span class="method get">GET</span></td><td class="path">/notifications</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Paginated list of all notifications for current user</td></tr>
+    <tr class="row-notif"><td>24</td><td><span class="method get">GET</span></td><td class="path">/notifications/unread-count</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Count of unread notifications (used for badge in UI)</td></tr>
+    <tr class="row-notif"><td>25</td><td><span class="method patch">PATCH</span></td><td class="path">/notifications/&lt;id&gt;/read</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Mark individual notification as read</td></tr>
+    <tr class="row-notif"><td>26</td><td><span class="method post">POST</span></td><td class="path">/notifications/read-all</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Mark all notifications as read in a single call</td></tr>
+    <tr class="row-notif"><td>27</td><td><span class="method delete">DEL</span></td><td class="path">/notifications/&lt;id&gt;</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Permanently delete a single notification record</td></tr>
+
+    <!-- MANAGER -->
+    <tr class="group-header gh-mgr"><td colspan="5">/manager — Team Management Dashboard (6 routes)</td></tr>
+    <tr class="row-mgr"><td>28</td><td><span class="method get">GET</span></td><td class="path">/manager/dashboard</td><td><span class="auth-level auth-mgr">Manager JWT</span></td><td>Team risk overview: aggregate scores, archetypes, compliance rate</td></tr>
+    <tr class="row-mgr"><td>29</td><td><span class="method get">GET</span></td><td class="path">/manager/team</td><td><span class="auth-level auth-mgr">Manager JWT</span></td><td>Paginated team member list with risk class and last-active date</td></tr>
+    <tr class="row-mgr"><td>30</td><td><span class="method get">GET</span></td><td class="path">/manager/team/&lt;user_id&gt;/profile</td><td><span class="auth-level auth-mgr">Manager JWT</span></td><td>Individual employee profile with score history and archetype</td></tr>
+    <tr class="row-mgr"><td>31</td><td><span class="method post">POST</span></td><td class="path">/manager/team/&lt;user_id&gt;/assign-training</td><td><span class="auth-level auth-mgr">Manager JWT</span></td><td>Manually assign a specific scenario category to an employee</td></tr>
+    <tr class="row-mgr"><td>32</td><td><span class="method get">GET</span></td><td class="path">/manager/history</td><td><span class="auth-level auth-mgr">Manager JWT</span></td><td>Team training activity log with completion rates over time</td></tr>
+    <tr class="row-mgr"><td>33</td><td><span class="method get">GET</span></td><td class="path">/manager/reports/summary</td><td><span class="auth-level auth-mgr">Manager JWT</span></td><td>Exportable summary report: risk distribution, top weaknesses</td></tr>
+
+    <!-- EVAL -->
+    <tr class="group-header gh-eval"><td colspan="5">/eval — Evaluation &amp; Transparency (9 routes)</td></tr>
+    <tr class="row-eval"><td>34</td><td><span class="method get">GET</span></td><td class="path">/eval/awareness/questions</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Security awareness pre/post questionnaire items (Likert scale)</td></tr>
+    <tr class="row-eval"><td>35</td><td><span class="method get">GET</span></td><td class="path">/eval/awareness/me</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Retrieve current user's latest awareness survey response</td></tr>
+    <tr class="row-eval"><td>36</td><td><span class="method post">POST</span></td><td class="path">/eval/awareness</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Submit awareness survey; calculates uplift score against baseline</td></tr>
+    <tr class="row-eval"><td>37</td><td><span class="method get">GET</span></td><td class="path">/eval/awareness-uplift</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Computed awareness uplift percentage since first survey</td></tr>
+    <tr class="row-eval"><td>38</td><td><span class="method get">GET</span></td><td class="path">/eval/sus/questions</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Standard 10-item SUS questionnaire for usability evaluation</td></tr>
+    <tr class="row-eval"><td>39</td><td><span class="method post">POST</span></td><td class="path">/eval/sus</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>Submit SUS response; computes SUS score (0–100 scale)</td></tr>
+    <tr class="row-eval"><td>40</td><td><span class="method get">GET</span></td><td class="path">/eval/sus-summary</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>Aggregate SUS scores across all respondents</td></tr>
+    <tr class="row-eval"><td>41</td><td><span class="method get">GET</span></td><td class="path">/eval/rf-metrics</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>Live RF model metrics: accuracy, F1, κ, PR-AUC, CV scores</td></tr>
+    <tr class="row-eval"><td>42</td><td><span class="method get">GET</span></td><td class="path">/eval/transparency-policy</td><td><span class="auth-level auth-jwt">Bearer JWT</span></td><td>XAI transparency disclosure: feature list, model purpose, data use</td></tr>
+
+    <!-- ADMIN -->
+    <tr class="group-header gh-admin"><td colspan="5">/admin — Administration &amp; System Management (18 routes)</td></tr>
+    <tr class="row-admin"><td>43</td><td><span class="method get">GET</span></td><td class="path">/admin/users</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>Paginated user list with role, status, and risk class</td></tr>
+    <tr class="row-admin"><td>44</td><td><span class="method post">POST</span></td><td class="path">/admin/users</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>Create new user account with specified role</td></tr>
+    <tr class="row-admin"><td>45</td><td><span class="method patch">PATCH</span></td><td class="path">/admin/users/&lt;user_id&gt;</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>Update user role, department, or account status</td></tr>
+    <tr class="row-admin"><td>46</td><td><span class="method get">GET</span></td><td class="path">/admin/scenarios</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>List all scenarios with category, difficulty, source, and status</td></tr>
+    <tr class="row-admin"><td>47</td><td><span class="method post">POST</span></td><td class="path">/admin/scenarios</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>Create a manual scenario (source = "manual")</td></tr>
+    <tr class="row-admin"><td>48</td><td><span class="method patch">PATCH</span></td><td class="path">/admin/scenarios/&lt;scenario_id&gt;</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>Edit scenario content or toggle active/inactive status</td></tr>
+    <tr class="row-admin"><td>49</td><td><span class="method get">GET</span></td><td class="path">/admin/threats</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>Paginated ThreatFeedEntry list with processing status</td></tr>
+    <tr class="row-admin"><td>50</td><td><span class="method get">GET</span></td><td class="path">/admin/threats/sources</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>Breakdown of threat entries by source feed</td></tr>
+    <tr class="row-admin"><td>51</td><td><span class="method post">POST</span></td><td class="path">/admin/threats/run-ingestion</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>Immediately trigger synchronous OSINT feed ingestion</td></tr>
+    <tr class="row-admin"><td>52</td><td><span class="method post">POST</span></td><td class="path">/admin/trigger-feed-ingestion</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>Queue background feed ingestion task (async variant)</td></tr>
+    <tr class="row-admin"><td>53</td><td><span class="method get">GET</span></td><td class="path">/admin/ingestion-status</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>Current ingestion job status, last run timestamp, and entry counts</td></tr>
+    <tr class="row-admin"><td>54</td><td><span class="method post">POST</span></td><td class="path">/admin/retrain-models</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>Trigger ML pipeline retrain (K-Means → RF → SHAP) on current data</td></tr>
+    <tr class="row-admin"><td>55</td><td><span class="method get">GET</span></td><td class="path">/admin/retrain-status</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>Retrain job progress and completion status</td></tr>
+    <tr class="row-admin"><td>56</td><td><span class="method get">GET</span></td><td class="path">/admin/stats</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>System-wide statistics: user count, scenario count, risk distribution</td></tr>
+    <tr class="row-admin"><td>57</td><td><span class="method get">GET</span></td><td class="path">/admin/audit-log</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>Immutable audit log of admin actions (create/update/delete)</td></tr>
+    <tr class="row-admin"><td>58</td><td><span class="method get">GET</span></td><td class="path">/admin/password-resets</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>Queue of pending employee password-reset requests</td></tr>
+    <tr class="row-admin"><td>59</td><td><span class="method post">POST</span></td><td class="path">/admin/password-resets/&lt;id&gt;/approve</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>Approve reset request; generates one-time token sent to employee</td></tr>
+    <tr class="row-admin"><td>60</td><td><span class="method post">POST</span></td><td class="path">/admin/password-resets/&lt;id&gt;/reject</td><td><span class="auth-level auth-admin">Admin JWT</span></td><td>Reject reset request with reason; notifies employee</td></tr>
+
+    <!-- HEALTH -->
+    <tr class="group-header gh-health"><td colspan="5">/health — Uptime Probe (1 route)</td></tr>
+    <tr class="row-health"><td>61</td><td><span class="method get">GET</span></td><td class="path">/health</td><td><span class="auth-level auth-pub">Public</span></td><td>Returns 200 OK with DB connectivity status; used by Render keep-warm action</td></tr>
+
+  </tbody>
+</table>
+
+<p class="note">
+  Route count verified from the live Flask URL map (HEAD and OPTIONS excluded).
+  Note: the thesis body text states 43 endpoints — this reflects an earlier development snapshot;
+  the implemented system registers 61 routes across 8 blueprints.
+  All non-public routes require a valid JWT in the <em>Authorization: Bearer</em> header.
+  Rate limiting is applied globally via Flask-Limiter (200/day, 50/hour per IP by default).
+</p>
+</div>
+</body>
+</html>

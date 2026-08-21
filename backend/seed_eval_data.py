@@ -88,8 +88,8 @@ def _seed_attempts(user: User, n: int = 14) -> int:
     created = 0
     for i, sc in enumerate(chosen):
         is_correct = random.random() < target_acc
-        # Generate a plausible response time: shorter when correct.
-        rt = random.randint(2500, 7500) if is_correct else random.randint(4000, 12000)
+        # Response times calibrated to scenario reading time (FAST=20s, OVERCONFIDENT=10s).
+        rt = random.randint(25000, 75000) if is_correct else random.randint(20000, 55000)
         answer = sc.correct_answer if is_correct else random.choice(
             [a for a in ("A", "B", "C", "D") if a != sc.correct_answer]
         )

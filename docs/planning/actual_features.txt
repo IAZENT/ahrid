@@ -1,0 +1,185 @@
+================================================================================
+AHRIP - ACTUAL IMPLEMENTED FEATURES (BSc Final Year Scope)
+Verified against codebase as of May 2026
+================================================================================
+
+PRODUCT: AHRIP (Adaptive Human Risk Intelligence Platform)
+A cybersecurity awareness training webapp for Kathmandu-based organizations.
+
+================================================================================
+BACKEND SERVICES (What actually runs)
+================================================================================
+
+1. ADAPTIVE ENGINE (mastery-based weighted selection)
+   - NO Thompson Sampling (explicitly removed)
+   - Recency-weighted mastery calculation per category (decay factor 0.85)
+   - Difficulty promotion/demotion based on mastery thresholds (0.80 / 0.40)
+   - Session size: 20 questions
+   - Scenario distribution: 50% weakest category, 25% other categories, 25% challenge
+   - Role-category priority mapping (accountant→phishing+smishing+data_handling, etc.)
+   - Spaced repetition: correctly answered scenarios are spaced out (12-72h by risk level)
+   - Recent threat slot: 1 fresh threat-feed scenario per session (if available)
+   - Prefer-unseen logic: prioritises scenarios the user hasn't attempted before
+   - Transparency labels: each scenario card shows a human-readable reason for
+     why it was selected (e.g., "Selected for your accounting role: phishing
+     email detection", "Challenge: higher difficulty to stretch your skills",
+     "Based on a real phishing threat detected in the last 48 hours")
+
+2. RISK SCORER (composite + per-category)
+   - Risk = inverse of accuracy per category (0% accuracy → 100 risk)
+   - Per-category scores: phishing_email, smishing, vishing, physical_security,
+     password_hygiene, usb_baiting, social_engineering, data_handling
+   - Composite: average of seen-category scores
+   - Risk levels: low (<40), medium (40-60), high (60-80), critical (80+)
+   - Recalculated synchronously after every attempt
+
+3. RANDOM FOREST RISK CLASSIFIER
+   - 14-feature vector: avg_response_time, 5 category accuracies, overall accuracy,
+     fast_attempt_rate, overconfident_rate, session_consistency, job_role_encoded,
+     total_sessions, days_since_last, attempts_count
+   - Behavioural proxies: fast response (<4s = rushed), overconfident (<2s AND wrong)
+   - Predicts risk_level class with confidence score
+   - Feature importances exposed (top 3)
+   - Requires minimum 10 attempts before prediction activates
+   - Model stored as .pkl, retrained on demand via admin
+
+4. K-MEANS USER CLUSTERING
+   - 5 archetypes, 6-feature vector
+   - Features: avg_response_time, overall_accuracy, accuracy_variance,
+     fast_attempt_rate, total_sessions, session_consistency
+   - StandardScaler preprocessing
+   - Silhouette score tracked
+   - Users assigned archetype label + description + intervention recommendation
+   - Requires minimum 5 attempts per user
+
+5. SHAP EXPLAINABILITY
+   - TreeExplainer on the Random Forest model
+   - Per-user SHAP values for all 14 features
+   - Top 3 risk factors + top 3 protective factors in plain language
+   - Stored in RiskScore.shap_summary (JSON column)
+   - Defensive: never blocks score computation on failure
+
+6. OSINT THREAT FEED INGESTION PIPELINE
+   - 4 sources: Phishing.Database (was PhishStats), AlienVault OTX
+   - 7-stage pipeline: Fetch → Validate (structural only) → Deduplicate (48h window) →
+     Classify → Sanitise → Generate scenario → Persist
+   - Max 20 new scenarios per run
+   - Round-robin interleaving across sources
+   - Brand+lure deduplication (no duplicate scenarios for same brand+lure_type in 14 days)
+   - Backlog processing: unconverted entries are retried in future runs
+
+7. SCENARIO CLASSIFIER (rule-based, no ML)
+   - URL pattern matching for 6 lure types: credential_harvest, invoice_fraud,
+     delivery_notification, it_support, ceo_impersonation, prize_scam
+   - Difficulty heuristics: 1 (obvious free-hosting/typosquat), 2 (subtle lookalike),
+     3 (advanced cloud-hosted/IDN/subdomain)
+   - Maps lure_type → category + target_roles
+   - Deterministic hash-based distribution across multiple possible categories
+
+8. SCENARIO GENERATOR (rule-based templates, NO LLM)
+   - Template-driven MCQ generation per lure_type
+   - Each lure has: title_template, prompt_template, correct_answer, 3 distractors,
+     explanation, red_flags
+   - Randomised correct-answer slot (defeats C-bias)
+   - URL defanging (hxxp, [.]) for display
+   - Learning tip auto-attached
+
+9. BEHAVIOURAL PROFILER (mistake clustering only)
+   - Groups recent wrong answers by (category, difficulty)
+   - Returns dominant_category, dominant_difficulty, mistake signature
+   - Lookback: last 50 incorrect attempts
+
+10. NOTIFICATIONS (2 types)
+    - risk_escalation: when user's risk level worsens
+    - training_assigned: when manager assigns targeted training
+
+11. BACKGROUND JOBS
+    - In-process threading (not Redis/RQ)
+    - Two job kinds: ingestion, retrain
+    - Admin triggers via dashboard buttons
+    - Status polling (running/completed/failed) with UTC timestamps
+
+12. SCHEDULER (periodic tasks)
+    - Threat feed ingestion on schedule
+    - ML model retraining on schedule
+
+================================================================================
+FRONTEND PAGES (What users actually see)
+================================================================================
+
+EMPLOYEE ROLE:
+- Dashboard: Risk score (composite number + colored badge), sessions completed,
+  weekly trend (weeks with activity out of last 8), "Start session" CTA
+- Training: 20-question adaptive MCQ session with:
+  - Progress bar + question counter
+  - Per-question timer (seconds)
+  - Category badge + difficulty level shown
+  - 4-option answer selection (A-D, keyboard shortcuts)
+  - Immediate feedback: correct/incorrect, explanation, red flags, learning tip,
+    mastery % update per category
+  - Session summary: accuracy ring, duration, categories covered, weakest
+    category, improvement tips
+- My Score: Composite risk score, SHAP explanation panel (risk/protective factors),
+  RF prediction (level + confidence + top features), K-Means archetype
+  (label + description + intervention), 8-week trend table
+- History: Past session results list
+- Profile: Personal details, job role, department
+- Evaluation: Self-assessment form
+- Transparency: Data usage policy page
+
+MANAGER ROLE (also sees employee pages for self):
+- Team Intelligence Dashboard: Avg risk, high/critical count, sessions/week, trend
+- Team: Individual member profiles with risk levels, weakest categories,
+  assign targeted training (select categories + note)
+- Clusters: K-Means archetype distribution (count, %, colour, intervention)
+- Reports: Aggregated analytics, historical trend (weekly buckets)
+
+ADMIN ROLE (also sees manager + employee pages):
+- Admin Dashboard: Total users, active users, scenarios count, active scenarios,
+  threats ingested last 24h, attempts last 24h, ML model status (trained/not,
+  last trained timestamp, model path), background job status + controls
+  (Ingest Feed button, Retrain Models button)
+- Users: Full CRUD, role/job_role assignment, activate/deactivate
+- Scenarios: Full CRUD for training items (MCQ, T/F, identify_threat),
+  category/difficulty/target_roles, accuracy stats (times_served, times_correct)
+- Threat Feed: Ingested entries with source, original_url, target_brand,
+  category, lure_type, conversion status
+- Password Resets: Approve/reject employee password reset requests
+- Evaluation Admin: View all evaluation responses
+
+AUTH:
+- Login, Register, Forgot Password, Reset Password
+- Role-based routing (employee→/app/dashboard, manager→/app/manager/dashboard,
+  admin→/app/admin)
+- JWT access tokens, protected routes
+
+================================================================================
+WHAT DOES NOT EXIST (removed from BSc scope)
+================================================================================
+
+- NO LLM / Gemini / GPT / Ollama (all removed)
+- NO Thompson Sampling (replaced with mastery-weighted selection)
+- NO Gamification engine (no XP, no streaks, no badges, no leaderboard)
+- NO Free-text answer grading (only MCQ/TF/identify_threat)
+- NO Sentiment analysis / VADER
+- NO Multi-tenant / org_id scoping
+- NO AI scenario generation (rule-based templates only)
+- NO Peer-cohort comparison
+- NO Motivation profiling
+- NO Coaching notes / hints system
+- NO Invite system
+- NO Daily challenges / streaks UI
+
+================================================================================
+TECH STACK
+================================================================================
+
+Backend: Flask, SQLAlchemy, scikit-learn (RF + KMeans), SHAP, joblib, numpy
+Frontend: React, TypeScript, TailwindCSS, Framer Motion, Lucide icons
+Database: SQLite (dev), PostgreSQL-ready via Alembic migrations
+ML Models: .pkl files (Random Forest + KMeans)
+Deployment: Procfile-ready (Gunicorn)
+
+================================================================================
+END
+================================================================================

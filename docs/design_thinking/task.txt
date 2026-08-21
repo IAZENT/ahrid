@@ -1,0 +1,145 @@
+Design Thinking Analysis - AHRIP
+Context: Himalayan Finance Ltd, Kathmandu, Nepal
+
+1. Empathy Map
+ROLE: ADMIN (Bikash, IT Security - Kathmandu Head Office)
+Sees
+
+Risk dashboard colour-coded employee risk levels
+ML cluster labels per user
+Pending profile-change-request badge
+Audit logs, invite token list, threat feed status
+
+Says
+
+"Who still hasn't completed training?"
+"I'll add a coaching note for this employee."
+"Three high-risk users flagged - let me investigate."
+
+Thinks
+
+"Are ML scores actually accurate?"
+"If there's a breach, management will ask about training."
+"Do coaching hints actually change behaviour?"
+
+Does
+
+Reviews risk dashboard daily
+Writes coaching notes for high-risk users
+Approves/rejects profile-change requests
+
+Feels
+
+Frustrated by low engagement
+Relieved when scores drop
+Empowered by real-time visibility
+Anxious when multiple high-risk alerts hit
+
+
+ROLE: EMPLOYEE (Priya, Accountant - Himalayan Finance Ltd)
+Sees
+
+XP bar, level badge, daily challenge notification
+Scenario cards with difficulty tags & phishing simulations (including fake NIC Asia Bank emails)
+Leaderboard (anonymised), badge toasts, coaching hints
+
+Says
+
+"How long does this take? I have a payment reconciliation due."
+"Why is there a USB question? I work with Tally and Excel all day."
+"I got the badge! ...what does it mean though?"
+
+Thinks
+
+"Will my risk score be seen by my manager?"
+"I'll click through quickly, I can retake it."
+"I levelled up but don't feel any safer online."
+
+Does
+
+Rushes MCQs, selects answers without reading fully
+Engages deeply only with finance-relevant scenarios (invoice fraud, fake bank emails)
+Reads LLM feedback when she gets a question wrong
+
+Feels
+
+Bored by generic scenarios (USB baiting, server room physical security)
+Proud earning badges
+Anxious about risk-score visibility
+Confused: XP ≠ actual skill
+
+
+Key Insight: Hidden Need & Pain Point
+Hidden Need: Priya needs training that connects directly to her role as an accountant - she becomes genuinely engaged when scenarios involve invoice fraud or fake NIC Asia Bank payment confirmations, but disengages when content feels generic.
+Pain Point: Despite AHRIP's adaptive engine, Priya still earns XP by rushing through scenarios - the gamification rewards speed of completion, not depth of understanding. She levels up without feeling more secure, revealing a gap between metric compliance and genuine behavioural change.
+How Might We Question
+How might we design AHRIP's training experience so that employees like Priya genuinely remember security concepts - with scenarios that feel directly relevant to their specific job role, questions that are interesting rather than boring, pacing that avoids overwhelm, and rewards that reflect actual skill growth rather than just click-through speed?
+Reflection
+Mapping all five dimensions - Sees, Says, Thinks, Does, Feels - reveals the crucial gap between surface behaviour and inner experience. Without this map, we might assume that leaderboards and badges fully motivate Priya. But empathy mapping shows her hidden thought: "I levelled up but don't feel safer." This moves design from assumption ("gamification works") to truth ("gamification without role-relevance creates hollow compliance"). The map also surfaces that Priya's most genuine engagement happens when LLM feedback explains why she was wrong - pointing to a design opportunity around feedback depth, not just reward frequency. Mapping dimensions transforms vague hunches into specific, actionable design directions.
+
+2. Five Whys
+1. Why do employees complete AHRIP training scenarios and earn XP, yet fail to retain cybersecurity knowledge and apply safe behaviours in their real daily work?
+→ Because training feels like a checkbox task - employees at Himalayan Finance rush through scenarios to collect XP and complete the requirement, without deeply reading or thinking about the content.
+2. Why do employees treat it as a checkbox?
+→ Because most scenarios are not visibly connected to the employee's specific job role - an accountant sees generic phishing emails, not invoice fraud or fake NIC Asia Bank payment confirmations that feel personally relevant.
+3. Why doesn't role relevance feel visible?
+→ Because the adaptive engine selects scenarios based on past performance and Thompson Sampling, but does not communicate its reasoning to the learner - employees see a scenario card with no context about why it was chosen for them.
+4. Why does the engine not communicate its reasoning?
+→ Because there is no spaced repetition or post-training reinforcement loop - once a scenario is answered, it is archived. Knowledge is tested once and never revisited, so retention decays rapidly without review cycles.
+5. Why is there no reinforcement loop?
+→ Because AHRIP's primary success metric is the risk score (Random Forest composite) - the system is optimised to move a measurable number, not to build lasting behavioural habits. Gamification rewards completion volume, not comprehension depth.
+Root Cause Identified
+AHRIP optimises for measurable output (risk scores, XP, completion rates) rather than lasting behavioural change. The platform delivers technically compliant training but fails to close the loop between adaptive selection, learner understanding, role-relevance communication, and long-term knowledge retention. Without visible personalisation, post-session reinforcement, and comprehension-linked rewards, employees learn to complete training - not to think securely.
+Design opportunity: Introduce transparent adaptive reasoning ("This scenario targets invoice fraud risks in your accounting role"), spaced-repetition review triggers, micro-reflection prompts after wrong answers, and comprehension-based XP multipliers - shifting AHRIP from a compliance engine to a genuine behavioural change platform.
+
+3. POEMS Observation
+Setting: Himalayan Finance Ltd, Kathmandu - employees at office workstations and remote home setups across the Kathmandu Valley, using the AHRIP training portal during designated training windows and on-demand daily challenges. Observation period: simulated 30-minute session across both admin and employee experiences.
+People
+
+Finance staff (accountants, HR, receptionists) completing training sessions
+IT Security Admin managing accounts and monitoring threat feed remotely
+Manager checking dashboard periodically
+Colleagues glancing at each other's screens in the open-plan office
+
+Objects
+
+Admin risk dashboard with RF predictions, cluster labels, heatmaps, and coaching notes
+Phishing email simulations - including a fake NIC Asia Bank login page rendered in a sandboxed iframe - with red flag overlays and HTML reproductions
+Scenario cards including MCQ, true/false, fill-in-the-blank, short answer, and descriptive questions
+AHRIP training dashboard with XP bar, level indicator, progress ring, and daily challenges
+Leaderboard showing anonymised XP-ranked users across the organisation
+
+Environment
+
+Open-plan Kathmandu office floor with frequent interruptions
+Remote home setup (staff from Lalitpur, Bhaktapur) with distractions
+Meeting room dashboard reviews
+Mobile use during breaks or Kathmandu commute
+Work context with Tally, Excel, email, and calls competing for attention during training windows
+
+Messages
+
+Daily Challenge available: complete it to maintain your streak
+Badge Unlocked - Phishing Defender: 5 suspicious emails correctly identified
+Risk score improved: momentum increasing
+New phishing threat ingested from Phishing.Database: new scenario added to your queue
+
+Services
+
+Thompson Sampling adaptive training engine
+OSINT phishing threat feed pipeline (Phishing.Database and AlienVault OTX)
+Gemini 2.5 Flash LLM for grading and coaching
+ML risk model with Random Forest + K-Means clustering
+Gamification system (XP, badges, streaks, leaderboard)
+
+Comments on User Experience
+Employees are interrupted in the open-plan office, often losing scenario context due to timers advancing. Cognitive load is high during peak banking hours (9-11 AM, end of month). Admins want explainable risk scores, not just outputs. Leaderboard anonymisation is positively received. New hires are confused by the separation between XP level and risk score.
+Friction Point
+Fast incorrect answers reduce difficulty, unintentionally rewarding low effort. This creates a feedback loop of easier questions, inflated XP, and reduced learning value - leading to disengagement and false confidence.
+Opportunity for Innovation
+Make adaptation transparent by explaining scenario selection. Add reflection prompts after mistakes to reinforce learning. Optimise notification timing based on user activity patterns (avoiding peak reconciliation hours). Reward reasoning quality, not just correctness, to encourage deeper engagement.
+General Thoughts & Design Direction
+AHRIP has strong technical capabilities (ML, LLMs, real-time feeds, accessibility). The key gap is explainability for users. The system should surface adaptive logic, connect training to job context, and align XP with real skill development. Focus should shift from hidden personalisation to transparent behaviour-driven learning and security awareness improvement.
+
+4. POV Statement
+Priya, an accountant at Himalayan Finance Ltd in Kathmandu using AHRIP for mandatory security training, needs training scenarios that feel directly relevant to her finance role, reinforce knowledge over time, and reward comprehension not just completion - because she currently treats training as a checkbox task, clicking through scenarios to earn XP without internalising the content, leaving her genuinely vulnerable to role-specific threats like invoice fraud and fake NIC Asia Bank phishing emails despite being technically "compliant."

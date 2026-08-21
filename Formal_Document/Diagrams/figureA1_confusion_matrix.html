@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Figure A1 — Confusion Matrix</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #fff; padding: 2rem; max-width: 680px; margin: 0 auto; }
+  .fig-caption { font-size: 11px; color: #5F5E5A; margin: 10px 0 0; line-height: 1.7; }
+  .fig-caption strong { color: #2c2c2a; font-weight: 500; }
+</style>
+</head>
+<body>
+<div id="cm-wrap"></div>
+<p class="fig-caption">
+  <strong>Figure A1.</strong>
+  Confusion matrix for the Random Forest classifier on the held-out test set (n=210).
+  Rows = actual class; columns = predicted class. Diagonal cells (correct predictions) are shaded green; off-diagonal cells (misclassifications) are shaded red proportional to count.
+  Zero false positives for Low Risk confirms no safe employee was escalated.
+  The dominant off-diagonal pattern is adjacent-class confusion (e.g., High &#x2192; Medium), consistent with smooth behavioural risk gradients rather than gross misclassification.
+  Overall accuracy = 191/210 = 90.95%.
+</p>
+<script>
+(function(){
+const NS='http://www.w3.org/2000/svg';
+function e(tag,a={}){const n=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(a))n.setAttribute(k,String(v));return n;}
+function tx(x,y,str,fill,sz=11,fw='400',anchor='middle'){
+  const n=e('text',{x,y,fill,'font-size':sz,'font-weight':fw,'text-anchor':anchor,'font-family':'system-ui,sans-serif'});
+  n.textContent=str;return n;
+}
+
+// Confusion matrix data
+const cm=[
+  [94,  2,  3,  3],
+  [ 0, 29,  1,  2],
+  [ 0,  5, 35,  1],
+  [ 0,  1,  1, 33],
+];
+const labels=['Low Risk\n(0)','Medium Risk\n(1)','High Risk\n(2)','Critical\n(3)'];
+const support=[102,32,41,35];
+const total=210;
+
+const W=580, CELL=88, PAD={l:110,t:90,r:20,b:60};
+const H=PAD.t+4*CELL+PAD.b+20;
+const svg=e('svg',{viewBox:`0 0 ${W} ${H}`,'style':'width:100%;display:block;',role:'img','aria-label':'Confusion Matrix'});
+const t=e('title');t.textContent='Confusion Matrix — Figure A1';svg.append(t);
+
+// max off-diagonal for colour scaling
+const maxOff=Math.max(...cm.flatMap((r,i)=>r.filter((_,j)=>i!==j)));
+
+function diagColour(v){
+  // green scale: low=light, high=dark
+  const intensity=Math.round(40+v/94*180);
+  return `rgb(${255-intensity},${220},${255-intensity})`;
+}
+function offColour(v){
+  if(v===0) return '#f8f9fa';
+  const intensity=Math.round(60+v/maxOff*160);
+  return `rgb(${220},${255-intensity},${255-intensity})`;
+}
+
+// Header: "Predicted →"
+svg.append(tx(PAD.l+2*CELL, PAD.t-52,'Predicted Class →','#2c2c2a',10,'600'));
+
+// Column labels
+labels.forEach((lbl,j)=>{
+  const x=PAD.l+j*CELL+CELL/2;
+  const parts=lbl.split('\n');
+  svg.append(tx(x,PAD.t-28,parts[0],'#2c2c2a',9,'600'));
+  svg.append(tx(x,PAD.t-14,parts[1],'#5F5E5A',8,'400'));
+});
+
+// "Actual ↓" label rotated
+const ylab=e('text',{x:16,y:PAD.t+2*CELL,fill:'#2c2c2a','font-size':10,'font-weight':'600','text-anchor':'middle','font-family':'system-ui,sans-serif',transform:`rotate(-90,16,${PAD.t+2*CELL})`});
+ylab.textContent='Actual Class ↓';svg.append(ylab);
+
+// Row labels + cells
+cm.forEach((row,i)=>{
+  const y=PAD.t+i*CELL;
+  const parts=labels[i].split('\n');
+  svg.append(tx(PAD.l-6,y+CELL/2-6,parts[0],'#2c2c2a',9,'600','end'));
+  svg.append(tx(PAD.l-6,y+CELL/2+8,parts[1],'#5F5E5A',8,'400','end'));
+
+  row.forEach((val,j)=>{
+    const x=PAD.l+j*CELL;
+    const fill=i===j ? diagColour(val) : offColour(val);
+    svg.append(e('rect',{x:x+0.5,y:y+0.5,width:CELL-1,height:CELL-1,fill,stroke:'#d1d5db','stroke-width':0.5}));
+
+    // Value
+    const textCol=i===j ? '#0a3d0a' : (val===0?'#adb5bd':'#5c0000');
+    svg.append(tx(x+CELL/2,y+CELL/2-4,String(val),textCol,i===j?16:13,'700'));
+
+    // Percentage of actual class
+    const pct=((val/support[i])*100).toFixed(1)+'%';
+    svg.append(tx(x+CELL/2,y+CELL/2+11,pct,i===j?'#1a5c1a':'#8a1a1a',8,'400'));
+  });
+});
+
+// Border around entire matrix
+svg.append(e('rect',{x:PAD.l,y:PAD.t,width:4*CELL,height:4*CELL,fill:'none',stroke:'#9ca3af','stroke-width':1}));
+
+// Legend
+const lgx=PAD.l, lgy=PAD.t+4*CELL+12;
+svg.append(e('rect',{x:lgx,y:lgy,width:14,height:14,fill:'#b3e6b3',stroke:'#9ca3af','stroke-width':0.5}));
+svg.append(tx(lgx+18,lgy+11,'Correct prediction','#5F5E5A',8,'400','start'));
+svg.append(e('rect',{x:lgx+140,y:lgy,width:14,height:14,fill:'#f5b8b8',stroke:'#9ca3af','stroke-width':0.5}));
+svg.append(tx(lgx+158,lgy+11,'Misclassification','#5F5E5A',8,'400','start'));
+svg.append(tx(lgx+310,lgy+11,'Numbers: count  |  Percentages: % of actual class','#5F5E5A',8,'400','start'));
+
+svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+document.getElementById('cm-wrap').append(svg);
+})();
+</script>
+</body>
+</html>

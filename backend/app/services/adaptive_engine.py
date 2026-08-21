@@ -28,6 +28,13 @@ DEMOTION_THRESHOLD = 0.40
 MIN_ATTEMPTS_FOR_DECISION = 5
 RECENCY_WINDOW = 10
 DECAY_FACTOR = 0.85
+
+# Forgetting curve: mastery decays toward FORGETTING_FLOOR (not toward 0.5)
+# because unpracticed security awareness erodes rather than becoming merely
+# "uncertain" - a category mastered 90 days ago and never revisited should
+# resurface as needing a refresher instead of keeping its stale high score.
+MASTERY_HALFLIFE_DAYS = 21.0
+FORGETTING_FLOOR = 0.30
 MAX_DIFFICULTY = 3
 MIN_DIFFICULTY = 1
 SESSION_SIZE = 20
@@ -39,7 +46,7 @@ SCENARIO_SELECTION_RATIO = {
 }
 
 # Live-feed slot
-THREAT_FEED_SOURCES = ("phishstats", "openphish", "otx", "urlscan")
+THREAT_FEED_SOURCES = ("phishstats", "otx")
 RECENT_THREAT_WINDOW_HOURS = 48
 
 # Spaced repetition by risk band (hours before a correct answer can re-appear)
@@ -97,6 +104,17 @@ def calculate_mastery(attempts: list[Attempt]) -> float:
     return weighted / sum(weights)
 
 
+def _apply_forgetting_curve(mastery: float, last_attempt_at: datetime | None) -> float:
+    """Decay mastery toward FORGETTING_FLOOR as time-since-practice grows."""
+    if last_attempt_at is None:
+        return mastery
+    days_idle = (datetime.utcnow() - last_attempt_at).total_seconds() / 86400
+    if days_idle <= 0:
+        return mastery
+    retained = 0.5 ** (days_idle / MASTERY_HALFLIFE_DAYS)
+    return FORGETTING_FLOOR + (mastery - FORGETTING_FLOOR) * retained
+
+
 def _trend(attempts: list[Attempt]) -> str:
     if len(attempts) < MIN_ATTEMPTS_FOR_DECISION:
         return "insufficient_data"
@@ -143,17 +161,24 @@ def get_user_profile(user_id) -> dict:
             .scalar()
             or 0
         )
-        mastery = calculate_mastery(recent)
+        raw_mastery = calculate_mastery(recent)
+        last_attempt_at = recent[0].created_at if recent else None
+        mastery = _apply_forgetting_curve(raw_mastery, last_attempt_at)
         if total < MIN_ATTEMPTS_FOR_DECISION:
             difficulty = MIN_DIFFICULTY
         else:
             anchor = max(set(a.difficulty for a in recent), key=[a.difficulty for a in recent].count)
             difficulty = _next_difficulty(anchor, mastery, total)
+        days_idle = (
+            round((datetime.utcnow() - last_attempt_at).total_seconds() / 86400, 1)
+            if last_attempt_at else None
+        )
         categories[cat] = {
             "mastery": round(mastery, 4),
             "difficulty": difficulty,
             "total_attempts": total,
             "trend": _trend(recent),
+            "days_since_practice": days_idle,
         }
 
     masteries = [c["mastery"] for c in categories.values()]

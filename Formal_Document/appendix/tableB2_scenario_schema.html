@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Table B2 – Scenario Model Schema</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Times New Roman', serif; background: #fff; padding: 32px; }
+  h3 { font-size: 13px; font-weight: bold; text-align: center; margin-bottom: 4px; color: #1a1a2e; }
+  .subtitle { font-size: 11px; text-align: center; color: #555; margin-bottom: 20px; font-style: italic; }
+  .wrap { width: 700px; margin: 0 auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  th { background: #1a1a2e; color: #fff; padding: 8px 10px; text-align: left; font-weight: bold; border: 1px solid #1a1a2e; }
+  td { padding: 6px 10px; border: 1px solid #d0d0d0; vertical-align: top; }
+  tr:nth-child(even) { background: #f8f9ff; }
+  .col-field { width: 22%; font-family: 'Courier New', monospace; font-size: 10px; color: #1a3a6e; font-weight: bold; }
+  .col-type  { width: 16%; }
+  .col-null  { width: 10%; text-align: center; }
+  .col-desc  { width: 52%; }
+  .type-badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 9.5px;
+                font-family: 'Courier New', monospace; background: #e8f0fe; color: #1a3a6e; border: 1px solid #c5d8ff; }
+  .pk  { color: #b71c1c; font-size: 9px; font-weight: bold; }
+  .fk  { color: #7b1fa2; font-size: 9px; font-weight: bold; }
+  .idx { color: #e65100; font-size: 9px; }
+  .null-y { color: #2e7d32; text-align: center; }
+  .null-n { color: #b71c1c; text-align: center; font-weight: bold; }
+  code { font-family: 'Courier New', monospace; font-size: 10px; background: #f0f0f0; padding: 0 3px; border-radius: 2px; }
+  .note { font-size: 10px; color: #555; text-align: center; margin-top: 12px; font-style: italic; line-height: 1.5; }
+  .section-divider td { background: #eef2ff; font-weight: bold; font-size: 10px; color: #1a1a2e; border-top: 2px solid #1a1a2e; padding: 4px 10px; }
+</style>
+</head>
+<body>
+<h3>Table B2. Scenario SQLAlchemy Model — Field Schema</h3>
+<p class="subtitle">PostgreSQL table: <code style="font-size:10px">scenarios</code> · populated by OSINT pipeline (source = "osint") and manual seeding (source = "manual")</p>
+
+<div class="wrap">
+<table>
+  <thead>
+    <tr>
+      <th class="col-field">Field Name</th>
+      <th class="col-type">Type</th>
+      <th class="col-null">Nullable</th>
+      <th class="col-desc">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Identity -->
+    <tr class="section-divider"><td colspan="4">Identity &amp; Classification</td></tr>
+    <tr>
+      <td class="col-field">id <span class="pk">PK</span></td>
+      <td><span class="type-badge">Integer</span></td>
+      <td class="null-n">No</td>
+      <td>Auto-incrementing primary key</td>
+    </tr>
+    <tr>
+      <td class="col-field">category <span class="idx">IDX</span></td>
+      <td><span class="type-badge">String(64)</span></td>
+      <td class="null-n">No</td>
+      <td>One of 8 training categories: <em>phishing_email, smishing, vishing, password_hygiene, social_engineering, usb_baiting, data_handling, physical_security</em></td>
+    </tr>
+    <tr>
+      <td class="col-field">difficulty <span class="idx">IDX</span></td>
+      <td><span class="type-badge">Integer</span></td>
+      <td class="null-n">No</td>
+      <td>Difficulty level: 1 = Obvious (10 XP), 2 = Subtle (15 XP), 3 = Advanced (25 XP)</td>
+    </tr>
+    <tr>
+      <td class="col-field">lure_type</td>
+      <td><span class="type-badge">String(64)</span></td>
+      <td class="null-y">Yes</td>
+      <td>One of 6 lure types assigned by the OSINT classifier; NULL for manually authored scenarios</td>
+    </tr>
+    <tr>
+      <td class="col-field">source</td>
+      <td><span class="type-badge">String(16)</span></td>
+      <td class="null-n">No</td>
+      <td><code>osint</code> — generated from ThreatFeedEntry; <code>manual</code> — admin-authored content</td>
+    </tr>
+    <!-- Content -->
+    <tr class="section-divider"><td colspan="4">Question Content</td></tr>
+    <tr>
+      <td class="col-field">title</td>
+      <td><span class="type-badge">String(256)</span></td>
+      <td class="null-n">No</td>
+      <td>Short scenario title displayed in the training UI (e.g., "Suspicious Invoice Email")</td>
+    </tr>
+    <tr>
+      <td class="col-field">description</td>
+      <td><span class="type-badge">Text</span></td>
+      <td class="null-n">No</td>
+      <td>Scenario narrative presented to the employee as context before the question</td>
+    </tr>
+    <tr>
+      <td class="col-field">question</td>
+      <td><span class="type-badge">Text</span></td>
+      <td class="null-n">No</td>
+      <td>The MCQ question stem (e.g., "What is the most suspicious element of this URL?")</td>
+    </tr>
+    <tr>
+      <td class="col-field">options</td>
+      <td><span class="type-badge">JSON</span></td>
+      <td class="null-n">No</td>
+      <td>Array of 4 answer strings; index of correct answer stored in <em>correct_option</em></td>
+    </tr>
+    <tr>
+      <td class="col-field">correct_option</td>
+      <td><span class="type-badge">Integer</span></td>
+      <td class="null-n">No</td>
+      <td>Zero-based index into the <em>options</em> array identifying the correct answer</td>
+    </tr>
+    <!-- Feedback -->
+    <tr class="section-divider"><td colspan="4">Feedback &amp; Learning</td></tr>
+    <tr>
+      <td class="col-field">red_flags</td>
+      <td><span class="type-badge">JSON</span></td>
+      <td class="null-y">Yes</td>
+      <td>Array of strings listing observable threat indicators shown after the employee answers</td>
+    </tr>
+    <tr>
+      <td class="col-field">explanation</td>
+      <td><span class="type-badge">Text</span></td>
+      <td class="null-y">Yes</td>
+      <td>Post-answer explanation of why the correct option is correct and what the threat represents</td>
+    </tr>
+    <tr>
+      <td class="col-field">learning_tip</td>
+      <td><span class="type-badge">Text</span></td>
+      <td class="null-y">Yes</td>
+      <td>Actionable advice to help the employee avoid this threat type in future</td>
+    </tr>
+    <tr>
+      <td class="col-field">xp_reward</td>
+      <td><span class="type-badge">Integer</span></td>
+      <td class="null-n">No</td>
+      <td>XP points awarded on correct answer; derived from difficulty (10 / 15 / 25)</td>
+    </tr>
+    <!-- Targeting -->
+    <tr class="section-divider"><td colspan="4">Targeting &amp; Status</td></tr>
+    <tr>
+      <td class="col-field">target_roles</td>
+      <td><span class="type-badge">JSON</span></td>
+      <td class="null-y">Yes</td>
+      <td>Array of job roles for which this scenario is relevant; NULL means applicable to all roles</td>
+    </tr>
+    <tr>
+      <td class="col-field">is_active</td>
+      <td><span class="type-badge">Boolean</span></td>
+      <td class="null-n">No</td>
+      <td>Default TRUE; set FALSE to retire a scenario without deletion (soft delete)</td>
+    </tr>
+    <tr>
+      <td class="col-field">threat_feed_id <span class="fk">FK</span></td>
+      <td><span class="type-badge">Integer</span></td>
+      <td class="null-y">Yes</td>
+      <td>References <code>threat_feed_entries.id</code>; NULL for manually authored scenarios</td>
+    </tr>
+    <tr>
+      <td class="col-field">created_at</td>
+      <td><span class="type-badge">DateTime</span></td>
+      <td class="null-n">No</td>
+      <td>UTC timestamp of scenario creation; used to surface recently added content</td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="note">
+  The <em>options</em> / <em>red_flags</em> / <em>target_roles</em> JSON columns allow variable-length lists without
+  auxiliary tables. The <em>threat_feed_id</em> FK maintains traceability from training scenario back to the
+  original OSINT entry for audit purposes. For the full entity relationship diagram, see Figure F1.
+</p>
+</div>
+</body>
+</html>

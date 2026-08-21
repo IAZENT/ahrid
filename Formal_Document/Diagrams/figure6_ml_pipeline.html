@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 6 — AHRID ML Pipeline</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #ffffff;
+    color: #2c2c2a;
+    padding: 2rem;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  #ml-wrap { padding: 0.5rem 0; }
+  .fig-caption {
+    font-size: 11px;
+    color: #5F5E5A;
+    margin: 10px 0 0;
+    line-height: 1.7;
+  }
+  .fig-caption strong { color: #2c2c2a; font-weight: 500; }
+</style>
+</head>
+<body>
+
+<div id="ml-wrap"></div>
+<p class="fig-caption">
+  <strong>Figure 6.</strong>
+  AHRID three-stage machine learning pipeline. Stage 1: K-Means (k=5) clusters employees into five behavioural archetypes from 6 interaction features; the resulting cluster label is appended as an explicit 18th feature to the Random Forest input vector. Stage 2: Random Forest classifier (200 trees, SMOTE-balanced, 4-class output) ingests the 18-feature vector and outputs a risk tier. Stage 3: SHAP TreeExplainer renders per-prediction attribution in plain language. Cluster sizes: C0=239, C1=266, C2=216, C3=185, C4=145; Silhouette=0.265. Classification accuracy: 90.95% (macro F1=0.889, PR-AUC=0.940, Cohen&#x2019;s &#x3ba;=0.868). Evaluated on 1,050 synthetic profiles across 8 threat categories.
+</p>
+
+<script>
+(function(){
+
+const col = {
+  gF:'#F1EFE8', gS:'#888780', gT:'#2C2C2A', gSt:'#5F5E5A',
+  tF:'#E1F5EE', tS:'#0F6E56', tT:'#04342C',
+  tcF:'#9FE1CB', tcT:'#04342C',
+  bF:'#E6F1FB', bS:'#185FA5', bT:'#042C53',
+  pF:'#EEEDFE', pS:'#534AB7', pT:'#26215C',
+  mF:'#EBF4FF', mS:'#378ADD', mT:'#042C53',
+  a:'#5F5E5A',
+};
+const risk=[
+  {l:'Low Risk',   f:'#EAF3DE', s:'#639922', t:'#173404'},
+  {l:'Medium Risk',f:'#FAEEDA', s:'#BA7517', t:'#412402'},
+  {l:'High Risk',  f:'#FAECE7', s:'#D85A30', t:'#4A1B0C'},
+  {l:'Critical',   f:'#FCEBEB', s:'#E24B4A', t:'#501313'},
+];
+
+const NS='http://www.w3.org/2000/svg';
+function e(tag,a={}){const n=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(a))n.setAttribute(k,String(v));return n;}
+function r(x,y,w,h,rx,f,s,sw=0.5){return e('rect',{x,y,width:w,height:h,rx,fill:f,stroke:s,'stroke-width':sw});}
+function tx(x,y,str,fill,sz=11,fw='400',anchor='middle'){
+  const n=e('text',{x,y,fill,'font-size':sz,'font-weight':fw,'text-anchor':anchor,'font-family':'system-ui,sans-serif'});
+  n.textContent=str;return n;
+}
+function arr(pts,c,dash=''){
+  const g=e('g');
+  for(let i=0;i<pts.length-1;i++)
+    g.append(e('line',{x1:pts[i][0],y1:pts[i][1],x2:pts[i+1][0],y2:pts[i+1][1],stroke:c,'stroke-width':1.5,'stroke-dasharray':dash}));
+  const L=pts[pts.length-1],P=pts[pts.length-2];
+  const ag=Math.atan2(L[1]-P[1],L[0]-P[0]),len=7;
+  g.append(e('polygon',{
+    points:`${L[0]},${L[1]} ${L[0]-len*Math.cos(ag-Math.PI/6)},${L[1]-len*Math.sin(ag-Math.PI/6)} ${L[0]-len*Math.cos(ag+Math.PI/6)},${L[1]-len*Math.sin(ag+Math.PI/6)}`,
+    fill:c
+  }));
+  return g;
+}
+
+const svg=e('svg',{role:'img','aria-label':'AHRID three-stage ML pipeline','style':'width:100%;display:block;'});
+const svgT=e('title');svgT.textContent='AHRID ML Pipeline — Figure 6';svg.append(svgT);
+
+const W=700, CCX=350;
+
+// ── INPUT BOX (full width) ────────────────────────────────────────────
+const IY=12, IH=50;
+svg.append(r(30,IY,640,IH,6,col.gF,col.gS,1));
+svg.append(tx(CCX,IY+18,'Employee Behavioural Session Data',col.gT,12,'500'));
+svg.append(tx(CCX,IY+35,'Interaction logs  \xb7  scenario scores  \xb7  session metadata',col.gSt,9,'400'));
+
+// ── STAGE 1 BAND LABEL ────────────────────────────────────────────────
+const S1Y = IY+IH+14;
+svg.append(tx(CCX, S1Y, 'Stage 1 — Behavioural Archetype Discovery (K-Means)', col.tS, 9, '600'));
+
+// Fork: input bottom-centre splits left (K-Means) and right (feature extraction)
+const LCX=172, RCX=528;
+svg.append(arr([[CCX,IY+IH],[LCX,IY+IH+4],[LCX,S1Y+10]], col.tS));
+svg.append(arr([[CCX,IY+IH],[RCX,IY+IH+4],[RCX,S1Y+10]], col.bS));
+
+// ── LEFT: K-MEANS BOX ────────────────────────────────────────────────
+const KMY=S1Y+10, KMH=70, KMW=296, KMX=24;
+svg.append(r(KMX,KMY,KMW,KMH,6,col.tF,col.tS,1));
+svg.append(tx(LCX,KMY+17,'K-Means Clustering',col.tT,12,'500'));
+svg.append(tx(LCX,KMY+32,'k=5  \xb7  6-feature input  \xb7  k-means++  \xb7  n_init=10',col.tT,9,'400'));
+svg.append(tx(LCX,KMY+47,'Silhouette=0.265  \xb7  Inertia=2,534.5',col.tT,9,'400'));
+svg.append(tx(LCX,KMY+61,'C0=239  C1=266  C2=216  C3=185  C4=145',col.tT,8,'400'));
+
+// Arrow K-Means → archetype chips
+svg.append(arr([[LCX,KMY+KMH],[LCX,KMY+KMH+10]],col.tS));
+
+// 5 ARCHETYPE CHIPS
+const AY=KMY+KMH+10, chipW=54, chipH=46, chipGap=3, chipX0=KMX+4;
+const archs=[
+  ['Overconfident','Clicker','C0\xb7n=239'],
+  ['Cautious','Learner','C1\xb7n=266'],
+  ['Inconsistent','Performer','C2\xb7n=216'],
+  ['Resilient','Defender','C3\xb7n=185'],
+  ['Disengaged','Completer','C4\xb7n=145'],
+];
+for(let i=0;i<5;i++){
+  const cx=chipX0+i*(chipW+chipGap);
+  svg.append(r(cx,AY,chipW,chipH,4,col.tcF,col.tS,0.5));
+  svg.append(tx(cx+chipW/2,AY+13,archs[i][0],col.tcT,8,'600'));
+  svg.append(tx(cx+chipW/2,AY+25,archs[i][1],col.tcT,8,'400'));
+  svg.append(tx(cx+chipW/2,AY+38,archs[i][2],col.tcT,7,'400'));
+}
+
+// cluster_label output badge
+const CLY=AY+chipH+8, clBW=160, clBH=22, clBX=LCX-80;
+svg.append(arr([[LCX,AY+chipH],[LCX,CLY]],col.tS));
+svg.append(r(clBX,CLY,clBW,clBH,11,col.tS,'none'));
+svg.append(tx(LCX,CLY+15,'cluster_label  →  C0 – C4  (Stage 1 output)','#ffffff',9,'500'));
+
+// ── RIGHT: 17 BEHAVIOURAL FEATURES BOX ───────────────────────────────
+const FX=380, FY=KMY, FW=296, FCX=FX+FW/2;
+const feats=[
+  'avg_response_time_ms  \xb7  overall_accuracy',
+  'phishing_accuracy  \xb7  smishing_accuracy',
+  'social_engineering_accuracy',
+  'password_hygiene_accuracy  \xb7  physical_security_accuracy',
+  'vishing_accuracy  \xb7  data_handling_accuracy',
+  'usb_baiting_accuracy',
+  'fast_attempt_rate  \xb7  overconfident_rate',
+  'session_consistency  \xb7  total_sessions',
+  'days_since_last_session  \xb7  attempts_count  \xb7  job_role_encoded',
+];
+const FH = 20 + feats.length*14 + 10;
+svg.append(r(FX,FY,FW,FH,6,col.bF,col.bS,1));
+svg.append(tx(FCX,FY+15,'17 Behavioural Features (extracted)',col.bT,11,'500'));
+feats.forEach((f,i)=>svg.append(tx(FCX,FY+27+i*14,f,col.bT,8,'400')));
+
+// ── MERGE: cluster_label + 17 features → 18-feature vector ───────────
+const leftBottom = CLY+clBH;
+const rightBottom = FY+FH;
+const mergeY = Math.max(leftBottom, rightBottom) + 20;
+const mW=380, mH=44, mX=CCX-mW/2;
+
+// dashed connector: cluster_label → merge left
+svg.append(arr([[LCX,leftBottom],[LCX,mergeY+mH/2],[mX,mergeY+mH/2]],col.tS,'6 3'));
+// dashed connector: features → merge right
+svg.append(arr([[FCX,rightBottom],[FCX,mergeY+mH/2],[mX+mW,mergeY+mH/2]],col.bS,'6 3'));
+
+svg.append(r(mX,mergeY,mW,mH,6,col.mF,col.mS,1.5));
+svg.append(tx(CCX,mergeY+16,'18-Feature Input Vector',col.mT,12,'600'));
+svg.append(tx(CCX,mergeY+32,'17 behavioural features  +  cluster_label (Stage 1 output)  =  Stage 2 input',col.mT,9,'400'));
+
+// ── STAGE 2: RANDOM FOREST ────────────────────────────────────────────
+const RFCY=mergeY+mH+24;
+svg.append(tx(CCX,RFCY-10,'Stage 2 — Risk Classification (Random Forest)',col.bS,9,'600'));
+svg.append(arr([[CCX,mergeY+mH],[CCX,RFCY]],col.a));
+
+const RFCW=380, RFCH=82, RFCX=CCX-RFCW/2;
+svg.append(r(RFCX,RFCY,RFCW,RFCH,6,col.bF,col.bS,1.5));
+svg.append(tx(CCX,RFCY+18,'Random Forest Classifier',col.bT,12,'500'));
+svg.append(tx(CCX,RFCY+34,'n_estimators=200  \xb7  SMOTE-balanced (n=409/class)  \xb7  max_features=sqrt',col.bT,9,'400'));
+svg.append(tx(CCX,RFCY+50,'4-class output  \xb7  3-fold CV  \xb7  F1_cv=0.860\xb10.009',col.bT,9,'400'));
+svg.append(tx(CCX,RFCY+66,'Accuracy: 90.95%  \xb7  F1_macro=0.889  \xb7  Cohen\u2019s \u03ba=0.868',col.bT,9,'600'));
+
+// ── 4 RISK TIER OUTPUTS ───────────────────────────────────────────────
+const RISY=RFCY+RFCH+18, RISW=155, RISH=44, RISG=4;
+const RISX=(W-(4*RISW+3*RISG))/2;
+svg.append(arr([[CCX,RFCY+RFCH],[CCX,RISY]],col.a));
+for(let i=0;i<4;i++){
+  const rx=RISX+i*(RISW+RISG);
+  svg.append(r(rx,RISY,RISW,RISH,4,risk[i].f,risk[i].s,0.5));
+  svg.append(tx(rx+RISW/2,RISY+16,risk[i].l,risk[i].t,11,'500'));
+  svg.append(tx(rx+RISW/2,RISY+31,'n=409 (SMOTE)',risk[i].t,8,'400'));
+}
+
+// ── STAGE 3: SHAP ─────────────────────────────────────────────────────
+const SHPY=RISY+RISH+24;
+svg.append(tx(CCX,SHPY-10,'Stage 3 — Attribution (SHAP)',col.pS,9,'600'));
+svg.append(arr([[CCX,RISY+RISH],[CCX,SHPY]],col.a));
+
+const SHPW=380, SHPH=46, SHPX=CCX-SHPW/2;
+svg.append(r(SHPX,SHPY,SHPW,SHPH,6,col.pF,col.pS,1.5));
+svg.append(tx(CCX,SHPY+18,'SHAP TreeExplainer',col.pT,12,'500'));
+svg.append(tx(CCX,SHPY+34,'Per-prediction feature attribution  \xb7  plain-language employee output',col.pT,9,'400'));
+
+const finalH=SHPY+SHPH+14;
+svg.setAttribute('viewBox',`0 0 ${W} ${finalH}`);
+document.getElementById('ml-wrap').append(svg);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Figure C2 – JWT Authentication Flow</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Times New Roman', serif; background: #fff; padding: 32px; }
+  h3 { font-size: 13px; font-weight: bold; text-align: center; margin-bottom: 4px; color: #1a1a2e; }
+  .subtitle { font-size: 11px; text-align: center; color: #555; margin-bottom: 24px; font-style: italic; }
+  .note { font-size: 10px; color: #555; text-align: center; margin-top: 18px; font-style: italic; line-height: 1.5; width: 660px; margin-left: auto; margin-right: auto; }
+
+  /* swimlane labels */
+  .lane-label { font-size: 10px; font-weight: bold; fill: #fff; text-anchor: middle; }
+  .lane-sub   { font-size: 8.5px; fill: rgba(255,255,255,0.8); text-anchor: middle; }
+
+  /* node styles */
+  .client-node { fill: #1a3a6e; }
+  .server-node { fill: #1e4d9e; }
+  .db-node     { fill: #2e7d32; }
+  .error-node  { fill: #b71c1c; }
+  .decision    { fill: #e65100; }
+  .blocklist   { fill: #555; }
+
+  .node-text  { font-family: 'Times New Roman', serif; font-size: 10px; fill: #fff; text-anchor: middle; font-weight: bold; }
+  .node-sub   { font-family: 'Times New Roman', serif; font-size: 8.5px; fill: rgba(255,255,255,0.85); text-anchor: middle; }
+  .edge       { stroke: #555; stroke-width: 1.5; fill: none; }
+  .edge-dash  { stroke: #aaa; stroke-width: 1.5; fill: none; stroke-dasharray: 5,3; }
+  .edge-label { font-family: 'Times New Roman', serif; font-size: 9px; fill: #333; }
+  .edge-label-em { font-family: 'Times New Roman', serif; font-size: 9px; fill: #e65100; font-style: italic; }
+</style>
+</head>
+<body>
+<h3>Figure C2. JWT Authentication and Token Lifecycle</h3>
+<p class="subtitle">Implementation-level sequence: login → protected access → token refresh → logout → blocklist</p>
+
+<svg width="720" height="620" viewBox="0 0 720 620">
+  <defs>
+    <marker id="arr" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#555"/>
+    </marker>
+    <marker id="arr-red" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#b71c1c"/>
+    </marker>
+    <marker id="arr-green" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#2e7d32"/>
+    </marker>
+  </defs>
+
+  <!-- Swimlane backgrounds -->
+  <rect x="0"   y="0" width="180" height="620" rx="0" fill="#f0f4ff"/>
+  <rect x="180" y="0" width="360" height="620" rx="0" fill="#fafafa"/>
+  <rect x="540" y="0" width="180" height="620" rx="0" fill="#f0f8f1"/>
+
+  <!-- Swimlane headers -->
+  <rect x="0"   y="0" width="180" height="36" fill="#1a3a6e"/>
+  <text class="lane-label" x="90"  y="16">Client</text>
+  <text class="lane-sub"   x="90"  y="28">React SPA · localStorage</text>
+
+  <rect x="180" y="0" width="360" height="36" fill="#1e4d9e"/>
+  <text class="lane-label" x="360" y="16">Flask API Server</text>
+  <text class="lane-sub"   x="360" y="28">JWT · bcrypt · Flask-Limiter · RBAC</text>
+
+  <rect x="540" y="0" width="180" height="36" fill="#2e7d32"/>
+  <text class="lane-label" x="630" y="16">Database</text>
+  <text class="lane-sub"   x="630" y="28">PostgreSQL · TokenBlocklist</text>
+
+  <!-- ══════════════════════════════════════════════
+       STEP 1: Login
+  ══════════════════════════════════════════════ -->
+  <!-- Client: POST /auth/login -->
+  <rect x="10" y="58" width="160" height="40" rx="6" class="client-node"/>
+  <text class="node-text" x="90" y="74">POST /auth/login</text>
+  <text class="node-sub"  x="90" y="86">email + password</text>
+
+  <!-- Arrow right -->
+  <line x1="170" y1="78" x2="258" y2="78" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Server: bcrypt verify -->
+  <rect x="260" y="58" width="200" height="40" rx="6" class="server-node"/>
+  <text class="node-text" x="360" y="74">bcrypt.verify(password)</text>
+  <text class="node-sub"  x="360" y="86">cost factor 12 · timing-safe compare</text>
+
+  <!-- Arrow down in server: issue tokens -->
+  <line x1="360" y1="98" x2="360" y2="128" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="230" y="130" width="260" height="48" rx="6" class="server-node"/>
+  <text class="node-text" x="360" y="148">Issue Tokens</text>
+  <text class="node-sub"  x="360" y="160">Access JWT · exp: 15 min · role claim</text>
+  <text class="node-sub"  x="360" y="171">Refresh JWT · exp: 30 days · jti stored</text>
+
+  <!-- Arrow left: return tokens -->
+  <line x1="230" y1="154" x2="170" y2="154" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text class="edge-label" x="175" y="150">200 OK</text>
+
+  <rect x="10" y="138" width="160" height="32" rx="6" class="client-node"/>
+  <text class="node-text" x="90" y="152">Store tokens</text>
+  <text class="node-sub"  x="90" y="163">memory · httpOnly cookie</text>
+
+  <!-- ══════════════════════════════════════════════
+       STEP 2: Protected Request
+  ══════════════════════════════════════════════ -->
+  <line x1="90" y1="170" x2="90" y2="202" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="10" y="204" width="160" height="32" rx="6" class="client-node"/>
+  <text class="node-text" x="90" y="218">Protected Request</text>
+  <text class="node-sub"  x="90" y="229">Authorization: Bearer &lt;access&gt;</text>
+
+  <line x1="170" y1="220" x2="258" y2="220" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Diamond decision: valid? -->
+  <polygon points="360,240 420,270 360,300 300,270" class="decision"/>
+  <text class="node-text" x="360" y="267">Token</text>
+  <text class="node-text" x="360" y="280">Valid?</text>
+
+  <!-- YES → endpoint -->
+  <line x1="420" y1="270" x2="530" y2="270" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arr-green)"/>
+  <text class="edge-label" x="432" y="265" fill="#2e7d32">YES</text>
+
+  <rect x="460" y="252" width="150" height="36" rx="6" class="db-node" x="532"/>
+  <rect x="532" y="252" width="150" height="36" rx="6" class="db-node"/>
+  <text class="node-text" x="607" y="267">Execute Endpoint</text>
+  <text class="node-sub"  x="607" y="279">RBAC role check · 200 response</text>
+
+  <!-- NO → 401 -->
+  <line x1="300" y1="270" x2="170" y2="270" stroke="#b71c1c" stroke-width="1.5" marker-end="url(#arr-red)"/>
+  <text class="edge-label-em" x="188" y="265">NO → 401</text>
+
+  <!-- ══════════════════════════════════════════════
+       STEP 3: Token Refresh
+  ══════════════════════════════════════════════ -->
+  <line x1="90" y1="236" x2="90" y2="322" stroke="#555" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+  <text class="edge-label" x="95" y="312" fill="#aaa" font-style="italic">access expires</text>
+
+  <rect x="10" y="324" width="160" height="32" rx="6" class="client-node"/>
+  <text class="node-text" x="90" y="338">POST /auth/refresh</text>
+  <text class="node-sub"  x="90" y="349">Refresh JWT in header</text>
+
+  <line x1="170" y1="340" x2="258" y2="340" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="260" y="324" width="200" height="40" rx="6" class="server-node"/>
+  <text class="node-text" x="360" y="340">Validate Refresh Token</text>
+  <text class="node-sub"  x="360" y="352">Check jti not in blocklist · exp check</text>
+  <text class="node-sub"  x="360" y="362">Query TokenBlocklist table</text>
+
+  <!-- Arrow to DB -->
+  <line x1="460" y1="344" x2="528" y2="344" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="530" y="328" width="160" height="32" rx="6" class="db-node"/>
+  <text class="node-text" x="610" y="342">TokenBlocklist</text>
+  <text class="node-sub"  x="610" y="353">SELECT jti · not revoked?</text>
+
+  <!-- Return new access token -->
+  <line x1="360" y1="364" x2="360" y2="388" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="230" y="390" width="260" height="30" rx="6" class="server-node"/>
+  <text class="node-text" x="360" y="403">New Access JWT issued</text>
+  <text class="node-sub"  x="360" y="413">exp: 15 min · same role claim</text>
+
+  <line x1="230" y1="405" x2="170" y2="405" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="10" y="392" width="160" height="26" rx="6" class="client-node"/>
+  <text class="node-text" x="90" y="409">Store new access token</text>
+
+  <!-- ══════════════════════════════════════════════
+       STEP 4: Logout
+  ══════════════════════════════════════════════ -->
+  <line x1="90" y1="418" x2="90" y2="450" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="10" y="452" width="160" height="30" rx="6" class="client-node"/>
+  <text class="node-text" x="90" y="466">POST /auth/logout</text>
+  <text class="node-sub"  x="90" y="477">Bearer access token</text>
+
+  <line x1="170" y1="467" x2="258" y2="467" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="260" y="452" width="200" height="30" rx="6" class="server-node"/>
+  <text class="node-text" x="360" y="466">Extract jti from token</text>
+  <text class="node-sub"  x="360" y="477">Decode · verify · get jti claim</text>
+
+  <line x1="460" y1="467" x2="528" y2="467" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="530" y="452" width="160" height="30" rx="6" class="blocklist"/>
+  <text class="node-text" x="610" y="466">INSERT jti</text>
+  <text class="node-sub"  x="610" y="477">TokenBlocklist · revoked_at</text>
+
+  <line x1="360" y1="482" x2="360" y2="508" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="270" y="510" width="180" height="26" rx="6" class="server-node"/>
+  <text class="node-text" x="360" y="527">204 No Content</text>
+
+  <line x1="270" y1="523" x2="170" y2="523" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="10" y="510" width="160" height="26" rx="6" class="client-node"/>
+  <text class="node-text" x="90" y="527">Clear stored tokens</text>
+
+  <!-- Blocklist effect -->
+  <line x1="610" y1="482" x2="610" y2="570" stroke="#555" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <rect x="530" y="572" width="160" height="36" rx="6" fill="#444"/>
+  <text class="node-text" x="610" y="587">All future requests</text>
+  <text class="node-sub"  x="610" y="598">with this jti → 401</text>
+  <text class="node-sub"  x="610" y="608">even if not expired</text>
+
+</svg>
+
+<p class="note">
+  Access tokens (15 min) are short-lived to limit exposure; refresh tokens (30 days) enable seamless re-authentication.
+  Server-side jti blocklisting on logout prevents token reuse even within the remaining validity window,
+  satisfying the IPA 2075 §8 consent-withdrawal requirement (user can revoke access at any time).
+</p>
+</body>
+</html>

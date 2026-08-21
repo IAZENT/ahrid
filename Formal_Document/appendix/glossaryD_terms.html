@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Appendix D – Glossary of Terms</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Times New Roman', serif; background: #fff; padding: 32px; }
+  h2 { font-size: 14px; font-weight: bold; text-align: center; margin-bottom: 4px; color: #1a1a2e; }
+  .doc-subtitle { font-size: 11px; text-align: center; color: #555; margin-bottom: 28px; font-style: italic; }
+  .wrap { width: 720px; margin: 0 auto; }
+
+  .section-heading {
+    font-size: 12px; font-weight: bold; color: #fff; padding: 8px 14px;
+    border-radius: 4px; margin: 24px 0 0;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .sec-ml    { background: #1a3a6e; }
+  .sec-sec   { background: #2e7d32; }
+  .sec-ahrid { background: #5c4d9a; }
+
+  .sec-label { font-size: 10px; opacity: 0.8; font-weight: normal; margin-left: auto; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 0; }
+  th { background: #f0f0f0; color: #333; padding: 6px 12px; text-align: left;
+       font-weight: bold; border: 1px solid #d0d0d0; font-size: 10.5px; }
+  td { padding: 6px 12px; border: 1px solid #d8d8d8; vertical-align: top; line-height: 1.55; }
+
+  .ml-row:nth-child(even)    { background: #f5f8ff; }
+  .sec-row:nth-child(even)   { background: #f5faf5; }
+  .ahrid-row:nth-child(even) { background: #f7f5fc; }
+
+  .term { font-weight: bold; color: #1a1a2e; white-space: nowrap; }
+  .acro { font-size: 9.5px; color: #666; display: block; font-weight: normal; margin-top: 1px; }
+  code  { font-family: 'Courier New', monospace; font-size: 9.5px; background: #f0f0f0;
+          padding: 0 3px; border-radius: 2px; }
+
+  .cross-ref { font-size: 9.5px; color: #5c4d9a; font-style: italic; margin-top: 3px; display: block; }
+
+  .note { font-size: 10px; color: #555; text-align: center; margin-top: 20px;
+          font-style: italic; line-height: 1.5; }
+</style>
+</head>
+<body>
+<h2>Appendix D. Glossary of Terms</h2>
+<p class="doc-subtitle">Three sections: D.1 Machine Learning · D.2 Cybersecurity · D.3 AHRID-Specific</p>
+
+<div class="wrap">
+
+<!-- ══════════════════════════════════════════════
+     D.1 Machine Learning Terms
+══════════════════════════════════════════════ -->
+<div class="section-heading sec-ml">
+  D.1 Machine Learning Terms
+  <span class="sec-label">14 entries</span>
+</div>
+<table>
+  <thead>
+    <tr><th style="width:22%">Term / Abbreviation</th><th>Definition</th></tr>
+  </thead>
+  <tbody>
+    <tr class="ml-row">
+      <td><span class="term">Adaptive Engine</span><span class="acro">—</span></td>
+      <td>The AHRID component that selects the next training scenario for each employee based on their current mastery scores, risk class, and K-Means archetype. It applies spaced repetition to revisit categories where accuracy falls below the mastery threshold (80%).</td>
+    </tr>
+    <tr class="ml-row">
+      <td><span class="term">Cohen's Kappa (κ)</span><span class="acro">Cohen (1960)</span></td>
+      <td>A statistical measure of inter-rater agreement that accounts for chance. Values above 0.80 indicate almost perfect agreement (Landis &amp; Koch, 1977). AHRID's classifier achieves κ = 0.8684, demonstrating reliable risk class assignment beyond random chance.</td>
+    </tr>
+    <tr class="ml-row">
+      <td><span class="term">Cross-Validation (CV)</span><span class="acro">k-fold CV</span></td>
+      <td>A model evaluation technique that partitions training data into k equally-sized folds, training on k−1 folds and validating on the remaining fold, repeated k times. AHRID uses 3-fold stratified CV (mean F1-macro = 0.8604 ± 0.0094).</td>
+    </tr>
+    <tr class="ml-row">
+      <td><span class="term">F1-Score</span><span class="acro">F-measure</span></td>
+      <td>The harmonic mean of precision and recall: F1 = 2 × (P × R) / (P + R). The macro-average F1 treats all classes equally regardless of support, making it appropriate for imbalanced datasets. AHRID achieves F1-macro = 0.889.</td>
+    </tr>
+    <tr class="ml-row">
+      <td><span class="term">Forgetting Curve</span><span class="acro">Ebbinghaus (1885)</span></td>
+      <td>The exponential decay of memory retention over time without reinforcement. The adaptive engine implements spaced repetition as a countermeasure: scenarios in categories where the employee has not trained for more than seven days are prioritised for re-presentation.</td>
+    </tr>
+    <tr class="ml-row">
+      <td><span class="term">K-Means Clustering</span><span class="acro">MacQueen, 1967</span></td>
+      <td>An unsupervised learning algorithm that partitions n observations into k clusters by minimising within-cluster variance (inertia). AHRID applies k = 5 on 18 behavioural features to produce five employee archetypes, validated with silhouette score = 0.2645.</td>
+    </tr>
+    <tr class="ml-row">
+      <td><span class="term">Mastery</span><span class="acro">AHRID context</span></td>
+      <td>A per-category proficiency threshold defined as ≥ 80% accuracy sustained over at least five scenario attempts in that category. Once mastered, the adaptive engine reduces frequency of that category and prioritises unmastered or recently failed categories.</td>
+    </tr>
+    <tr class="ml-row">
+      <td><span class="term">MDI</span><span class="acro">Mean Decrease in Impurity</span></td>
+      <td>A Random Forest feature importance metric that measures the total reduction in node impurity (Gini) contributed by splits on a given feature, averaged across all trees. MDI scores are normalised to sum to 1.0. In AHRID, <em>overall_accuracy</em> has the highest MDI (0.3096).</td>
+    </tr>
+    <tr class="ml-row">
+      <td><span class="term">PR-AUC</span><span class="acro">Precision-Recall AUC</span></td>
+      <td>The area under the precision-recall curve, computed using a one-vs-rest (OvR) strategy with macro averaging across all four risk classes. PR-AUC is preferred over ROC-AUC for imbalanced datasets. AHRID achieves PR-AUC = 0.9399.</td>
+    </tr>
+    <tr class="ml-row">
+      <td><span class="term">Random Forest (RF)</span><span class="acro">Breiman, 2001</span></td>
+      <td>An ensemble learning method that builds multiple decision trees on bootstrap samples and aggregates their predictions by majority vote. AHRID's classifier uses 200 trees, max_depth = 12, and class_weight = "balanced_subsample" to handle class imbalance.</td>
+    </tr>
+    <tr class="ml-row">
+      <td><span class="term">SHAP</span><span class="acro">SHapley Additive exPlanations</span></td>
+      <td>A unified framework for model interpretability based on cooperative game theory Shapley values (Lundberg &amp; Lee, 2017). SHAP assigns each feature a contribution score to individual predictions. AHRID uses <code>TreeExplainer</code> for efficient exact SHAP values from the RF model.</td>
+    </tr>
+    <tr class="ml-row">
+      <td><span class="term">Silhouette Score</span><span class="acro">Rousseeuw, 1987</span></td>
+      <td>A cluster quality metric ranging from −1 to +1, where values approaching +1 indicate well-separated clusters. Computed as (b − a) / max(a, b) where a = mean intra-cluster distance and b = mean nearest-cluster distance. AHRID's k = 5 solution achieves 0.2645.</td>
+    </tr>
+    <tr class="ml-row">
+      <td><span class="term">SMOTE</span><span class="acro">Synthetic Minority Over-sampling Technique</span></td>
+      <td>A data augmentation technique (Chawla et al., 2002) that generates synthetic minority-class samples by interpolating between k-nearest neighbours in feature space. Applied to the AHRID training set (k = 5) to balance four risk classes from 840 to 1,636 samples.</td>
+    </tr>
+    <tr class="ml-row">
+      <td><span class="term">XAI</span><span class="acro">Explainable Artificial Intelligence</span></td>
+      <td>A branch of AI concerned with making model decisions interpretable to human users. AHRID implements XAI via SHAP TreeExplainer to generate personalised explanations of risk scores, satisfying transparency requirements under IPA 2075 §7 and the GDPR right-to-explanation principle.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ══════════════════════════════════════════════
+     D.2 Cybersecurity Terms
+══════════════════════════════════════════════ -->
+<div class="section-heading sec-sec">
+  D.2 Cybersecurity Terms
+  <span class="sec-label">13 entries</span>
+</div>
+<table>
+  <thead>
+    <tr><th style="width:22%">Term / Abbreviation</th><th>Definition</th></tr>
+  </thead>
+  <tbody>
+    <tr class="sec-row">
+      <td><span class="term">AlienVault OTX</span><span class="acro">Open Threat Exchange</span></td>
+      <td>A community-driven threat intelligence platform that aggregates Indicators of Compromise (IoCs) including malicious URLs, IPs, and file hashes contributed by security researchers worldwide. AHRID's OSINT pipeline polls the OTX DirectConnect API for phishing pulses.</td>
+    </tr>
+    <tr class="sec-row">
+      <td><span class="term">API</span><span class="acro">Application Programming Interface</span></td>
+      <td>A defined set of rules and protocols enabling software components to communicate. AHRID exposes a RESTful API (61 endpoints, JSON payloads) over HTTPS, consumed by the React SPA frontend. All non-public routes are protected by JWT bearer authentication.</td>
+    </tr>
+    <tr class="sec-row">
+      <td><span class="term">bcrypt</span><span class="acro">—</span></td>
+      <td>A password-hashing function incorporating a work factor (cost factor) that intentionally slows computation to resist brute-force attacks. AHRID uses bcrypt with cost factor 12 via Flask-Bcrypt; the cost factor can be increased as hardware improves without rehashing existing passwords.</td>
+    </tr>
+    <tr class="sec-row">
+      <td><span class="term">Compliance Budget</span><span class="acro">AHRID / IPA 2075</span></td>
+      <td>The proportion of training scenarios that an employee must complete within a specified review period to remain compliant with the organisation's security awareness programme. Displayed as a percentage on the employee dashboard and used by managers for reporting.</td>
+    </tr>
+    <tr class="sec-row">
+      <td><span class="term">IDN / Homograph Attack</span><span class="acro">Internationalised Domain Name</span></td>
+      <td>A phishing technique that exploits visually similar Unicode characters (e.g., Cyrillic "а" vs Latin "a") to create domain names indistinguishable to the human eye. IDN encoding is a Level 3 (Advanced) difficulty signal in the OSINT difficulty classification heuristic.</td>
+    </tr>
+    <tr class="sec-row">
+      <td><span class="term">IPA 2075</span><span class="acro">Information Protection Act 2075 (BS)</span></td>
+      <td>Nepal's primary data protection legislation (enacted 2018 CE / 2075 BS) governing the collection, processing, and storage of personal information. AHRID's design incorporates IPA 2075 requirements including data minimisation (§5), consent mechanisms (§8), and user transparency rights (§7).</td>
+    </tr>
+    <tr class="sec-row">
+      <td><span class="term">JWT</span><span class="acro">JSON Web Token · RFC 7519</span></td>
+      <td>A compact, URL-safe token format used to transmit claims between parties as a digitally signed JSON object. AHRID issues access tokens (15-minute expiry) and refresh tokens (30-day expiry). A server-side blocklist invalidates tokens on logout, preventing reuse within the remaining validity window.</td>
+    </tr>
+    <tr class="sec-row">
+      <td><span class="term">OSINT</span><span class="acro">Open-Source Intelligence</span></td>
+      <td>The practice of collecting and analysing information from publicly available sources. AHRID's OSINT pipeline ingests real phishing URLs from Phishing.Database and AlienVault OTX, classifies them by lure type and difficulty, and converts them into training scenarios automatically.</td>
+    </tr>
+    <tr class="sec-row">
+      <td><span class="term">Phishing.Database</span><span class="acro">mitchellkrogza/Phishing.Database</span></td>
+      <td>An open-source repository of verified phishing URLs maintained on GitHub, updated daily with new entries from multiple community sources. AHRID's threat ingestion service fetches the <code>phishing_links_ACTIVE.txt</code> file to supply recent, real-world phishing examples for training scenarios.</td>
+    </tr>
+    <tr class="sec-row">
+      <td><span class="term">PMT</span><span class="acro">Protection Motivation Theory · Rogers, 1975</span></td>
+      <td>A psychological model explaining how individuals respond to threatening information based on perceived threat severity, vulnerability, self-efficacy, and response efficacy. AHRID's training design applies PMT by presenting real threat examples (high perceived severity) alongside achievable protective actions (high self-efficacy cues).</td>
+    </tr>
+    <tr class="sec-row">
+      <td><span class="term">RBAC</span><span class="acro">Role-Based Access Control</span></td>
+      <td>An access control model that restricts system operations based on the roles assigned to individual users. AHRID implements three roles — <em>employee</em>, <em>manager</em>, and <em>admin</em> — enforced at the API layer via JWT role claims and route-level decorators.</td>
+    </tr>
+    <tr class="sec-row">
+      <td><span class="term">Social Engineering</span><span class="acro">—</span></td>
+      <td>Psychological manipulation of individuals to perform actions or divulge confidential information. Encompasses phishing, pretexting, baiting, and vishing. AHRID's training scenarios cover eight social engineering attack categories derived from real OSINT-sourced phishing URLs and manually authored examples.</td>
+    </tr>
+    <tr class="sec-row">
+      <td><span class="term">Typosquatting</span><span class="acro">—</span></td>
+      <td>A form of cyber attack that registers domain names closely resembling legitimate brands, exploiting common typing errors (e.g., <em>gooogle.com</em>) or character substitutions (e.g., <em>paypa1.com</em>). Detected by AHRID's keyword pattern matcher as a Level 1 (Obvious) difficulty signal.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ══════════════════════════════════════════════
+     D.3 AHRID-Specific Terms
+══════════════════════════════════════════════ -->
+<div class="section-heading sec-ahrid">
+  D.3 AHRID-Specific Terms
+  <span class="sec-label">8 entries</span>
+</div>
+<table>
+  <thead>
+    <tr><th style="width:22%">Term / Abbreviation</th><th>Definition</th></tr>
+  </thead>
+  <tbody>
+    <tr class="ahrid-row">
+      <td><span class="term">AHRID</span><span class="acro">Adaptive Human-Risk Intelligence Dashboard</span></td>
+      <td>The system developed for this thesis: a full-stack web application that combines OSINT-driven scenario generation, K-Means behavioural clustering, Random Forest risk classification, SHAP explainability, and a spaced-repetition adaptive engine to deliver personalised cybersecurity awareness training.</td>
+    </tr>
+    <tr class="ahrid-row">
+      <td><span class="term">Archetype</span><span class="acro">K-Means cluster profile</span></td>
+      <td>One of five behavioural profiles produced by K-Means clustering of employee training data. Each archetype captures a distinct combination of speed, accuracy, consistency, and overconfidence patterns: C0 Overconfident Clicker (n=239), C1 Cautious Learner (n=266), C2 Inconsistent Performer (n=216), C3 Resilient Defender (n=185), C4 Disengaged Completer (n=145).</td>
+    </tr>
+    <tr class="ahrid-row">
+      <td><span class="term">Behavioural Risk Score</span><span class="acro">BRS</span></td>
+      <td>A composite score (0–100) produced by the Random Forest classifier, representing an employee's probability of exhibiting high-risk security behaviour. Derived from 18 behavioural features extracted from training session history. Displayed on the employee dashboard with SHAP-based explanations.</td>
+    </tr>
+    <tr class="ahrid-row">
+      <td><span class="term">DSR / DSRM</span><span class="acro">Design Science Research Methodology</span></td>
+      <td>The research paradigm used for this thesis (Peffers et al., 2007). DSRM produces and evaluates IT artefacts (software, models, methods) as research contributions. AHRID was developed following the six DSRM phases: problem identification, objectives, design &amp; development, demonstration, evaluation, and communication.</td>
+    </tr>
+    <tr class="ahrid-row">
+      <td><span class="term">SME</span><span class="acro">Small and Medium-sized Enterprise</span></td>
+      <td>The primary target organisation type for AHRID. SMEs are defined by the European Commission as enterprises with fewer than 250 employees and annual turnover not exceeding €50 million. SMEs are disproportionately targeted by phishing attacks (APWG, 2022) yet lack dedicated security training resources.</td>
+    </tr>
+    <tr class="ahrid-row">
+      <td><span class="term">SPA</span><span class="acro">Single-Page Application</span></td>
+      <td>A web application architecture that loads a single HTML page and dynamically updates content via JavaScript without full page reloads. AHRID's frontend is built as a React 18 SPA using Vite as the build tool, communicating with the Flask backend exclusively via REST API calls.</td>
+    </tr>
+    <tr class="ahrid-row">
+      <td><span class="term">SUS</span><span class="acro">System Usability Scale · Brooke, 1996</span></td>
+      <td>A validated 10-item Likert questionnaire producing a usability score from 0 to 100. Scores above 68 are considered above-average usability; scores above 80 indicate excellent usability. Used in AHRID's evaluation phase to assess user experience independently of task performance.</td>
+    </tr>
+    <tr class="ahrid-row">
+      <td><span class="term">Transparency Policy</span><span class="acro">XAI disclosure</span></td>
+      <td>The AHRID endpoint (<code>/api/v1/eval/transparency-policy</code>) and corresponding UI panel that disclose to employees how their risk score is computed, which features are used, what data is retained, and how to request data deletion. Required under IPA 2075 §7 and aligned with GDPR Article 22 (automated decision-making).</td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="note">
+  Entries are listed alphabetically within each section.
+  Cross-references: terms in <em>italics</em> within a definition refer to other glossary entries.
+  All acronyms are expanded on first use in the thesis body text.
+</p>
+
+</div>
+</body>
+</html>

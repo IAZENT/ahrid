@@ -1,8 +1,9 @@
 """Random Forest risk-prediction inference service (BSc scope).
 
-14-feature vector preserved (master doc Phase 5). Dropped sentiment/XP
-features have been replaced with response-time-derived behavioural
-proxies so the contract length is unchanged.
+18-feature vector: 17 behavioural features + K-Means cluster_label.
+The cluster label (0–4) encodes long-run archetype membership and is
+predicted on-the-fly via UserClusterer at both training and inference
+time, making K-Means a hard upstream dependency for this predictor.
 """
 from __future__ import annotations
 
@@ -32,9 +33,12 @@ JOB_ROLE_ENCODING = {
 RISK_LEVEL_ENCODING = {"low": 0, "medium": 1, "high": 2, "critical": 3}
 RISK_LEVEL_DECODING = {v: k for k, v in RISK_LEVEL_ENCODING.items()}
 
-# Behavioural-proxy thresholds (BSc replacement for VADER sentiment).
-FAST_RESPONSE_MS = 4000      # under this => "rushed"
-OVERCONFIDENT_MS = 2000      # under this AND wrong => "overconfident"
+# Behavioural-proxy thresholds calibrated to scenario reading time.
+# Minimum honest read+decide time for the shortest AHRID scenario (~25 words
+# SMS/smishing) is ~20s at 200 WPM; anything faster = didn't read properly.
+# Overconfident: answered in under 10s AND wrong = clicked without reading.
+FAST_RESPONSE_MS = 20_000    # under 20 s => "rushed"
+OVERCONFIDENT_MS = 10_000    # under 10 s AND wrong => "overconfident"
 
 FEATURE_NAMES: list[str] = [
     "avg_response_time_ms",
@@ -43,7 +47,10 @@ FEATURE_NAMES: list[str] = [
     "social_engineering_accuracy",
     "password_hygiene_accuracy",
     "physical_security_accuracy",
-    "overall_accuracy",
+    "vishing_accuracy",
+    "data_handling_accuracy",
+    "usb_baiting_accuracy",
+    "overall_accuracy",random_forest_model.py 
     "fast_attempt_rate",
     "overconfident_rate",
     "session_consistency",
@@ -51,9 +58,10 @@ FEATURE_NAMES: list[str] = [
     "total_sessions",
     "days_since_last_session",
     "attempts_count",
+    "cluster_label",
 ]
 N_FEATURES = len(FEATURE_NAMES)
-assert N_FEATURES == 14, "Feature count drift  master doc requires exactly 14"
+assert N_FEATURES == 18, "Feature count drift — master doc requires exactly 18"
 
 MIN_ATTEMPTS_FOR_PREDICT = 10
 
@@ -119,6 +127,12 @@ def build_feature_vector_for_user(user_id) -> np.ndarray | None:
     else:
         session_consistency = 0.0
 
+    # Cluster label: long-run archetype membership (0–4).
+    # K-Means must be trained before RF; returns 0 when model not ready.
+    from app.services.kmeans_clustering import UserClusterer
+    cluster_id = UserClusterer().predict_cluster(user_id)
+    cluster_label_val = float(cluster_id) if cluster_id is not None else 0.0
+
     return np.array(
         [
             avg_rt,
@@ -127,6 +141,9 @@ def build_feature_vector_for_user(user_id) -> np.ndarray | None:
             _category_accuracy(attempts, "social_engineering"),
             _category_accuracy(attempts, "password_hygiene"),
             _category_accuracy(attempts, "physical_security"),
+            _category_accuracy(attempts, "vishing"),
+            _category_accuracy(attempts, "data_handling"),
+            _category_accuracy(attempts, "usb_baiting"),
             overall_acc,
             fast_rate,
             overconfident_rate,
@@ -135,6 +152,7 @@ def build_feature_vector_for_user(user_id) -> np.ndarray | None:
             float(total_sessions),
             float(days_since),
             float(len(attempts)),
+            cluster_label_val,
         ],
         dtype=float,
     )

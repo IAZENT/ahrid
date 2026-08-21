@@ -35,21 +35,25 @@ JOB_ROLES = ["receptionist", "accountant", "hr", "it", "finance", "sales", "mana
 
 # Profile definitions: (label, base_accuracy, rt_correct_range, rt_wrong_range,
 #                       n_users, attempts_per_user_range)
+# Response times calibrated to realistic scenario reading times.
+# FAST threshold = 20,000 ms; OVERCONFIDENT threshold = 10,000 ms AND wrong.
+# Shortest scenario (smishing, ~25 words) requires ~20s minimum honest read.
+# Longest scenarios (vishing/data_handling, ~150 words) require 60-120s.
 PROFILES = [
-    # critical: very low accuracy, fast/guessing, overconfident
-    ("critical", 0.15, (1500, 3500), (1200, 3000), 200, (20, 35)),
-    # high: low accuracy, rushed
-    ("high", 0.35, (2000, 5000), (1500, 4000), 200, (18, 30)),
-    # medium: moderate accuracy, some categories weak
-    ("medium", 0.60, (2500, 6000), (3000, 7000), 250, (15, 25)),
-    # low: good accuracy, careful
-    ("low", 0.82, (3000, 7000), (4000, 10000), 250, (15, 30)),
-    # very low risk: excellent accuracy, fast but correct
-    ("very_low", 0.92, (2500, 5500), (5000, 12000), 150, (20, 40)),
+    # critical: very low accuracy, rushing/guessing, many responses flagged fast+overconfident
+    ("critical", 0.12, (15000, 40000), (8000, 22000), 200, (20, 35)),
+    # high: low accuracy, often rushed on wrong answers
+    ("high", 0.30, (30000, 70000), (15000, 35000), 200, (18, 30)),
+    # medium: moderate accuracy, normal reading pace, rarely flagged
+    ("medium", 0.58, (45000, 90000), (30000, 65000), 250, (15, 25)),
+    # low: good accuracy, careful deliberate reading
+    ("low", 0.85, (60000, 120000), (50000, 100000), 250, (15, 30)),
+    # very_low: excellent accuracy, confident and efficient — fast but correct
+    ("very_low", 0.95, (35000, 80000), (50000, 100000), 150, (20, 40)),
 ]
 
 # Per-user jitter so users within a tier aren't clones of the profile mean.
-PER_USER_ACCURACY_JITTER = 0.07
+PER_USER_ACCURACY_JITTER = 0.04
 
 FIRST_NAMES = [
     "Aarav", "Vivaan", "Aditya", "Arjun", "Sai", "Reyansh", "Krishna", "Ishaan",
@@ -126,18 +130,21 @@ def _generate_attempts(
                     sc = random.choice(candidates)
 
             # Accuracy varies by difficulty
-            diff_modifier = {1: 0.10, 2: 0.0, 3: -0.15}.get(sc.difficulty, 0)
-            category_modifier = random.gauss(0, 0.08)
-            effective_acc = max(0.05, min(0.95, base_accuracy + diff_modifier + category_modifier))
+            diff_modifier = {1: 0.05, 2: 0.0, 3: -0.05}.get(sc.difficulty, 0)
+            category_modifier = random.gauss(0, 0.03)
+            effective_acc = max(0.05, min(0.98, base_accuracy + diff_modifier + category_modifier))
 
             is_correct = random.random() < effective_acc
             rt = random.randint(*rt_correct) if is_correct else random.randint(*rt_wrong)
-
-            # Occasional very fast overconfident answers
+            # Occasional fast overconfident answers (cross-profile noise).
+            # Correct + fast: lucky guess or strong prior knowledge.
             if is_correct and random.random() < 0.05:
-                rt = random.randint(800, 1500)
+                rt = random.randint(12000, 19000)
+            # Wrong + fast: answered without reading (overconfident).
+            # Range straddles the 10,000 ms threshold so ~30% register as
+            # overconfident (< 10 s) and the rest as merely rushed (< 20 s).
             if not is_correct and random.random() < 0.15:
-                rt = random.randint(1000, 2500)
+                rt = random.randint(6000, 19000)
 
             answer = sc.correct_answer if is_correct else random.choice(
                 [a for a in ("A", "B", "C", "D") if a != sc.correct_answer]

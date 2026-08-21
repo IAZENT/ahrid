@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 12 — RF Per-Class Performance</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #ffffff;
+    color: #2c2c2a;
+    padding: 2rem;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  #rf-wrap { padding: 0.5rem 0; }
+  .fig-caption { font-size: 11px; color: #5F5E5A; margin: 10px 0 0; line-height: 1.7; }
+  .fig-caption strong { color: #2c2c2a; font-weight: 500; }
+</style>
+</head>
+<body>
+<div id="rf-wrap"></div>
+<p class="fig-caption">
+  <strong>Figure 12.</strong>
+  Random Forest classifier per-class performance on the held-out test set (n=210, 80:20 stratified split).
+  Bars show Precision (P), Recall (R), and F1-score for each of the four risk tiers.
+  Low Risk (Class 0) achieves perfect precision (1.000) — zero safe employees misclassified as at-risk.
+  Critical Risk (Class 3) achieves highest recall (0.943) — 94.3% of the most dangerous profiles correctly identified.
+  Macro-averaged F1=0.889; overall accuracy=90.95%; Cohen&#x2019;s &#x3ba;=0.868 (&#x201C;almost perfect&#x201D;).
+  Baseline rule-based classifier F1=0.387 (+50.21 percentage-point improvement).
+</p>
+<script>
+(function(){
+const NS='http://www.w3.org/2000/svg';
+function e(tag,a={}){const n=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(a))n.setAttribute(k,String(v));return n;}
+function tx(x,y,str,fill,sz=10,fw='400',anchor='middle'){
+  const n=e('text',{x,y,fill,'font-size':sz,'font-weight':fw,'text-anchor':anchor,'font-family':'system-ui,sans-serif'});
+  n.textContent=str;return n;
+}
+
+const W=700, H=340;
+const svg=e('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'RF per-class performance chart','style':'width:100%;display:block;'});
+const t=e('title');t.textContent='Random Forest Per-Class Performance — Figure 12';svg.append(t);
+
+// Layout
+const PAD={l:60,r:20,t:30,b:80};
+const CW=W-PAD.l-PAD.r, CH=H-PAD.t-PAD.b;
+
+// Data
+const classes=[
+  {label:'Low Risk\n(Class 0)',short:'Low (0)',p:1.000,r:0.922,f:0.959,
+   pf:'#dbeafe',rf:'#93c5fd',ff:'#3b82f6',tf:'#1e3a5f'},
+  {label:'Medium Risk\n(Class 1)',short:'Medium (1)',p:0.784,r:0.906,f:0.841,
+   pf:'#fef3c7',rf:'#fcd34d',ff:'#f59e0b',tf:'#451a03'},
+  {label:'High Risk\n(Class 2)',short:'High (2)',p:0.875,r:0.854,f:0.864,
+   pf:'#fee2e2',rf:'#fca5a5',ff:'#ef4444',tf:'#4a0101'},
+  {label:'Critical\n(Class 3)',short:'Critical (3)',p:0.846,r:0.943,f:0.892,
+   pf:'#f3e8ff',rf:'#c4b5fd',ff:'#7c3aed',tf:'#1e0047'},
+];
+
+const metrics=['p','r','f'];
+const mLabels=['Precision','Recall','F1-Score'];
+const mColors=['#185FA5','#0F6E56','#534AB7'];
+
+const nGroups=4, barsPerGroup=3, groupGap=28, barGap=3;
+const totalBarW=CW-groupGap*(nGroups-1);
+const groupW=totalBarW/nGroups;
+const barW=(groupW-barGap*(barsPerGroup-1))/barsPerGroup;
+
+// Y axis
+const maxVal=1.05;
+function toY(v){ return PAD.t + CH*(1-v/maxVal); }
+
+// Grid lines
+for(let v=0;v<=1.0;v+=0.2){
+  const y=toY(v);
+  svg.append(e('line',{x1:PAD.l,y1:y,x2:PAD.l+CW,y2:y,stroke:'#e5e7eb','stroke-width':0.5}));
+  svg.append(tx(PAD.l-6,y+4,v.toFixed(1),'#888780',9,'400','end'));
+}
+
+// Axes
+svg.append(e('line',{x1:PAD.l,y1:PAD.t,x2:PAD.l,y2:PAD.t+CH,stroke:'#d1d5db','stroke-width':1}));
+svg.append(e('line',{x1:PAD.l,y1:PAD.t+CH,x2:PAD.l+CW,y2:PAD.t+CH,stroke:'#d1d5db','stroke-width':1}));
+
+// Bars
+classes.forEach((cls,i)=>{
+  const gx=PAD.l+i*(groupW+groupGap);
+  metrics.forEach((m,j)=>{
+    const val=cls[m];
+    const x=gx+j*(barW+barGap);
+    const y=toY(val);
+    const bh=PAD.t+CH-y;
+    // bar
+    svg.append(e('rect',{x,y,width:barW,height:bh,fill:mColors[j],rx:2,opacity:0.85}));
+    // value label on top
+    svg.append(tx(x+barW/2,y-4,val.toFixed(3),'#2c2c2a',8,'500'));
+  });
+  // class label (two lines)
+  const lx=gx+groupW/2, ly=PAD.t+CH+16;
+  const parts=cls.short.split(' ');
+  svg.append(tx(lx,ly,parts[0],'#2c2c2a',9,'600'));
+  svg.append(tx(lx,ly+13,parts.slice(1).join(' '),'#5F5E5A',8,'400'));
+});
+
+// Legend
+const legX=PAD.l, legY=PAD.t-20;
+metrics.forEach((m,j)=>{
+  const lx=legX+j*110;
+  svg.append(e('rect',{x:lx,y:legY,width:12,height:12,fill:mColors[j],rx:2}));
+  svg.append(tx(lx+16,legY+10,mLabels[j],'#2c2c2a',9,'400','start'));
+});
+
+// Macro avg line
+const macroF1=0.889;
+const my=toY(macroF1);
+svg.append(e('line',{x1:PAD.l,y1:my,x2:PAD.l+CW,y2:my,stroke:'#888780','stroke-width':1,'stroke-dasharray':'6 3'}));
+svg.append(tx(PAD.l+CW-2,my-4,'Macro F1=0.889','#5F5E5A',8,'400','end'));
+
+// Y axis label
+const ylab=e('text',{x:14,y:PAD.t+CH/2,fill:'#5F5E5A','font-size':9,'font-weight':'400','text-anchor':'middle','font-family':'system-ui,sans-serif',transform:`rotate(-90,14,${PAD.t+CH/2})`});
+ylab.textContent='Score';svg.append(ylab);
+
+svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+document.getElementById('rf-wrap').append(svg);
+})();
+</script>
+</body>
+</html>

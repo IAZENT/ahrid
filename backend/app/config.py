@@ -39,11 +39,7 @@ class BaseConfig:
         "PHISHSTATS_FEED_URL",
         "https://raw.githubusercontent.com/Phishing-Database/Phishing.Database/master/phishing-links-ACTIVE.txt",
     )
-    OPENPHISH_FEED_URL = os.environ.get(
-        "OPENPHISH_FEED_URL", "https://openphish.com/feed.txt"
-    )
     ALIENVAULT_OTX_KEY = os.environ.get("ALIENVAULT_OTX_KEY", "")
-    URLSCAN_API_KEY = os.environ.get("URLSCAN_API_KEY", "")
     THREAT_FEED_REFRESH_HOURS = int(os.environ.get("THREAT_FEED_REFRESH_HOURS", "6"))
 
     # ML

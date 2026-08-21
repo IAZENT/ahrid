@@ -1,0 +1,196 @@
+
+✅ Keep (title-aligned)
+ML core
+Random Forest classifier
+Explicitly named in title. 14-feature vector is fine - keep as-is.
+KMeans clustering (5 archetypes)
+"Clustering on user telemetry" - required. Keep 6-feature vector.
+Threat feed
+OSINT pipeline (4 sources)
+Phishing.Database and AlienVault OTX - keep all.
+Scenario classifier
+6 lure typologies. Needed to turn raw feeds into training content.
+Risk scoring
+Behavioural risk scorer
+8-category + composite score + risk_level - core thesis output.
+User telemetry (response_time, accuracy)
+Powers RF + KMeans. Keep UserBehaviorEvent + Attempt.
+Adaptive engine
+Mastery-based scenario selection
+Recency-weighted accuracy, difficulty promotion/demotion. Core to "adaptive" in title.
+Core auth + dashboard
+Auth (admin + employee + manager roles)
+JWT, bcrypt, RBAC - keep but simplify (see Simplify column).
+Employee training UI (MCQ)
+The awareness uplift evaluation target. Keep MCQ + true_false + identify_threat.
+Manager/admin risk dashboard
+The "intelligence dashboard" from title. KPI tiles, risk heatmap, cluster view.
+Threat feed display panel
+"Live threat-feed integration" - keep the ThreatFeedPage and badge.
+Evaluation hooks
+Score history + session summary
+Needed to measure "awareness uplift" over time - the assessment metric in title.
+RF prediction card (my-score page)
+Demonstrates "prediction accuracy" evaluation - keep RfPredictionCard.
+Cluster archetype card
+Shows "risk-score transparency" - which archetype the user is and why.
+
+
+⚠️ Simplify (cut the excess)
+Adaptive engine
+Remove Thompson Sampler (Bayesian bandit)
+Too research-heavy for BSc scope. Simple weighted selection is enough. Keep mastery scoring.
+Simplify sentiment - drop to 2 labels
+Keep only response_time_ms as a behavioural signal. VADER compound adds complexity with no title grounding. If you keep it, call it a "behavioural proxy" not a full sentiment engine.
+Background jobs
+Keep only 2 of 7 scheduler jobs
+Keep: threat_ingestion + risk_recalc. Drop: llm_scenario_generation, cyber_news_ingestion, weekly_xp_reset, rf_retrain (manual trigger is fine for BSc), kmeans_recluster.
+Auth / admin
+Drop invite system
+For BSc demo, seed users directly. No invite tokens needed.
+Drop profile change request workflow
+HR workflow irrelevant to thesis. Remove Phase-23 Phase-2 entirely.
+Drop admin coaching system
+coaching_note + coaching_hints not in scope. Simplifies User model and removes Thompson coupling.
+Notifications
+Trim to 2 notification types
+Keep: risk_escalation + training_assigned. Drop: level_up, badge_earned, streak_milestone, announcement, system. You don't need gamification events.
+Security
+Keep core security, drop over-engineering
+Keep: JWT blocklist, bcrypt, rate-limiting on auth, CORS. Drop: Flask-Talisman HSTS (local only), vercel.json headers. Mention security considerations in chapter but don't over-build.
+Data model
+Trim from 17 to ~10 models
+Drop: UserGamification, UserCluster history (keep User.cluster_label only), CyberNews, FamousBreach, ProfileChangeRequest, SystemCounter, Invite. That's 7 models gone.
+Frontend
+Keep MyScore, drop gamification pages
+Keep: dashboard, training, my-score, history, profile. Drop: badges, leaderboard. The leaderboard hides risk scores anyway - it adds nothing to your thesis evaluation.
+
+
+❌ Remove (out of scope)
+LLM stack - entire system
+Gemini 2.5 Flash + Ollama fallback
+The title says nothing about generative AI. LLM scenario generation is a separate research topic entirely. This is your biggest scope creep.
+Free-text question types + LLM grader
+short_answer, descriptive, fill_in_blank, answer_evaluator.py - all depend on Ollama. Remove completely. Stick to MCQ + true_false + identify_threat.
+AIGenerationPage (admin panel)
+Entire page becomes dead weight without LLM backend.
+llm_orchestrator, gemini_generator, ollama_fallback
+All LLM service files can be deleted.
+Gamification - entire system
+XP, levels, streaks, badges (12 types)
+Zero mention in title. Adds code weight and distracts from the research contribution. UserGamification model + gamification_engine.py - remove.
+Daily challenge + leaderboard
+Leaderboard anonymises everything anyway - no value for thesis evaluation. Drop /gamification/* routes.
+Streak bonuses + XP rewards
+Engagement mechanics, not research contributions.
+Content modules
+Cyber News RSS module
+CyberNews model, RSS ingestion, /news routes, cyber_news_ingestion job - not in title scope.
+Famous Breach Chronicle
+FamousBreach model, /breach-chronicle routes, seed_breaches.py - interesting but completely out of title scope.
+Architecture
+Multi-tenancy (org_id everywhere)
+Your thesis is scoped to SMEs in Kathmandu Valley - one org for the study is enough. Multi-tenancy adds 0 to the research contribution. Remove Organisation model, remove org_id foreign keys.
+Peer signal service
+peer_signal_service.py + /scores/peer-insight - adds complexity with no title alignment.
+MyInsightsPage (peer trends)
+Depends on peer signal. Drop the page and the route.
+
+
+
+
+
+
+✅ Keep (title-aligned)
+ML core
+Random Forest classifier
+Explicitly named in title. 14-feature vector is fine - keep as-is.
+KMeans clustering (5 archetypes)
+"Clustering on user telemetry" - required. Keep 6-feature vector.
+Threat feed
+OSINT pipeline (4 sources)
+Phishing.Database and AlienVault OTX - keep all.
+Scenario classifier
+6 lure typologies. Needed to turn raw feeds into training content.
+Risk scoring
+Behavioural risk scorer
+8-category + composite score + risk_level - core thesis output.
+User telemetry (response_time, accuracy)
+Powers RF + KMeans. Keep UserBehaviorEvent + Attempt.
+Adaptive engine
+Mastery-based scenario selection
+Recency-weighted accuracy, difficulty promotion/demotion. Core to "adaptive" in title.
+Core auth + dashboard
+Auth (admin + employee + manager roles)
+JWT, bcrypt, RBAC - keep but simplify (see Simplify column).
+Employee training UI (MCQ)
+The awareness uplift evaluation target. Keep MCQ + true_false + identify_threat.
+Manager/admin risk dashboard
+The "intelligence dashboard" from title. KPI tiles, risk heatmap, cluster view.
+Threat feed display panel
+"Live threat-feed integration" - keep the ThreatFeedPage and badge.
+Evaluation hooks
+Score history + session summary
+Needed to measure "awareness uplift" over time - the assessment metric in title.
+RF prediction card (my-score page)
+Demonstrates "prediction accuracy" evaluation - keep RfPredictionCard.
+Cluster archetype card
+Shows "risk-score transparency" - which archetype the user is and why.
+⚠️ Simplify (cut the excess)
+Adaptive engine
+Remove Thompson Sampler (Bayesian bandit)
+Too research-heavy for BSc scope. Simple weighted selection is enough. Keep mastery scoring.
+Simplify sentiment - drop to 2 labels
+Keep only response_time_ms as a behavioural signal. VADER compound adds complexity with no title grounding. If you keep it, call it a "behavioural proxy" not a full sentiment engine.
+Background jobs
+Keep only 2 of 7 scheduler jobs
+Keep: threat_ingestion + risk_recalc. Drop: llm_scenario_generation, cyber_news_ingestion, weekly_xp_reset, rf_retrain (manual trigger is fine for BSc), kmeans_recluster.
+Auth / admin
+Drop invite system
+For BSc demo, seed users directly. No invite tokens needed.
+Drop profile change request workflow
+HR workflow irrelevant to thesis. Remove Phase-23 Phase-2 entirely.
+Drop admin coaching system
+coaching_note + coaching_hints not in scope. Simplifies User model and removes Thompson coupling.
+Notifications
+Trim to 2 notification types
+Keep: risk_escalation + training_assigned. Drop: level_up, badge_earned, streak_milestone, announcement, system. You don't need gamification events.
+Security
+Keep core security, drop over-engineering
+Keep: JWT blocklist, bcrypt, rate-limiting on auth, CORS. Drop: Flask-Talisman HSTS (local only), vercel.json headers. Mention security considerations in chapter but don't over-build.
+Data model
+Trim from 17 to ~10 models
+Drop: UserGamification, UserCluster history (keep User.cluster_label only), CyberNews, FamousBreach, ProfileChangeRequest, SystemCounter, Invite. That's 7 models gone.
+Frontend
+Keep MyScore, drop gamification pages
+Keep: dashboard, training, my-score, history, profile. Drop: badges, leaderboard. The leaderboard hides risk scores anyway - it adds nothing to your thesis evaluation.
+❌ Remove (out of scope)
+LLM stack - entire system
+Gemini 2.5 Flash + Ollama fallback
+The title says nothing about generative AI. LLM scenario generation is a separate research topic entirely. This is your biggest scope creep.
+Free-text question types + LLM grader
+short_answer, descriptive, fill_in_blank, answer_evaluator.py - all depend on Ollama. Remove completely. Stick to MCQ + true_false + identify_threat.
+AIGenerationPage (admin panel)
+Entire page becomes dead weight without LLM backend.
+llm_orchestrator, gemini_generator, ollama_fallback
+All LLM service files can be deleted.
+Gamification - entire system
+XP, levels, streaks, badges (12 types)
+Zero mention in title. Adds code weight and distracts from the research contribution. UserGamification model + gamification_engine.py - remove.
+Daily challenge + leaderboard
+Leaderboard anonymises everything anyway - no value for thesis evaluation. Drop /gamification/* routes.
+Streak bonuses + XP rewards
+Engagement mechanics, not research contributions.
+Content modules
+Cyber News RSS module
+CyberNews model, RSS ingestion, /news routes, cyber_news_ingestion job - not in title scope.
+Famous Breach Chronicle
+FamousBreach model, /breach-chronicle routes, seed_breaches.py - interesting but completely out of title scope.
+Architecture
+Multi-tenancy (org_id everywhere)
+Your thesis is scoped to SMEs in Kathmandu Valley - one org for the study is enough. Multi-tenancy adds 0 to the research contribution. Remove Organisation model, remove org_id foreign keys.
+Peer signal service
+peer_signal_service.py + /scores/peer-insight - adds complexity with no title alignment.
+MyInsightsPage (peer trends)
+Depends on peer signal. Drop the page and the route.
+

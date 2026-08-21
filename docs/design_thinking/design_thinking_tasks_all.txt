@@ -1,0 +1,514 @@
+================================================================================
+AHRIP - DESIGN THINKING DELIVERABLES
+Adaptive Human Risk Intelligence Platform
+Context: Kathmandu-based employees (Himalayan Finance Ltd)
+================================================================================
+
+Product: AHRIP is a cybersecurity awareness training webapp that uses a
+mastery-based adaptive engine, Random Forest risk scoring, K-Means user
+clustering, SHAP explainability, and OSINT threat feeds (Phishing.Database,
+AlienVault OTX) with rule-based scenario generation.
+Targets employees at Kathmandu Valley organizations.
+
+What USER (Employee) sees when opening the webapp:
+- Dashboard: Risk score, sessions completed, weekly trend
+- Training: Adaptive MCQ session (20 questions), timer, category badge, difficulty
+- My Score: Detailed risk breakdown by category
+- History: Past session results
+- Profile: Personal details, job role, department
+- Evaluation: Self-assessment form
+
+What ADMIN sees when opening the webapp:
+- Admin Dashboard: Total users, active scenarios, threats ingested (24h), attempts (24h), ML model status, background job controls (Ingest Feed / Retrain Models)
+- Users: Create, edit, deactivate, assign roles/job_roles
+- Scenarios: CRUD for training items (MCQ, T/F, identify_threat)
+- Threat Feed: Ingested phishing URLs, brand targets, conversion status
+- Password Resets: Approve/reject employee reset requests
+- Evaluation Admin: View evaluation responses
+
+What MANAGER sees:
+- Team Intelligence: Avg risk, high/critical count, sessions/week, trend
+- Team: Individual member profiles, assign targeted training
+- Clusters: K-Means archetype distribution
+- Reports: Aggregated analytics
+
+================================================================================
+1. EMPATHY MAP
+================================================================================
+Persona: Suman Shrestha, 28, Accountant at Himalayan Finance Ltd, Putalisadak
+Uses Tally, Excel, NIC Asia Bank portal daily. Commutes from Lalitpur.
+
+SEES:
+- AHRIP dashboard showing risk score number and a colored risk-level badge
+- Scenario cards with phishing email content (fake NIC Asia login pages)
+- Progress bar showing question 4/20 during a training session
+- Session summary at the end: accuracy ring, duration, weakest category
+- Colleagues in the open-plan office completing training at their desks
+- Timer counting seconds while reading a scenario question
+
+SAYS:
+- "I finished my training for this week, done."
+- "This phishing email looks like the real NIC Asia one, how am I supposed to tell?"
+- "My risk score dropped from 72 to 65 but I don't feel any safer."
+- "Can I do this later? Month-end reconciliation is due today."
+
+THINKS:
+- "My risk score is a number but I don't know what it actually measures."
+- "The card says 'Selected for your accounting role' but I still don't get it."
+- "If I answer fast, I get easier questions next time. System rewards speed."
+- "My risk score dropped but I still clicked a suspicious link last week."
+- "I see accuracy % at the end but forget it by the next session."
+
+DOES:
+- Rushes through 20-question sessions during lunch break to finish fast
+- Selects answers quickly without reading full scenario content
+- Glances at session summary accuracy % then closes the page immediately
+- Skips reading the feedback explanation after wrong answers
+- Opens training during month-end then gets interrupted by Tally alerts
+
+FEELS:
+- Frustrated that training interrupts actual accounting deadlines
+- Anxious about the visible risk score - colleagues or manager might judge
+- Bored despite the role-relevance label - the scenarios still feel like a test
+- Indifferent toward the mastery percentage shown in feedback - just a number
+- Confused by the My Score page (risk score, RF prediction, cluster archetype)
+
+KEY INSIGHT (Employee):
+Suman completes sessions to get them done, not to learn. The system shows him
+a risk score and mastery % but these numbers don't change how he thinks about
+security. The gap between "finishing 20 questions" and "understanding why that
+fake NIC Asia login was dangerous" is where real vulnerability lives.
+
+--------------------------------------------------------------------------------
+Persona 2: Rajesh Tamang, 34, IT Security Admin at Himalayan Finance Ltd
+Works remotely from Bhaktapur. Manages AHRIP platform, monitors threat feeds.
+
+SEES:
+- Admin dashboard with total users, active scenarios, threats ingested (24h)
+- ML model status panel (Random Forest trained/untrained, last retrained date)
+- Background job controls: "Ingest Feed" and "Retrain Models" buttons
+- User table with names, roles, risk scores, cluster labels, active status
+- Threat feed list showing ingested phishing URLs, target brands, conversion %
+- Password reset requests queue waiting for approval
+
+SAYS:
+- "The risk score says 72 but I don't know which category is causing it."
+- "I retrained the model but nothing visibly changed for the employees."
+- "Three users are flagged high-risk but I have no recommended action."
+- "The feed ingested 15 new threats but only 2 got converted to scenarios."
+- "Management wants a report but I can only export what the dashboard shows."
+
+THINKS:
+- "I can see numbers but I can't explain them to my manager in simple terms."
+- "Why doesn't the system suggest what to do with high-risk users?"
+- "Retraining the model feels like a black box - did it actually improve?"
+- "I wish I could assign targeted training without manually checking each user."
+- "The cluster labels (moderate_risk, low_engagement) mean nothing to non-IT staff."
+
+DOES:
+- Checks admin dashboard every morning, looks at threats ingested count
+- Manually clicks "Retrain Models" once a week without knowing if it helped
+- Scrolls through user list looking for high-risk scores by eye
+- Approves password reset requests one by one
+- Creates new scenarios manually when threat feed conversion misses local context
+- Exports data by copy-pasting from the browser for monthly reports
+
+FEELS:
+- Overwhelmed by data without actionable recommendations
+- Frustrated that the ML pipeline is a black box with no feedback
+- Responsible for org-wide security but lacks tools to intervene precisely
+- Isolated - manages the system alone, no second admin to verify decisions
+- Uncertain whether retraining or ingesting actually improves employee outcomes
+
+KEY INSIGHT (Admin):
+Rajesh has access to powerful ML outputs (RF scores, clusters, SHAP) but lacks
+actionable interpretation. The admin dashboard shows WHAT is happening but not
+WHY or WHAT TO DO NEXT. He needs the system to recommend interventions, not
+just display metrics. The gap is between "data visibility" and "decision support."
+
+================================================================================
+2. FIVE WHYS
+================================================================================
+
+PROBLEM: Employees at Himalayan Finance treat AHRIP training as a pointless
+task - they either don't see why it's their responsibility, find it boring
+and irrelevant to their actual job, rush through it without thinking, and
+ultimately remain just as vulnerable to real attacks as before.
+(Links to: Empathy Map - Suman's Thinks/Feels; POEMS - friction points;
+POV Statement - the core user need.)
+
+1. Why do employees not take cybersecurity training seriously?
+   -> Because they believe cybersecurity is the IT department's job. Suman is
+   an accountant - he thinks hackers attack servers and firewalls, not people
+   who process invoices. He sees the training as something IT made him do,
+   not something that protects him personally.
+   (Links to: Empathy Map - Suman Says: "Can I do this later?"; Admin Empathy
+   Map - Rajesh Feels: responsible but lacks tools to convince employees.)
+
+2. Why do they believe they are not personally at risk?
+   -> Because the training content does not connect to their daily workflow
+   in a tangible way. The system uses role-category priorities and shows
+   a transparency label ("Selected for your accounting role: phishing email
+   detection"), but the scenarios themselves remain abstract MCQ questions.
+   Suman never sees a scenario that looks like his actual NIC Asia Bank
+   portal or his Tally interface - so despite the label, he still feels
+   the training is hypothetical and not about him personally.
+   (Links to: Empathy Map - Suman Thinks: "Label says accounting but the
+   question still feels generic"; POEMS - Environment: competing Tally.)
+
+3. Why doesn't abstract MCQ training feel personally relevant?
+   -> Because reading about phishing in a multiple-choice format is
+   fundamentally different from encountering a convincing fake email in
+   one's inbox. The adaptive engine correctly targets Suman's weak
+   categories and the card explains why, but the training modality
+   (read → pick A-D → see feedback) lacks the visceral impact of a
+   real attack simulation. The employee learns facts but doesn't build
+   the reflexive suspicion needed when a real threat arrives.
+   (Links to: POEMS - Friction: training modality gap;
+   Empathy Map - Suman Feels: bored despite role-relevance label.)
+
+4. Why do employees rush through it anyway instead of engaging?
+   -> Because even when they do sit down to train, there is no consequence
+   for rushing. The system accepts an answer whether Suman spent 2 seconds
+   or 2 minutes on a question. The training ends the moment he submits -
+   no follow-up, no reflection, no revisiting mistakes. The mastery score
+   updates silently in the background. So the fastest way to "complete"
+   training is to click through and move on. The scenarios feel irrelevant,
+   and rushing has no downside - so that's exactly what employees do.
+   (Links to: Empathy Map - Suman Does: rushes through sessions; Feels:
+   bored by generic scenarios. POEMS - Friction: fast answers reduce
+   difficulty, making future sessions even easier.)
+
+5. Why does the system reward finishing instead of understanding?
+   -> Because the organisation needs proof of compliance - "all staff
+   completed training this quarter." The platform was built to generate
+   trackable numbers (risk scores, mastery %, completion counts) that
+   satisfy audit requirements and look good on the admin dashboard. It was
+   not designed to change how employees actually behave when a real phishing
+   email lands in their inbox tomorrow morning.
+   (Links to: Admin Empathy Map - Rajesh Thinks: "I see numbers but can't
+   explain them"; Rajesh Feels: uncertain whether retraining improves
+   outcomes. POV Statement - the gap between compliance and real security.)
+
+ROOT CAUSE:
+The platform was built to measure compliance ("did they finish?") not to
+change behaviour ("do they understand?"). Employees don't engage because:
+- They don't believe security is their problem (no personal relevance shown)
+- The content is role-matched with transparency labels but still feels abstract
+- Rushing is rewarded the same as careful learning (no comprehension check)
+- There is no follow-up or reinforcement after training ends
+All four issues stem from the same root: the system optimises for numbers
+that satisfy audits, not for experiences that change how people think.
+
+================================================================================
+3. POEMS OBSERVATION
+================================================================================
+
+PEOPLE:
+- Suman Shrestha (accountant) completing training at his desk during lunch
+- Anita Maharjan (receptionist) answering phones while doing training session
+- Rajesh Tamang (IT admin) monitoring threat dashboard remotely from Bhaktapur
+- Deepa Adhikari (HR) reviewing team compliance reports in meeting room
+- Manager checking cluster distribution and top-risk users periodically
+
+OBJECTS:
+- Admin dashboard: RF model status, cluster summary, ingestion/retrain buttons
+- Scenario cards: MCQ with 4 options, category badge, difficulty indicator
+- Employee dashboard: Risk score card, sessions completed, weekly trend
+- Training interface: Progress bar, timer, answer options (A-D), feedback card
+- My Score page: SHAP explanation panel, RF prediction, cluster archetype
+- Session summary: Accuracy ring, duration, categories covered, learning tips
+
+ENVIRONMENT:
+- Open-plan office at Putalisadak, Kathmandu - frequent interruptions
+- Remote home setup (staff from Lalitpur, Bhaktapur) with family distractions
+- Slow internet during load-shedding hours affecting page loads
+- Mobile use during Kathmandu commute (microbus/tempo)
+- Competing attention: Tally, Excel, NIC Asia portal, phone calls
+- Peak banking hours (9-11 AM, month-end) create cognitive overload
+
+MESSAGES:
+- "Session complete: 14/20 correct · 180s · 4 categories covered"
+- "Focus area: Your weakest category was phishing_email"
+- "Risk level raised to high - review your weak categories"
+- "New training assignment from your manager: phishing_email, data_handling"
+- Feedback card per question: correct answer, explanation, red flags, learning tip
+
+SERVICES:
+- Mastery-based adaptive scenario selection engine (role-category priorities)
+- OSINT threat feed pipeline (Phishing.Database, OTX)
+- Random Forest risk classifier (14-feature vector, behavioural proxies)
+- K-Means user clustering (5 archetypes, 6 features)
+- SHAP explainability for per-user risk factor explanation
+- Rule-based scenario generator (6 lure templates, no LLM)
+- Spaced repetition (correctly answered scenarios spaced 12-72h by risk level)
+- Notification service (risk_escalation, training_assigned)
+
+FRICTION POINTS OBSERVED:
+- Suman answers fast -> difficulty drops -> easier questions -> false low risk
+  (Links to: 5 Whys - Why 4: no consequence for rushing)
+- Timer advances during interruptions (phone rings, colleague asks question)
+- Transparency label shows role-relevance but training modality remains abstract
+  (Links to: 5 Whys - Why 3: label present but MCQ format limits impact)
+- New hires confused by multiple metrics (risk score, mastery, RF prediction,
+  cluster archetype) with no guidance on what they mean
+  (Links to: Empathy Map - Suman Feels: confused by My Score page)
+- Month-end reconciliation period: zero training engagement for 3-5 days
+  (Links to: Empathy Map - Suman Says: "Can I do this later?")
+- Admin sees raw risk numbers but wants actionable coaching recommendations
+  (Links to: Empathy Map - Rajesh Thinks: "I see numbers but can't act")
+
+OPPORTUNITY:
+- Add micro-reflection prompts after wrong answers
+- Pause timer during detected inactivity
+- Reward reasoning quality, not just answer correctness
+- Schedule notifications outside peak reconciliation hours (avoid 9-11 AM)
+- Introduce interactive phishing simulations alongside MCQ-based training
+
+================================================================================
+4. POV STATEMENT
+================================================================================
+
+Suman Shrestha, a 28-year-old accountant at Himalayan Finance Ltd in Kathmandu
+using AHRIP for mandatory security awareness training, needs the system to show
+him that he personally is a target, deliver scenarios that match his actual
+finance work, and reward genuine understanding instead of fast completion -
+because he currently believes cybersecurity is IT's problem, finds the
+role-matched scenarios abstract despite the transparency labels, rushes
+through 20 questions just to finish, and remains genuinely vulnerable to
+role-specific threats like fake NIC Asia Bank payment emails despite his risk
+score showing "low" on the admin dashboard.
+(Links to: Empathy Map - all five dimensions for Suman; 5 Whys - all five
+levels trace back to this gap; POEMS - friction points and environment.)
+
+================================================================================
+NOTE: Problem Identification & Solution Generation has been moved to a
+separate file: problem_solution.txt
+================================================================================
+
+
+================================================================================
+AHRIP - PROBLEM IDENTIFICATION & SOLUTION GENERATION
+Based on Design Thinking Analysis (Empathy Map, 5 Whys, POEMS, POV)
+Context: Kathmandu-based employees (Himalayan Finance Ltd)
+================================================================================
+
+
+================================================================================
+SECTION 1: ALL PROBLEMS
+================================================================================
+
+P1. Employees rush through training without reading content
+P2. Admin cannot interpret or act on risk scores meaningfully
+P3. Training feedback exists but employees do not use it to improve
+P4. Training engagement drops to zero during peak work periods
+P5. New employees are overwhelmed by multiple unfamiliar metrics
+
+
+================================================================================
+SECTION 2: AUDIENCE / USERS AFFECTED PER PROBLEM
+================================================================================
+
+P1 - Accountant, Receptionist, Sales Staff
+P2 - IT Security Admin, HR Manager
+P3 - Accountant, Receptionist, Sales Staff
+P4 - Accountant, HR Manager, Operations Staff
+P5 - New hires across all departments
+
+
+P1 - Employee (all roles)
+  Suman (accountant) clicks through 20 MCQs fast, skips explanations.
+  Mastery updates silently; risk score drops despite no real learning.
+
+P2 - Admin / Manager
+  Rajesh (IT admin) sees composite risk score 67 and cluster label
+  "moderate_risk" but does not know which category drives the score
+  or what action to take. Manager Deepa cannot explain the numbers
+  to leadership in plain terms.
+
+P3 - Employee (all roles)
+  After each wrong answer, Suman sees explanation, red flags, and a
+  learning tip but skips it instantly. He does not open the My Score
+  page to check which categories he is weak in.
+
+P4 - Employee (finance, HR, operations)
+  During month-end (25th-5th), Suman has zero bandwidth. He skips
+  training entirely for a week. Risk score rises from inactivity;
+  the system offers no accommodation when he returns.
+
+P5 - Employee (new hires especially)
+  A new hire opens the My Score page and sees: risk score "72
+  (moderate)", RF prediction "high - 68% confidence", SHAP factors,
+  and cluster archetype "Disengaged Learner". None of these metrics
+  are self-explanatory.
+
+
+
+================================================================================
+SECTION 3: FEASIBLE SOLUTIONS (10 per problem)
+================================================================================
+
+--------------------------------------------------------------------------------
+P1: Employees rush through training without reading content
+--------------------------------------------------------------------------------
+1.  Add minimum read-time per scenario (e.g., 15s before submit enables)
+2.  Show a brief comprehension check after the explanation card
+3.  Factor time-spent-reading into mastery/risk calculation, not just correctness
+4.  Introduce reflection prompt after wrong answers requiring typed response
+5.  Reduce session length from 20 to 10 questions but add depth per question
+6.  Display scenario relevance tag ("Why this matters for your role")
+7.  Require viewing the full explanation before advancing to next question
+8.  Flag sessions completed under 3 minutes as "low engagement" in admin view
+9.  Show engagement quality score alongside risk score to differentiate depth
+10. Tighten spaced repetition for missed scenarios (shorter re-appearance window)
+
+--------------------------------------------------------------------------------
+P2: Admin cannot interpret or act on risk scores meaningfully
+--------------------------------------------------------------------------------
+1.  Add per-category risk breakdown visible on admin user detail page
+2.  Show SHAP feature importance for each user's RF prediction
+3.  Generate automated coaching recommendations per high-risk user
+4.  Add "weakest category" column to the admin users table
+5.  Create one-click "assign remedial training" button from admin dashboard
+6.  Show historical risk trend (last 4 weeks) for each user on hover
+7.  Add notification to admin when a user's score crosses critical threshold
+8.  Display cluster archetype description (not just label) on dashboard
+9.  Export risk report per department as CSV for management review
+10. Add natural-language summary: "User X struggles with phishing_email
+    due to 3 consecutive wrong answers in last 2 sessions"
+
+--------------------------------------------------------------------------------
+P3: Training feedback exists but employees do not use it to improve
+--------------------------------------------------------------------------------
+1.  Require reading the full explanation before the "Next" button appears
+2.  Add a 1-question micro-quiz after the explanation to confirm understanding
+3.  Highlight the mastery % change prominently in the feedback card itself
+4.  Show "Your weakest area this session" summary before allowing session end
+5.  Send a notification after each session: "You struggled with phishing_email"
+6.  Make the session summary page the default landing after training
+7.  Add a "Review mistakes" button on the session summary to revisit wrong answers
+8.  Show per-category mastery trend on the employee dashboard (not just My Score)
+9.  Use the SHAP explanation in employee-facing language on the dashboard
+10. Prompt employee with "Did you know?" micro-facts related to their wrong answers
+
+--------------------------------------------------------------------------------
+P4: Training engagement drops to zero during peak work periods
+--------------------------------------------------------------------------------
+1.  Auto-detect low-engagement periods and send lighter "welcome back" session
+2.  Allow employees to set "busy hours" where notifications are suppressed
+3.  Offer 5-question micro-sessions during busy periods (instead of 20)
+4.  Schedule training reminders based on individual activity patterns (avoid 9-11 AM)
+5.  Send a push notification only after 3+ days of inactivity (not daily)
+6.  Send training reminders during historically active times per user
+7.  Allow managers to set department-wide "blackout windows" for training
+8.  Provide month-end-specific ultra-short scenarios (2-min invoice fraud focus)
+9.  Reduce session size dynamically during detected low-activity weeks
+10. Offer optional weekend catch-up sessions with reduced question count
+
+--------------------------------------------------------------------------------
+P5: New employees are overwhelmed by multiple unfamiliar metrics
+--------------------------------------------------------------------------------
+1.  Add onboarding tooltip explaining each metric on first login
+2.  Simplify My Score to show only composite risk + weakest category initially
+3.  Add plain-language labels: "Risk Score = how vulnerable you are (lower = better)"
+4.  Hide RF prediction and SHAP from employee view (admin-only data)
+5.  Rename "Risk Score" to "Security Score" and invert (higher = better)
+6.  Add a brief tutorial/walkthrough for first-time users
+7.  Show "What this means for you" plain-language summary above technical details
+8.  Use colour coding consistently (green = safe across all metrics)
+9.  Display detailed metrics only after 3+ sessions (avoid overwhelming new users)
+10. Add "What does this mean?" expandable helper text under each metric card
+
+
+================================================================================
+SECTION 4: BEST 2 ALTERNATIVES PER PROBLEM
+================================================================================
+
+--------------------------------------------------------------------------------
+P1: Employees rush through training without reading content
+--------------------------------------------------------------------------------
+-> (A) Add minimum engagement timer (15s) and require reading explanation
+   before advancing. Simple frontend change, directly prevents speed-rushing.
+-> (B) Tighten spaced repetition - shorten the re-appearance window for
+   incorrectly answered scenarios (e.g., 12h instead of 24-72h). Existing
+   adaptive engine supports this; requires parameter adjustment.
+
+--------------------------------------------------------------------------------
+P2: Admin cannot interpret or act on risk scores meaningfully
+--------------------------------------------------------------------------------
+1. Show SHAP-based per-category breakdown and weakest category on the
+   admin user table. Gives immediate actionable visibility without extra clicks.
+2. Add one-click "Assign remedial training" with auto-selected categories
+   based on weakest areas. Turns insight into direct action.
+
+--------------------------------------------------------------------------------
+P3: Training feedback exists but employees do not use it to improve
+--------------------------------------------------------------------------------
+1. Require reading the full explanation (minimum 5s display) before the
+   "Next" button enables. Zero backend change, immediate engagement improvement.
+2. Show per-category mastery breakdown on the main employee dashboard
+   (currently only visible on My Score page). Makes weakness visible where
+   Suman actually looks - the dashboard he opens every time.
+
+--------------------------------------------------------------------------------
+P4: Training engagement drops to zero during peak work periods
+--------------------------------------------------------------------------------
+1. Allow managers to declare department-wide "busy windows" (e.g., month-end)
+   where the system automatically offers 5-question micro-sessions instead of 20.
+2. Offer 5-question micro-sessions as a permanent alternative. Maintains
+   learning continuity without full 20-question commitment.
+
+--------------------------------------------------------------------------------
+P5: New employees are overwhelmed by multiple unfamiliar metrics
+--------------------------------------------------------------------------------
+1. Add first-login onboarding walkthrough with tooltip explanations for
+   each dashboard element. Low effort, addresses confusion at the source.
+2. Simplify default employee view: show only composite risk score and
+   weakest category with a plain-language SHAP summary. Hide RF prediction
+   details behind an expandable "Technical details" section.
+
+
+================================================================================
+CORRELATION MAP: Design Thinking Tasks <-> Problems
+================================================================================
+
+Empathy Map (Employee - Thinks/Feels)
+  -> P1 (rushing), P3 (feedback ignored)
+  Suman's risk score drops but he does not feel safer. He skips explanations.
+
+Empathy Map (Employee - Sees/Does)
+  -> P5 (metric overload)
+  Suman sees multiple confusing metrics on the My Score page.
+
+Empathy Map (Admin - Thinks/Does)
+  -> P2 (admin cannot act on scores)
+  Rajesh sees numbers but cannot explain or act on them.
+
+5 Whys (Why 1)   -> P1: "Security is IT's job" mindset = employees do not engage
+5 Whys (Why 2+3) -> P3: Training feels abstract despite role-matching = feedback skipped
+5 Whys (Why 4)   -> P3: No consequence for rushing = feedback skipped entirely
+5 Whys (Why 5)   -> P4: Compliance-driven design = no busy-period flexibility
+                 -> P2: Dashboard shows metrics, not actionable guidance
+
+POEMS (Environment)       -> P4: Month-end, open-plan interruptions, Tally workload
+POEMS (Friction Points)   -> P1 + P2: Fast answers lower difficulty; admin wants actions
+POEMS (Messages/Objects)  -> P5: Multiple metrics with no plain-language guidance
+
+POV Statement -> ALL: "believes security is not his problem" (P1) + "finds
+scenarios abstract despite labels" (P3) + "rushes through" (P1) + "shows
+compliant but is not" (P4)
+
+================================================================================
+END
+================================================================================
+
+
+
+
+
+
+
+
+================================================================================
+END OF DOCUMENT
+================================================================================

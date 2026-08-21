@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Table B3 – Lure-Type to Category Routing</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Times New Roman', serif; background: #fff; padding: 32px; }
+  h3 { font-size: 13px; font-weight: bold; text-align: center; margin-bottom: 4px; color: #1a1a2e; }
+  .subtitle { font-size: 11px; text-align: center; color: #555; margin-bottom: 20px; font-style: italic; }
+  .wrap { width: 700px; margin: 0 auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  th { background: #1a1a2e; color: #fff; padding: 8px 10px; text-align: left; font-weight: bold; border: 1px solid #1a1a2e; }
+  td { padding: 7px 10px; border: 1px solid #d0d0d0; vertical-align: top; }
+  tr:nth-child(even) { background: #f8f9ff; }
+
+  .lure-badge {
+    display: inline-block; padding: 2px 8px; border-radius: 3px;
+    font-size: 10px; font-family: 'Courier New', monospace; font-weight: bold; color: #fff;
+  }
+  .lure-ch   { background: #1a3a6e; }
+  .lure-inv  { background: #2e7d32; }
+  .lure-del  { background: #e65100; }
+  .lure-it   { background: #5c4d9a; }
+  .lure-ceo  { background: #b71c1c; }
+  .lure-prz  { background: #00838f; }
+
+  .cat-chip {
+    display: inline-block; padding: 1px 7px; border-radius: 10px;
+    font-size: 9.5px; color: #1a1a2e;
+    background: #e8f0fe; border: 1px solid #c5d8ff;
+    margin: 1px 2px 1px 0;
+  }
+
+  .role-chip {
+    display: inline-block; padding: 1px 7px; border-radius: 10px;
+    font-size: 9.5px; color: #555;
+    background: #f5f5f5; border: 1px solid #ddd;
+    margin: 1px 2px 1px 0;
+  }
+
+  .keyword-col { font-family: 'Courier New', monospace; font-size: 9.5px; color: #333; line-height: 1.7; }
+  code { font-family: 'Courier New', monospace; font-size: 9.5px; background: #f0f0f0; padding: 0 3px; border-radius: 2px; }
+
+  .note { font-size: 10px; color: #555; text-align: center; margin-top: 12px; font-style: italic; line-height: 1.5; }
+</style>
+</head>
+<body>
+<h3>Table B3. Lure-Type to Scenario Category Routing</h3>
+<p class="subtitle">Six lure types · keyword detection triggers · mapped categories · primary target roles</p>
+
+<div class="wrap">
+<table>
+  <thead>
+    <tr>
+      <th style="width:20%">Lure Type</th>
+      <th style="width:28%">Detection Keywords (sample)</th>
+      <th style="width:30%">Mapped Categories</th>
+      <th style="width:22%">Primary Target Roles</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="lure-badge lure-ch">credential_harvest</span></td>
+      <td class="keyword-col">login, signin, account, verify, secure, password, auth, webmail, portal</td>
+      <td>
+        <span class="cat-chip">phishing_email</span>
+        <span class="cat-chip">smishing</span>
+        <span class="cat-chip">password_hygiene</span>
+      </td>
+      <td>
+        <span class="role-chip">all roles</span>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="lure-badge lure-inv">invoice_fraud</span></td>
+      <td class="keyword-col">invoice, payment, billing, remittance, purchase-order, receipt, wire</td>
+      <td>
+        <span class="cat-chip">phishing_email</span>
+        <span class="cat-chip">social_engineering</span>
+      </td>
+      <td>
+        <span class="role-chip">finance</span>
+        <span class="role-chip">accounting</span>
+        <span class="role-chip">management</span>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="lure-badge lure-del">delivery_notification</span></td>
+      <td class="keyword-col">track, parcel, delivery, shipment, courier, dhl, fedex, ups, usps, package</td>
+      <td>
+        <span class="cat-chip">smishing</span>
+        <span class="cat-chip">phishing_email</span>
+      </td>
+      <td>
+        <span class="role-chip">all roles</span>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="lure-badge lure-it">it_support</span></td>
+      <td class="keyword-col">helpdesk, support, update, antivirus, vpn, patch, microsoft, office365, teams, ticket</td>
+      <td>
+        <span class="cat-chip">phishing_email</span>
+        <span class="cat-chip">vishing</span>
+        <span class="cat-chip">usb_baiting</span>
+      </td>
+      <td>
+        <span class="role-chip">all roles</span>
+        <span class="role-chip">IT staff</span>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="lure-badge lure-ceo">ceo_impersonation</span></td>
+      <td class="keyword-col">ceo, director, executive, urgent-request, boss, chairman, board, transfer-funds</td>
+      <td>
+        <span class="cat-chip">social_engineering</span>
+        <span class="cat-chip">vishing</span>
+        <span class="cat-chip">phishing_email</span>
+      </td>
+      <td>
+        <span class="role-chip">finance</span>
+        <span class="role-chip">PA / EA</span>
+        <span class="role-chip">HR</span>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="lure-badge lure-prz">prize_scam</span></td>
+      <td class="keyword-col">winner, prize, reward, gift, claim, lottery, lucky, congratulations, free-iphone</td>
+      <td>
+        <span class="cat-chip">phishing_email</span>
+        <span class="cat-chip">smishing</span>
+      </td>
+      <td>
+        <span class="role-chip">all roles</span>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="note">
+  When a URL matches multiple keyword sets, the first matched lure type wins (precedence order as listed).
+  The final scenario category is selected deterministically via SHA-1(<em>url</em>) mod <em>n</em> where <em>n</em> is
+  the number of mapped categories for that lure type, ensuring reproducible routing and balanced category coverage.
+  For the full classification workflow, see Figure B2.
+</p>
+</div>
+</body>
+</html>

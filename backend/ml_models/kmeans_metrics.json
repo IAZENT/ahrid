@@ -1,16 +1,16 @@
 {
-  "trained_at": "2026-06-20T16:32:33Z",
-  "n_users": 1057,
+  "trained_at": "2026-07-07T02:41:01Z",
+  "n_users": 1051,
   "n_features": 6,
   "n_clusters": 5,
-  "inertia": 2547.0345258725283,
-  "silhouette_score": 0.23041573719902209,
+  "inertia": 2534.468951417878,
+  "silhouette_score": 0.2645014049170892,
   "cluster_sizes": {
-    "0": 245,
-    "1": 220,
-    "2": 173,
-    "3": 184,
-    "4": 235
+    "0": 239,
+    "1": 266,
+    "2": 216,
+    "3": 185,
+    "4": 145
   },
   "min_attempts_per_user": 5,
   "feature_names": [

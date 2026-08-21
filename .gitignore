@@ -1,6 +1,11 @@
+# --- Obsidian workspace state (keep .obsidian/app.json etc, ignore runtime) -
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+.obsidian/plugins/
+
 # --- Secrets & credentials -------------------------------------------------
-secret
-Users_info.secret
+credentials/
 *.secret
 .env
 .env.*
@@ -51,10 +56,18 @@ Thumbs.db
 # --- Markdown / text notes -------------------------------------------------
 *.md
 !README.md
+!docs/**/*.md
+!ML_Learning_Guide/**/*.md
+!ML_Sandbox/**/*.md
+!Formal_Document/**/*.md
+!Research/**/*.md
 *.txt
 !requirements.txt
 !requirements-dev.txt
 !runtime.txt
+!docs/**/*.txt
+!ML_Sandbox/**/*.txt
+!Research/**/*.txt
 
 # --- Misc -----------------------------------------------------------------
 .windsurf/

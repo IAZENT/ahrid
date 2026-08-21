@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AHRID Thesis Defence Presentation — Rupesh Kumar Thakur</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #ffffff;
+    --surface: #f8fafc;
+    --surface2: #f1f5f9;
+    --accent: #2563eb;
+    --accent2: #4f46e5;
+    --accent3: #7c3aed;
+    --green: #059669;
+    --orange: #d97706;
+    --red: #dc2626;
+    --text: #0f172a;
+    --text2: #475569;
+    --text3: #94a3b8;
+    --border: #e2e8f0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+
+  .slide {
+    width: 100vw; height: 100vh;
+    display: none; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: 60px 100px;
+    position: relative;
+    overflow: hidden;
+  }
+  .slide.active { display: flex; }
+
+  /* Slide number */
+  .slide::after {
+    content: attr(data-num);
+    position: absolute; bottom: 28px; right: 40px;
+    font-size: 13px; color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Progress bar */
+  #progress {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    transition: width 0.4s ease; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  /* Typography */
+  h1 { font-size: 52px; font-weight: 800; line-height: 1.15; letter-spacing: -1.5px; }
+  h2 { font-size: 38px; font-weight: 700; line-height: 1.2; letter-spacing: -1px; margin-bottom: 32px; }
+  h3 { font-size: 24px; font-weight: 600; color: var(--accent); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; font-size: 14px; }
+  p, li { font-size: 22px; line-height: 1.7; color: var(--text2); }
+  ul { list-style: none; }
+  ul li { padding: 8px 0; position: relative; padding-left: 28px; }
+  ul li::before { content: '▸'; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+
+  .highlight { color: var(--accent); font-weight: 600; }
+  .highlight-green { color: var(--green); font-weight: 700; }
+  .highlight-orange { color: var(--orange); font-weight: 600; }
+
+  /* Title slide */
+  .title-slide { text-align: center; }
+  .title-slide h1 { font-size: 48px; margin-bottom: 16px;
+    background: linear-gradient(135deg, #1d4ed8, #6d28d9, #be185d);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .title-slide .subtitle { font-size: 20px; color: var(--text2); margin-bottom: 40px; max-width: 700px; }
+  .title-slide .meta { font-size: 16px; color: var(--text3); line-height: 2; }
+  .title-slide .meta strong { color: var(--text2); }
+
+  /* Two column */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; width: 100%; max-width: 1200px; }
+  .two-col-wide { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 50px; width: 100%; max-width: 1200px; }
+
+  /* Cards */
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 28px 32px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .card-body { font-size: 15px; color: var(--text2); line-height: 1.6; }
+
+  /* Metric cards */
+  .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%; max-width: 1100px; }
+  .metric-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px; text-align: center;
+  }
+  .metric-value { font-size: 42px; font-weight: 800; color: var(--green); font-family: 'JetBrains Mono', monospace; }
+  .metric-label { font-size: 13px; color: var(--text3); margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .metric-card.blue .metric-value { color: var(--accent); }
+  .metric-card.orange .metric-value { color: var(--orange); }
+  .metric-card.purple .metric-value { color: var(--accent3); }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  th { text-align: left; padding: 12px 16px; background: var(--surface2); color: var(--accent);
+       font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid var(--accent); border-top: 1px solid var(--border); }
+  td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text2); }
+  tr:hover td { background: rgba(59,130,246,0.05); }
+
+  /* Pipeline flow */
+  .pipeline { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 20px 0; }
+  .pipeline-step {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 20px; font-size: 14px; font-weight: 600; color: var(--text);
+    text-align: center; min-width: 130px;
+  }
+  .pipeline-arrow { color: var(--accent); font-size: 20px; font-weight: 700; }
+  .pipeline-step.active-step { border-color: var(--accent); background: rgba(59,130,246,0.1); color: var(--accent); }
+
+  /* Cluster badges */
+  .cluster-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; width: 100%; max-width: 1100px; }
+  .cluster-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 20px 16px; text-align: center;
+  }
+  .cluster-id { font-size: 28px; font-weight: 800; font-family: 'JetBrains Mono', monospace; margin-bottom: 6px; }
+  .cluster-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .cluster-n { font-size: 12px; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
+  .cluster-desc { font-size: 11px; color: var(--text3); margin-top: 6px; line-height: 1.4; }
+
+  /* Comparison bar */
+  .comparison-bar { width: 100%; max-width: 900px; margin: 16px 0; }
+  .bar-row { display: flex; align-items: center; margin-bottom: 20px; }
+  .bar-label { width: 180px; font-size: 15px; font-weight: 600; color: var(--text2); text-align: right; padding-right: 20px; }
+  .bar-track { flex: 1; height: 36px; background: var(--surface); border-radius: 8px; position: relative; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 8px; display: flex; align-items: center; justify-content: flex-end; padding-right: 12px;
+              font-size: 14px; font-weight: 700; color: #fff; font-family: 'JetBrains Mono', monospace; transition: width 1s ease; }
+
+  /* Section label */
+  .section-label {
+    position: absolute; top: 32px; left: 40px;
+    font-size: 11px; font-weight: 700; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 3px;
+  }
+
+  /* SHAP explanation */
+  .shap-bar { display: flex; align-items: center; margin-bottom: 10px; }
+  .shap-feature { width: 200px; font-size: 14px; color: var(--text2); text-align: right; padding-right: 16px;
+                  font-family: 'JetBrains Mono', monospace; }
+  .shap-viz { flex: 1; height: 24px; background: var(--surface); border-radius: 4px; position: relative; }
+  .shap-fill { height: 100%; border-radius: 4px; position: absolute; }
+  .shap-fill.positive { background: var(--red); right: 50%; }
+  .shap-fill.negative { background: var(--accent); left: 50%; }
+  .shap-center { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: var(--text3); }
+  .shap-val { font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--text3); margin-left: 8px; width: 60px; }
+
+  /* Glow effects */
+  .glow-blob {
+    position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.06; pointer-events: none;
+  }
+
+  /* Navigation hint */
+  #nav-hint {
+    position: fixed; bottom: 28px; left: 40px; font-size: 12px; color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Full width */
+  .full-width { width: 100%; max-width: 1200px; }
+
+  /* Agenda items */
+  .agenda-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; max-width: 1000px; }
+  .agenda-item {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 16px 20px; font-size: 15px; color: var(--text2); display: flex; align-items: center; gap: 12px;
+  }
+  .agenda-num { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--accent); font-size: 18px; }
+
+  /* Ethics checklist */
+  .check-list { list-style: none; }
+  .check-list li { padding: 10px 0; padding-left: 32px; position: relative; font-size: 19px; }
+  .check-list li::before { content: '✓'; position: absolute; left: 0; color: var(--green); font-weight: 700; font-size: 20px; }
+
+  /* Quote */
+  .quote { font-size: 26px; font-style: italic; color: var(--text2); border-left: 4px solid var(--accent); padding-left: 28px;
+           max-width: 800px; line-height: 1.6; margin: 20px 0; }
+  .quote-attr { font-size: 15px; color: var(--text3); font-style: normal; margin-top: 12px; }
+
+  /* Thank you */
+  .thankyou h1 {
+    font-size: 64px;
+    background: linear-gradient(135deg, #1d4ed8, #6d28d9, #be185d);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  /* Difficulty levels */
+  .diff-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; max-width: 1000px; }
+  .diff-card { border-radius: 10px; padding: 24px; text-align: center; }
+  .diff-card.l1 { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); }
+  .diff-card.l2 { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); }
+  .diff-card.l3 { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); }
+  .diff-level { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+  .diff-card.l1 .diff-level { color: var(--green); }
+  .diff-card.l2 .diff-level { color: var(--orange); }
+  .diff-card.l3 .diff-level { color: var(--red); }
+  .diff-signals { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+  /* Feature importance horizontal bars */
+  .feat-row { display: flex; align-items: center; margin-bottom: 8px; }
+  .feat-name { width: 220px; font-size: 13px; color: var(--text2); text-align: right; padding-right: 14px;
+               font-family: 'JetBrains Mono', monospace; }
+  .feat-bar { height: 22px; background: linear-gradient(90deg, var(--accent), var(--accent3)); border-radius: 4px;
+              display: flex; align-items: center; justify-content: flex-end; padding-right: 8px;
+              font-size: 11px; font-weight: 600; color: #fff; font-family: 'JetBrains Mono', monospace; min-width: 40px; }
+
+  /* Print / PDF */
+  @media print {
+    .slide { page-break-after: always; display: flex !important; height: 100vh; }
+    #progress, #nav-hint { display: none; }
+  }
+
+  /* OSINT pipeline vertical */
+  .osint-steps { display: flex; flex-direction: column; gap: 6px; }
+  .osint-step { display: flex; align-items: center; gap: 14px; }
+  .osint-num { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff;
+               display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700;
+               font-family: 'JetBrains Mono', monospace; flex-shrink: 0; }
+  .osint-text { font-size: 16px; color: var(--text2); }
+  .osint-text strong { color: var(--text); }
+
+  /* Tech stack pills */
+  .tech-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .pill { padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;
+          background: var(--surface); border: 1px solid var(--border); color: var(--text2); }
+  .pill.primary { border-color: var(--accent); color: var(--accent); background: rgba(59,130,246,0.1); }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div id="nav-hint">← → or Space to navigate</div>
+
+<!-- ============================================================
+     SLIDE 1 — Title
+============================================================ -->
+<div class="slide active title-slide" data-num="1 / 25">
+  <div class="glow-blob" style="width:600px;height:600px;background:var(--accent);top:-200px;right:-100px;"></div>
+  <div class="glow-blob" style="width:500px;height:500px;background:var(--accent3);bottom:-200px;left:-100px;"></div>
+  <h3 style="margin-bottom:20px;">BSc (Hons) Cybersecurity — Thesis Defence</h3>
+  <h1>Adaptive Human-Risk<br>Intelligence Dashboard</h1>
+  <p class="subtitle">An ML-Driven Cybersecurity Awareness Platform for SMEs in Nepal</p>
+  <div class="meta">
+    <strong>Rupesh Kumar Thakur</strong> · CUID 230548<br>
+    Supervisor: [Supervisor Name] · July 2026
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 2 — Agenda
+============================================================ -->
+<div class="slide" data-num="2 / 25">
+  <h2>Presentation Roadmap</h2>
+  <div class="agenda-grid">
+    <div class="agenda-item"><span class="agenda-num">01</span> Problem & Motivation</div>
+    <div class="agenda-item"><span class="agenda-num">02</span> Research Questions</div>
+    <div class="agenda-item"><span class="agenda-num">03</span> Literature & Theory</div>
+    <div class="agenda-item"><span class="agenda-num">04</span> Methodology (DSR)</div>
+    <div class="agenda-item"><span class="agenda-num">05</span> System Architecture</div>
+    <div class="agenda-item"><span class="agenda-num">06</span> ML Pipeline</div>
+    <div class="agenda-item"><span class="agenda-num">07</span> OSINT Integration</div>
+    <div class="agenda-item"><span class="agenda-num">08</span> Ethical Framework</div>
+    <div class="agenda-item"><span class="agenda-num">09</span> Results & Evaluation</div>
+    <div class="agenda-item"><span class="agenda-num">10</span> Limitations & Future</div>
+    <div class="agenda-item"><span class="agenda-num">11</span> Conclusion</div>
+    <div class="agenda-item"><span class="agenda-num">12</span> Q&A</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 3 — The Problem
+============================================================ -->
+<div class="slide" data-num="3 / 25">
+  <span class="section-label">01 — Problem</span>
+  <div class="glow-blob" style="width:400px;height:400px;background:var(--red);top:100px;right:50px;"></div>
+  <h2>The Human Factor is the Weakest Link</h2>
+  <div class="metrics-grid">
+    <div class="metric-card orange">
+      <div class="metric-value">74%</div>
+      <div class="metric-label">Breaches involve<br>human element</div>
+    </div>
+    <div class="metric-card blue">
+      <div class="metric-value">80%+</div>
+      <div class="metric-label">Nepal internet<br>penetration</div>
+    </div>
+    <div class="metric-card purple">
+      <div class="metric-value">0</div>
+      <div class="metric-label">Adaptive SAT for<br>Nepali SMEs</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--red);">↑</div>
+      <div class="metric-label">Rising cybercrime<br>Nepal Police data</div>
+    </div>
+  </div>
+  <p style="margin-top:32px; max-width:900px; text-align:center; font-size:18px;">
+    Kathmandu Valley SMEs face rising phishing threats but lack budget, expertise, and locally adapted training platforms.
+  </p>
+</div>
+
+<!-- ============================================================
+     SLIDE 4 — Gap Analysis
+============================================================ -->
+<div class="slide" data-num="4 / 25">
+  <span class="section-label">01 — Problem</span>
+  <h2>What Existing Platforms Lack</h2>
+  <div class="full-width" style="max-width:1000px;">
+    <table>
+      <thead>
+        <tr><th>Capability</th><th>KnowBe4 / Proofpoint</th><th>AHRID</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Adaptive ML risk scoring</td><td style="color:var(--red);">✗ Rule-based / proprietary</td><td style="color:var(--green);">✓ RF + K-Means</td></tr>
+        <tr><td>Explainable AI</td><td style="color:var(--red);">✗ Black-box scores</td><td style="color:var(--green);">✓ SHAP per prediction</td></tr>
+        <tr><td>Live OSINT integration</td><td style="color:var(--red);">✗ Manual content curation</td><td style="color:var(--green);">✓ Automated pipeline</td></tr>
+        <tr><td>Privacy-by-design</td><td style="color:var(--orange);">~ GDPR-focused</td><td style="color:var(--green);">✓ IPA 2075 aligned</td></tr>
+        <tr><td>SME affordable</td><td style="color:var(--red);">✗ Enterprise pricing</td><td style="color:var(--green);">✓ Free / self-hosted</td></tr>
+        <tr><td>Non-punitive governance</td><td style="color:var(--orange);">~ Policy-dependent</td><td style="color:var(--green);">✓ Architectural</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 5 — Research Questions
+============================================================ -->
+<div class="slide" data-num="5 / 25">
+  <span class="section-label">02 — Research Questions</span>
+  <h2 style="margin-bottom:40px;">Dual Research Questions</h2>
+  <div class="two-col" style="max-width:1100px;">
+    <div class="card">
+      <div class="card-title" style="color:var(--accent); font-size:13px; text-transform:uppercase; letter-spacing:2px;">RQ1 — Technical</div>
+      <p style="font-size:17px; margin-top:12px; color:var(--text2); line-height:1.7;">
+        To what extent can <span class="highlight">K-Means + Random Forest + SHAP + OSINT</span> improve cybersecurity risk assessment accuracy compared with a rule-based baseline?
+      </p>
+      <div style="margin-top:20px; padding:14px; background:var(--surface2); border-radius:8px;">
+        <div style="font-size:13px; color:var(--text3); text-transform:uppercase; letter-spacing:1px;">Hypothesis H1</div>
+        <div style="font-size:15px; color:var(--green); margin-top:6px;">Macro F1 > 0.85 + substantial κ agreement</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--accent3); font-size:13px; text-transform:uppercase; letter-spacing:2px;">RQ2 — Ethical</div>
+      <p style="font-size:17px; margin-top:12px; color:var(--text2); line-height:1.7;">
+        How can <span class="highlight">privacy-by-design, XAI, and non-punitive governance</span> ensure IPA 2075 compliance and ethical deployment?
+      </p>
+      <div style="margin-top:20px; padding:14px; background:var(--surface2); border-radius:8px;">
+        <div style="font-size:13px; color:var(--text3); text-transform:uppercase; letter-spacing:1px;">Hypothesis H2</div>
+        <div style="font-size:15px; color:var(--green); margin-top:6px;">Privacy + XAI + RBAC → ethical compliance</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 6 — Theoretical Framework
+============================================================ -->
+<div class="slide" data-num="6 / 25">
+  <span class="section-label">03 — Literature</span>
+  <h2>Theoretical Foundations</h2>
+  <div class="metrics-grid" style="grid-template-columns: repeat(4, 1fr); max-width:1100px;">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:28px; margin-bottom:8px;">🛡️</div>
+      <div class="card-title">PMT</div>
+      <div class="card-body" style="font-size:13px;">Rogers (1975)<br>Threat + coping appraisal → security behaviour</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div style="font-size:28px; margin-bottom:8px;">📱</div>
+      <div class="card-title">TAM</div>
+      <div class="card-body" style="font-size:13px;">Davis (1989)<br>Perceived usefulness + ease of use → adoption</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div style="font-size:28px; margin-bottom:8px;">⚖️</div>
+      <div class="card-title">Prospect Theory</div>
+      <div class="card-body" style="font-size:13px;">Kahneman & Tversky (1979)<br>Loss aversion → stronger behavioural response</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div style="font-size:28px; margin-bottom:8px;">🧠</div>
+      <div class="card-title">Forgetting Curve</div>
+      <div class="card-body" style="font-size:13px;">Ebbinghaus (1885)<br>Spaced repetition counters memory decay</div>
+    </div>
+  </div>
+  <p style="margin-top:28px; text-align:center; font-size:16px; color:var(--text3); max-width:800px;">
+    + AI4People ethical framework (Floridi et al., 2018) · IPA 2075 (Nepal, 2018) · DSR methodology (Peffers et al., 2007)
+  </p>
+</div>
+
+<!-- ============================================================
+     SLIDE 7 — DSR Methodology
+============================================================ -->
+<div class="slide" data-num="7 / 25">
+  <span class="section-label">04 — Methodology</span>
+  <h2>Design Science Research + Agile</h2>
+  <div class="pipeline" style="margin-bottom:30px;">
+    <div class="pipeline-step">Problem<br><span style="font-size:11px;color:var(--text3);">Identification</span></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step">Objectives<br><span style="font-size:11px;color:var(--text3);">Definition</span></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step active-step">Design &<br><span style="font-size:11px;color:var(--text3);">Development</span></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step">Demonstration<br><span style="font-size:11px;color:var(--text3);">Prototype</span></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step">Evaluation<br><span style="font-size:11px;color:var(--text3);">ML Metrics</span></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step">Communication<br><span style="font-size:11px;color:var(--text3);">Thesis</span></div>
+  </div>
+  <div class="two-col" style="max-width:1000px;">
+    <div>
+      <h3 style="font-size:14px;">Why DSR?</h3>
+      <ul>
+        <li>Objective: <span class="highlight">create & evaluate</span> an artefact</li>
+        <li>Not observing — <span class="highlight">building</span></li>
+        <li>Follows Hevner's 7 guidelines</li>
+        <li>Peffers et al. (2007) 6-phase model</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="font-size:14px;">Agile Integration</h3>
+      <ul>
+        <li><span class="highlight">15 sprints</span> · Jan–Jul 2026</li>
+        <li>Iterative model refinement</li>
+        <li>Continuous OSINT pipeline testing</li>
+        <li>5 project stages mapped to DSR phases</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 8 — Data Strategy
+============================================================ -->
+<div class="slide" data-num="8 / 25">
+  <span class="section-label">04 — Methodology</span>
+  <h2>Desk-Based Data Strategy</h2>
+  <div class="two-col" style="max-width:1100px;">
+    <div>
+      <h3 style="font-size:14px;">Synthetic Behavioural Profiles</h3>
+      <ul>
+        <li><span class="highlight">1,050</span> synthetic profiles</li>
+        <li><span class="highlight">18</span> behavioural features</li>
+        <li>Calibrated against Nepal Police Cyber Bureau stats</li>
+        <li>Verizon DBIR distributions</li>
+        <li>Peer-reviewed behavioural literature</li>
+        <li>Realistic class imbalance preserved</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="font-size:14px;">Why Synthetic?</h3>
+      <div class="card">
+        <div class="card-body">
+          <strong style="color:var(--green);">Privacy:</strong> Zero PII → IPA 2075 compliant<br><br>
+          <strong style="color:var(--accent);">Ethics:</strong> No employee monitoring required<br><br>
+          <strong style="color:var(--orange);">Feasibility:</strong> BSc scope — no ethics board / org partner needed<br><br>
+          <strong style="color:var(--text3);">Trade-off:</strong> Validates architecture, not operational performance
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 9 — Tech Stack
+============================================================ -->
+<div class="slide" data-num="9 / 25">
+  <span class="section-label">05 — Architecture</span>
+  <h2>System Architecture</h2>
+  <div class="two-col-wide" style="max-width:1100px;">
+    <div>
+      <div class="pipeline" style="flex-direction:column; align-items:stretch; gap:12px;">
+        <div style="display:flex; gap:12px;">
+          <div class="pipeline-step" style="flex:1; border-color:var(--accent);">
+            <strong style="color:var(--accent);">Frontend</strong><br>
+            <span style="font-size:12px; color:var(--text3);">React 18 · TypeScript · Vite · Tailwind</span>
+          </div>
+        </div>
+        <div style="text-align:center; color:var(--text3); font-size:14px;">↕ REST API (61 endpoints)</div>
+        <div style="display:flex; gap:12px;">
+          <div class="pipeline-step" style="flex:1; border-color:var(--green);">
+            <strong style="color:var(--green);">Backend</strong><br>
+            <span style="font-size:12px; color:var(--text3);">Flask 3.1 · SQLAlchemy · JWT</span>
+          </div>
+        </div>
+        <div style="display:flex; gap:12px;">
+          <div class="pipeline-step" style="flex:1; border-color:var(--accent3);">
+            <strong style="color:var(--accent3);">ML Pipeline</strong><br>
+            <span style="font-size:12px; color:var(--text3);">scikit-learn · SHAP · joblib</span>
+          </div>
+          <div class="pipeline-step" style="flex:1; border-color:var(--orange);">
+            <strong style="color:var(--orange);">OSINT</strong><br>
+            <span style="font-size:12px; color:var(--text3);">Phishing.Database · OTX</span>
+          </div>
+        </div>
+        <div style="display:flex; gap:12px;">
+          <div class="pipeline-step" style="flex:1; border-color:var(--text3);">
+            <strong>PostgreSQL</strong><br>
+            <span style="font-size:12px; color:var(--text3);">10 tables · Alembic migrations</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-size:14px;">Key Numbers</h3>
+      <div class="card">
+        <div class="card-body" style="font-family:'JetBrains Mono',monospace; font-size:14px; line-height:2.2;">
+          <span class="highlight">61</span> API endpoints<br>
+          <span class="highlight">8</span> Flask blueprints<br>
+          <span class="highlight">10</span> DB tables<br>
+          <span class="highlight">10</span> foreign keys<br>
+          <span class="highlight">3</span> user roles (RBAC)<br>
+          <span class="highlight">15 min</span> JWT access<br>
+          <span class="highlight">30 day</span> JWT refresh<br>
+          <span style="color:var(--green);">bcrypt</span> password hashing
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 10 — ML Pipeline
+============================================================ -->
+<div class="slide" data-num="10 / 25">
+  <span class="section-label">06 — ML Pipeline</span>
+  <h2>End-to-End ML Pipeline</h2>
+  <div class="pipeline" style="margin-bottom:30px;">
+    <div class="pipeline-step">1,050<br>Profiles</div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step" style="border-color:var(--orange);">SMOTE<br><span style="font-size:11px;color:var(--text3);">409/class</span></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step" style="border-color:var(--accent3);">K-Means<br><span style="font-size:11px;color:var(--text3);">k=5</span></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step" style="border-color:var(--accent);">80:20<br>Split</div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step active-step">Random<br>Forest</div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step" style="border-color:var(--green);">SHAP<br><span style="font-size:11px;color:var(--text3);">Explain</span></div>
+  </div>
+  <div class="full-width" style="max-width:900px;">
+    <table>
+      <thead><tr><th>Component</th><th>Configuration</th><th>Rationale</th></tr></thead>
+      <tbody>
+        <tr><td>SMOTE</td><td>k=5 neighbours</td><td>Balance classes without duplicating</td></tr>
+        <tr><td>K-Means</td><td>k=5 clusters</td><td>Elbow method + silhouette analysis</td></tr>
+        <tr><td>Random Forest</td><td>200 trees, depth=12</td><td>Interpretability + SHAP compatibility</td></tr>
+        <tr><td>SHAP</td><td>TreeExplainer (exact)</td><td>Per-prediction feature attribution</td></tr>
+        <tr><td>Cross-validation</td><td>3-fold stratified</td><td>Generalisation check</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 11 — Behavioural Clusters
+============================================================ -->
+<div class="slide" data-num="11 / 25">
+  <span class="section-label">06 — ML Pipeline</span>
+  <h2>5 Behavioural Archetypes (K-Means)</h2>
+  <div class="cluster-grid">
+    <div class="cluster-card">
+      <div class="cluster-id" style="color:var(--red);">C0</div>
+      <div class="cluster-name">Overconfident Clicker</div>
+      <div class="cluster-n">n = 239</div>
+      <div class="cluster-desc">High engagement, poor accuracy — clicks everything fast</div>
+    </div>
+    <div class="cluster-card">
+      <div class="cluster-id" style="color:var(--accent);">C1</div>
+      <div class="cluster-name">Cautious Learner</div>
+      <div class="cluster-n">n = 266</div>
+      <div class="cluster-desc">Moderate engagement, improving accuracy — actively learning</div>
+    </div>
+    <div class="cluster-card">
+      <div class="cluster-id" style="color:var(--orange);">C2</div>
+      <div class="cluster-name">Inconsistent Performer</div>
+      <div class="cluster-n">n = 216</div>
+      <div class="cluster-desc">Variable results — good one session, poor the next</div>
+    </div>
+    <div class="cluster-card">
+      <div class="cluster-id" style="color:var(--green);">C3</div>
+      <div class="cluster-name">Resilient Defender</div>
+      <div class="cluster-n">n = 185</div>
+      <div class="cluster-desc">Consistently high accuracy — security-aware</div>
+    </div>
+    <div class="cluster-card">
+      <div class="cluster-id" style="color:var(--text3);">C4</div>
+      <div class="cluster-name">Disengaged Completer</div>
+      <div class="cluster-n">n = 145</div>
+      <div class="cluster-desc">Completes minimum training — does bare minimum</div>
+    </div>
+  </div>
+  <p style="margin-top:24px; text-align:center; font-size:16px; color:var(--text3);">
+    Each archetype receives tailored training paths via the adaptive engine
+  </p>
+</div>
+
+<!-- ============================================================
+     SLIDE 12 — Feature Importance
+============================================================ -->
+<div class="slide" data-num="12 / 25">
+  <span class="section-label">06 — ML Pipeline</span>
+  <h2>Top Feature Importances (MDI)</h2>
+  <div style="width:100%; max-width:800px;">
+    <div class="feat-row"><div class="feat-name">overall_accuracy</div><div class="feat-bar" style="width:62%;">0.310</div></div>
+    <div class="feat-row"><div class="feat-name">avg_response_time</div><div class="feat-bar" style="width:22%;">0.109</div></div>
+    <div class="feat-row"><div class="feat-name">scenario_completion</div><div class="feat-bar" style="width:20%;">0.102</div></div>
+    <div class="feat-row"><div class="feat-name">phishing_accuracy</div><div class="feat-bar" style="width:15%;">0.076</div></div>
+    <div class="feat-row"><div class="feat-name">sessions_completed</div><div class="feat-bar" style="width:13%;">0.066</div></div>
+    <div class="feat-row"><div class="feat-name">social_eng_accuracy</div><div class="feat-bar" style="width:10%;">0.051</div></div>
+    <div class="feat-row"><div class="feat-name">malware_accuracy</div><div class="feat-bar" style="width:9%;">0.046</div></div>
+    <div class="feat-row"><div class="feat-name">password_accuracy</div><div class="feat-bar" style="width:8%;">0.038</div></div>
+    <div class="feat-row"><div class="feat-name" style="color:var(--text3);">... 10 more features</div><div class="feat-bar" style="width:20%; background:var(--surface2); color:var(--text3);">0.194</div></div>
+  </div>
+  <p style="margin-top:20px; text-align:center; font-size:15px; color:var(--text3);">
+    18 behavioural features · zero demographic/PII features · cluster_label = 0.009 (contextual)
+  </p>
+</div>
+
+<!-- ============================================================
+     SLIDE 13 — SHAP Explainability
+============================================================ -->
+<div class="slide" data-num="13 / 25">
+  <span class="section-label">06 — ML Pipeline</span>
+  <h2>SHAP: Every Prediction Explained</h2>
+  <div class="two-col" style="max-width:1100px;">
+    <div>
+      <h3 style="font-size:14px;">How TreeSHAP Works</h3>
+      <ul style="font-size:17px;">
+        <li>Game-theoretic feature attribution</li>
+        <li><span class="highlight">Exact</span> Shapley values for tree ensembles</li>
+        <li>O(TLD²) — polynomial, not exponential</li>
+        <li>Properties: efficiency, symmetry, consistency</li>
+        <li>Superior to LIME (unstable, approximate)</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="font-size:14px;">Employee-Facing Explanation</h3>
+      <div class="card" style="background:rgba(239,68,68,0.06); border-color:rgba(220,38,38,0.25);">
+        <div style="font-size:13px; color:var(--red); font-weight:700; margin-bottom:8px;">⚠ RISK LEVEL: HIGH</div>
+        <div class="card-body" style="font-size:14px;">
+          Your risk is elevated because:<br><br>
+          • <strong>Phishing accuracy 42%</strong> — below safe threshold<br>
+          • <strong>Response time 3.2s</strong> — fast clicks suggest insufficient scrutiny<br>
+          • <strong>Completion rate 58%</strong> — training modules incomplete<br><br>
+          <span style="color:var(--green); font-size:13px;">Recommended: Complete 3 more Level 2 phishing scenarios</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 14 — OSINT Pipeline
+============================================================ -->
+<div class="slide" data-num="14 / 25">
+  <span class="section-label">07 — OSINT</span>
+  <h2>7-Stage OSINT Threat Pipeline</h2>
+  <div class="two-col" style="max-width:1100px;">
+    <div>
+      <div class="osint-steps">
+        <div class="osint-step"><div class="osint-num">1</div><div class="osint-text"><strong>Acquire</strong> — fetch URLs from feeds</div></div>
+        <div class="osint-step"><div class="osint-num">2</div><div class="osint-text"><strong>Validate</strong> — format, liveness, content type</div></div>
+        <div class="osint-step"><div class="osint-num">3</div><div class="osint-text"><strong>Deduplicate</strong> — hash-based against DB</div></div>
+        <div class="osint-step"><div class="osint-num">4</div><div class="osint-text"><strong>Classify</strong> — attack type categorisation</div></div>
+        <div class="osint-step"><div class="osint-num">5</div><div class="osint-text"><strong>Sanitise</strong> — defang URLs, strip trackers</div></div>
+        <div class="osint-step"><div class="osint-num">6</div><div class="osint-text"><strong>Generate</strong> — create MCQ training scenarios</div></div>
+        <div class="osint-step"><div class="osint-num">7</div><div class="osint-text"><strong>Persist</strong> — store in PostgreSQL</div></div>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-size:14px;">Sources</h3>
+      <div class="card">
+        <div class="card-title">Phishing.Database</div>
+        <div class="card-body" style="font-size:13px;">Community-maintained · GitHub · daily updates</div>
+      </div>
+      <div class="card">
+        <div class="card-title">AlienVault OTX</div>
+        <div class="card-body" style="font-size:13px;">Crowd-sourced IoCs · API access · threat pulses</div>
+      </div>
+      <h3 style="font-size:14px; margin-top:20px;">Scenario Output</h3>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <span class="pill">8 categories</span>
+        <span class="pill">6 lure types</span>
+        <span class="pill">3 difficulty levels</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 15 — Difficulty Levels
+============================================================ -->
+<div class="slide" data-num="15 / 25">
+  <span class="section-label">07 — OSINT</span>
+  <h2>URL Difficulty Classification</h2>
+  <div class="diff-grid">
+    <div class="diff-card l1">
+      <div class="diff-level">Level 1 — Obvious</div>
+      <div style="font-size:24px; font-weight:700; color:var(--green); margin:8px 0;">10 XP</div>
+      <div class="diff-signals">
+        Non-HTTPS schemes<br>
+        Free TLDs (.tk .ml .ga .cf .gq)<br>
+        Known typosquats (paypa1, g00gle)<br>
+        Free platforms (blogspot, weebly)
+      </div>
+    </div>
+    <div class="diff-card l2">
+      <div class="diff-level">Level 2 — Subtle</div>
+      <div style="font-size:24px; font-weight:700; color:var(--orange); margin:8px 0;">15 XP</div>
+      <div class="diff-signals">
+        Brand in URL path or query<br>
+        Brand as subdomain of non-brand<br>
+        Default fallback<br>
+        (no L1 or L3 signals matched)
+      </div>
+    </div>
+    <div class="diff-card l3">
+      <div class="diff-level">Level 3 — Advanced</div>
+      <div style="font-size:24px; font-weight:700; color:var(--red); margin:8px 0;">25 XP</div>
+      <div class="diff-signals">
+        Cloud infra abuse (AWS, Vercel)<br>
+        Subdomain-brand attacks<br>
+        IDN homograph encoding<br>
+        Evades visual inspection
+      </div>
+    </div>
+  </div>
+  <p style="margin-top:24px; text-align:center; font-size:15px; color:var(--text3);">
+    First-match wins · Level 1 checked before Level 3 · deterministic & reproducible
+  </p>
+</div>
+
+<!-- ============================================================
+     SLIDE 16 — Ethics
+============================================================ -->
+<div class="slide" data-num="16 / 25">
+  <span class="section-label">08 — Ethics</span>
+  <h2>Ethical Framework & IPA 2075 Compliance</h2>
+  <div class="two-col" style="max-width:1100px;">
+    <div>
+      <h3 style="font-size:14px;">Privacy-by-Design Principles</h3>
+      <ul class="check-list">
+        <li><span class="highlight">Data minimisation</span> — 18 behavioural features, zero PII</li>
+        <li><span class="highlight">Purpose limitation</span> — risk assessment & training only</li>
+        <li><span class="highlight">Synthetic data</span> — no real employee records processed</li>
+        <li><span class="highlight">Right to explanation</span> — SHAP per prediction</li>
+        <li><span class="highlight">CASCADE deletion</span> — user removal = full data wipe</li>
+        <li><span class="highlight">RBAC enforcement</span> — role-based access at API level</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="font-size:14px;">Non-Punitive Governance</h3>
+      <div class="card" style="background:rgba(5,150,105,0.06); border-color:rgba(5,150,105,0.25);">
+        <div class="card-body" style="font-size:15px;">
+          <strong style="color:var(--green);">High risk ≠ Disciplinary action</strong><br><br>
+          Elevated risk triggers:<br>
+          ✓ Additional training scenarios<br>
+          ✓ Personalised learning path<br>
+          ✓ SHAP-guided improvement tips<br><br>
+          ✗ No performance reviews<br>
+          ✗ No managerial warnings<br>
+          ✗ No employment consequences
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <div class="card-body" style="font-size:13px; color:var(--text3);">
+          AI4People (Floridi et al., 2018):<br>
+          Beneficence · Non-maleficence · Autonomy · Justice · Explicability
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 17 — Key Results
+============================================================ -->
+<div class="slide" data-num="17 / 25">
+  <span class="section-label">09 — Results</span>
+  <div class="glow-blob" style="width:500px;height:500px;background:var(--green);bottom:-200px;right:-100px;"></div>
+  <h2>Key Results: H1 Confirmed ✓</h2>
+  <div class="metrics-grid" style="margin-bottom:32px;">
+    <div class="metric-card">
+      <div class="metric-value">0.889</div>
+      <div class="metric-label">Macro F1<br><span style="color:var(--green);">threshold 0.85 ✓</span></div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">0.868</div>
+      <div class="metric-label">Cohen's κ<br><span style="color:var(--green);">almost perfect</span></div>
+    </div>
+    <div class="metric-card blue">
+      <div class="metric-value">0.940</div>
+      <div class="metric-label">PR-AUC<br><span style="color:var(--text3);">threshold-robust</span></div>
+    </div>
+    <div class="metric-card purple">
+      <div class="metric-value">90.9%</div>
+      <div class="metric-label">Accuracy<br><span style="color:var(--text3);">overall</span></div>
+    </div>
+  </div>
+  <div class="card" style="max-width:600px; text-align:center;">
+    <div class="card-body" style="font-family:'JetBrains Mono',monospace; font-size:15px;">
+      CV mean: <span class="highlight">0.8604 ± 0.0094</span> (3-fold stratified)
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 18 — Baseline Comparison
+============================================================ -->
+<div class="slide" data-num="18 / 25">
+  <span class="section-label">09 — Results</span>
+  <h2>ML vs Rule-Based Baseline</h2>
+  <div class="comparison-bar">
+    <div class="bar-row">
+      <div class="bar-label">Rule-Based<br><span style="font-size:12px; color:var(--text3);">Threshold rules</span></div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:39%; background:var(--red);">0.387</div>
+      </div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">AHRID (RF)<br><span style="font-size:12px; color:var(--text3);">ML pipeline</span></div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:89%; background:linear-gradient(90deg, var(--accent), var(--green));">0.889</div>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:20px;">
+    <span style="font-size:48px; font-weight:800; color:var(--green); font-family:'JetBrains Mono',monospace;">+50.21 pp</span>
+    <p style="font-size:16px; color:var(--text3); margin-top:8px;">improvement in macro F1-score</p>
+  </div>
+  <div class="two-col" style="max-width:800px; margin-top:28px;">
+    <div class="card" style="text-align:center;">
+      <div class="card-body" style="font-size:14px;">
+        <strong style="color:var(--green);">Low Risk precision</strong><br>
+        <span style="font-size:28px; font-weight:700; color:var(--green); font-family:'JetBrains Mono';">1.000</span><br>
+        <span style="color:var(--text3);">No false escalations</span>
+      </div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div class="card-body" style="font-size:14px;">
+        <strong style="color:var(--red);">Critical Risk recall</strong><br>
+        <span style="font-size:28px; font-weight:700; color:var(--red); font-family:'JetBrains Mono';">0.943</span><br>
+        <span style="color:var(--text3);">Almost all threats caught</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 19 — Per-Class Breakdown
+============================================================ -->
+<div class="slide" data-num="19 / 25">
+  <span class="section-label">09 — Results</span>
+  <h2>Per-Class Classification Report</h2>
+  <div class="full-width" style="max-width:900px;">
+    <table>
+      <thead>
+        <tr><th>Risk Class</th><th>Precision</th><th>Recall</th><th>F1-Score</th><th>Support</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span style="color:var(--green); font-weight:700;">Low</span></td>
+          <td style="font-family:'JetBrains Mono'; font-weight:700; color:var(--green);">1.000</td>
+          <td style="font-family:'JetBrains Mono';">0.890</td>
+          <td style="font-family:'JetBrains Mono';">0.942</td>
+          <td style="font-family:'JetBrains Mono'; color:var(--text3);">82</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--orange); font-weight:700;">Medium</span></td>
+          <td style="font-family:'JetBrains Mono';">0.784</td>
+          <td style="font-family:'JetBrains Mono';">0.880</td>
+          <td style="font-family:'JetBrains Mono';">0.829</td>
+          <td style="font-family:'JetBrains Mono'; color:var(--text3);">25</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--red); font-weight:700;">High</span></td>
+          <td style="font-family:'JetBrains Mono';">0.879</td>
+          <td style="font-family:'JetBrains Mono';">0.879</td>
+          <td style="font-family:'JetBrains Mono';">0.879</td>
+          <td style="font-family:'JetBrains Mono'; color:var(--text3);">33</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--accent3); font-weight:700;">Critical</span></td>
+          <td style="font-family:'JetBrains Mono';">0.917</td>
+          <td style="font-family:'JetBrains Mono'; font-weight:700; color:var(--green);">0.943</td>
+          <td style="font-family:'JetBrains Mono';">0.930</td>
+          <td style="font-family:'JetBrains Mono'; color:var(--text3);">53</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:24px; text-align:center; font-size:16px; color:var(--text3); max-width:700px;">
+    Medium Risk lower precision (0.784) reflects natural overlap between neighbouring behavioural profiles — not a model weakness
+  </p>
+</div>
+
+<!-- ============================================================
+     SLIDE 20 — Ethical Results (RQ2)
+============================================================ -->
+<div class="slide" data-num="20 / 25">
+  <span class="section-label">09 — Results</span>
+  <h2>RQ2 Results: Ethical Compliance ✓</h2>
+  <div class="full-width" style="max-width:1000px;">
+    <table>
+      <thead>
+        <tr><th>Ethical Requirement</th><th>Implementation</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Data minimisation (IPA 2075)</td><td>18 behavioural features, zero PII</td><td style="color:var(--green); font-weight:700;">✓ Met</td></tr>
+        <tr><td>Right to explanation</td><td>SHAP TreeExplainer per prediction</td><td style="color:var(--green); font-weight:700;">✓ Met</td></tr>
+        <tr><td>Algorithmic fairness</td><td>Feature audit + SMOTE + no demographics</td><td style="color:var(--green); font-weight:700;">✓ Met</td></tr>
+        <tr><td>Non-punitive governance</td><td>Risk → training, not discipline</td><td style="color:var(--green); font-weight:700;">✓ Met</td></tr>
+        <tr><td>Data deletion rights</td><td>CASCADE delete on user removal</td><td style="color:var(--green); font-weight:700;">✓ Met</td></tr>
+        <tr><td>RBAC access controls</td><td>Role-based API decorators</td><td style="color:var(--green); font-weight:700;">✓ Met</td></tr>
+        <tr><td>Real-world fairness validation</td><td>Requires deployment with real users</td><td style="color:var(--orange); font-weight:700;">◐ Future</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 21 — Limitations
+============================================================ -->
+<div class="slide" data-num="21 / 25">
+  <span class="section-label">10 — Limitations</span>
+  <h2>Honest Limitations</h2>
+  <div class="two-col" style="max-width:1100px;">
+    <div>
+      <h3 style="font-size:14px;">Data & Validation</h3>
+      <ul style="font-size:17px;">
+        <li>Synthetic data — validates architecture, not operational performance</li>
+        <li>No real-user deployment or testing</li>
+        <li>No longitudinal behavioural study</li>
+        <li>Single classifier comparison (RF vs baseline only)</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="font-size:14px;">Scope & Access</h3>
+      <ul style="font-size:17px;">
+        <li>Kathmandu Valley SMEs only</li>
+        <li>English-only (no Nepali localisation)</li>
+        <li>Moderate silhouette coefficient</li>
+        <li>No adversarial robustness testing</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="max-width:800px; margin-top:28px; text-align:center;">
+    <div class="card-body" style="font-size:16px;">
+      Each limitation is <span class="highlight">explicitly acknowledged</span> in the thesis and paired with a <span class="highlight-green">future work recommendation</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 22 — Future Work
+============================================================ -->
+<div class="slide" data-num="22 / 25">
+  <span class="section-label">10 — Future Work</span>
+  <h2>Future Research Directions</h2>
+  <div class="full-width" style="max-width:1000px;">
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+      <div class="card">
+        <div class="card-title" style="color:var(--red);">🔴 Immediate Priority</div>
+        <div class="card-body" style="font-size:14px;">
+          Real-world pilot deployment with consenting employees in Kathmandu Valley SMEs
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--orange);">🟡 Short-term</div>
+        <div class="card-body" style="font-size:14px;">
+          Longitudinal study (12+ months) measuring sustained behavioural change
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--accent);">🔵 Enhancement</div>
+        <div class="card-body" style="font-size:14px;">
+          Nepali localisation · HDBSCAN clustering · Thompson Sampling for scenario selection
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--accent3);">🟣 Expansion</div>
+        <div class="card-body" style="font-size:14px;">
+          Multi-classifier benchmark · regional expansion across South Asia · LLM scenario generation
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 23 — Contributions Summary
+============================================================ -->
+<div class="slide" data-num="23 / 25">
+  <span class="section-label">11 — Conclusion</span>
+  <h2>Key Contributions</h2>
+  <div style="max-width:900px; width:100%;">
+    <div class="card" style="margin-bottom:14px; border-left:4px solid var(--accent);">
+      <div class="card-title">Technical Contribution</div>
+      <div class="card-body" style="font-size:16px;">Integrated K-Means + RF + SHAP + OSINT into a single adaptive SAT platform achieving F1 = 0.889 — <span class="highlight-green">+50pp over baseline</span></div>
+    </div>
+    <div class="card" style="margin-bottom:14px; border-left:4px solid var(--accent3);">
+      <div class="card-title">Methodological Contribution</div>
+      <div class="card-body" style="font-size:16px;">Applied DSR + Agile to cybersecurity awareness in a developing-country context with measurable evaluation</div>
+    </div>
+    <div class="card" style="margin-bottom:14px; border-left:4px solid var(--green);">
+      <div class="card-title">Ethical Contribution</div>
+      <div class="card-body" style="font-size:16px;">Designed non-punitive, explainable governance model for employee behavioural monitoring aligned with IPA 2075</div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--orange);">
+      <div class="card-title">Practical Contribution</div>
+      <div class="card-body" style="font-size:16px;">Created a free, deployable platform prototype addressing an unmet need for Nepali SMEs</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 24 — Conclusion
+============================================================ -->
+<div class="slide" data-num="24 / 25">
+  <span class="section-label">11 — Conclusion</span>
+  <h2>Conclusion</h2>
+  <div class="glow-blob" style="width:400px;height:400px;background:var(--green);top:100px;left:-100px;"></div>
+  <div style="max-width:800px;">
+    <div class="quote">
+      Adaptive, explainable, privacy-preserving cybersecurity awareness training is technically feasible and affordable for developing-economy SMEs.
+    </div>
+    <ul style="margin-top:28px; font-size:18px;">
+      <li><span class="highlight-green">H1 confirmed</span> — macro F1 = 0.889, κ = 0.868 (almost perfect agreement)</li>
+      <li><span class="highlight-green">H2 supported</span> — full IPA 2075 alignment with privacy-by-design</li>
+      <li><span class="highlight">Architecture validated</span> — clustering + ML + XAI + OSINT work together</li>
+      <li><span class="highlight-orange">Next step</span> — real-world deployment with consenting employees</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 25 — Thank You / Q&A
+============================================================ -->
+<div class="slide thankyou" data-num="25 / 25">
+  <div class="glow-blob" style="width:600px;height:600px;background:var(--accent);top:-100px;left:-200px;"></div>
+  <div class="glow-blob" style="width:500px;height:500px;background:var(--accent3);bottom:-100px;right:-200px;"></div>
+  <h1>Thank You</h1>
+  <p style="font-size:24px; color:var(--text2); margin-top:16px; margin-bottom:40px;">Questions & Discussion</p>
+  <div style="text-align:center;">
+    <p style="font-size:16px; color:var(--text3); line-height:2;">
+      <strong style="color:var(--text2);">Rupesh Kumar Thakur</strong> · CUID 230548<br>
+      BSc (Hons) Cybersecurity · July 2026<br>
+      rupeshkthakur7@gmail.com
+    </p>
+  </div>
+</div>
+
+<!-- ============================================================
+     NAVIGATION SCRIPT
+============================================================ -->
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progress = document.getElementById('progress');
+  let current = 0;
+
+  function showSlide(n) {
+    slides[current].classList.remove('active');
+    current = Math.max(0, Math.min(n, slides.length - 1));
+    slides[current].classList.add('active');
+    progress.style.width = ((current + 1) / slides.length * 100) + '%';
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') { e.preventDefault(); showSlide(current + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'Backspace') { e.preventDefault(); showSlide(current - 1); }
+    if (e.key === 'Home') { e.preventDefault(); showSlide(0); }
+    if (e.key === 'End') { e.preventDefault(); showSlide(slides.length - 1); }
+    if (e.key === 'f' || e.key === 'F') {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    }
+  });
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+  document.addEventListener('touchend', e => {
+    const diff = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(diff) > 50) showSlide(current + (diff < 0 ? 1 : -1));
+  });
+
+  // Click to advance (right half) or go back (left half)
+  document.addEventListener('click', e => {
+    if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
+    if (e.clientX > window.innerWidth / 2) showSlide(current + 1);
+    else showSlide(current - 1);
+  });
+
+  showSlide(0);
+</script>
+
+</body>
+</html>

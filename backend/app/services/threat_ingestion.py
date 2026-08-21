@@ -66,9 +66,7 @@ class IngestionStats:
     sources: dict[str, int] = field(
         default_factory=lambda: {
             "phishstats": 0,
-            "openphish": 0,
             "otx": 0,
-            "urlscan": 0,
         }
     )
 
@@ -179,20 +177,6 @@ def _fetch_phishstats(feed_url: str) -> list[RawThreat]:
         return []
 
 
-def _fetch_openphish(feed_url: str) -> list[RawThreat]:
-    try:
-        resp = requests.get(feed_url, timeout=20)
-        resp.raise_for_status()
-        return [
-            RawThreat(source="openphish", url=line.strip())
-            for line in resp.text.splitlines()
-            if line.strip().startswith("http")
-        ]
-    except Exception as exc:
-        LOG.warning("OpenPhish fetch failed: %s", exc)
-        return []
-
-
 def _fetch_otx(api_key: str | None) -> list[RawThreat]:
     """Fetch phishing indicators from AlienVault OTX.
 
@@ -275,66 +259,6 @@ def _fetch_otx(api_key: str | None) -> list[RawThreat]:
     return deduped[:200]
 
 
-_URLSCAN_QUERIES = (
-    # Most precise  paid keys hit this without 403; free keys often allowed too.
-    'task.tags:"phishing"',
-    # Verdict-based  covers anything URLScan's own classifier flagged.
-    "verdicts.overall.malicious:true",
-    # Broad fallback  pages whose URL screams "credential capture".
-    'page.url:"login" OR page.url:"verify" OR page.url:"account"',
-)
-
-
-def _fetch_urlscan(api_key: str | None) -> list[RawThreat]:
-    """Fetch recent phishing-likely scans from URLScan.io.
-
-    Tries 3 progressively-broader queries; stops at the first one that
-    actually returns rows on this API key (free tier sometimes 403s on the
-    most precise queries). All queries are read-only ``/search`` calls.
-    """
-    if not api_key:
-        LOG.info("URLScan: skipped (no API key)")
-        return []
-
-    headers = {"API-Key": api_key, "User-Agent": "AHRIP/2.0"}
-    for query in _URLSCAN_QUERIES:
-        try:
-            LOG.info("URLScan: trying query %r", query)
-            resp = requests.get(
-                "https://urlscan.io/api/v1/search/",
-                params={"q": query, "size": 100},
-                headers=headers, timeout=FETCH_TIMEOUT,
-            )
-            if resp.status_code in (401, 403):
-                LOG.info("URLScan: %d on query %r, trying broader fallback", resp.status_code, query)
-                continue
-            resp.raise_for_status()
-            results = (resp.json() or {}).get("results", []) or []
-            LOG.info("URLScan[%r]: got %d results", query, len(results))
-            if not results:
-                continue
-            out: list[RawThreat] = []
-            for item in results:
-                page = item.get("page") or {}
-                verdicts = (item.get("verdicts") or {}).get("overall") or {}
-                url = page.get("url")
-                if not url:
-                    continue
-                out.append(
-                    RawThreat(
-                        source="urlscan",
-                        url=url,
-                        urlscan_verdict=(
-                            "phishing" if verdicts.get("malicious") else "suspicious"
-                        ),
-                    )
-                )
-            LOG.info("URLScan: extracted %d URLs (query=%r)", len(out), query)
-            return out
-        except Exception as exc:
-            LOG.warning("URLScan query %r failed: %s", query, exc)
-    return []
-
 
 # ---------------------------------------------------------------------------
 # Service
@@ -355,13 +279,9 @@ class ThreatIngestionService:
     def fetch_all(self) -> list[RawThreat]:
         sources = {
             "phishstats": lambda: _fetch_phishstats(
-                self._cfg("PHISHSTATS_FEED_URL", "https://phishstats.info/phish_score.csv")
-            ),
-            "openphish": lambda: _fetch_openphish(
-                self._cfg("OPENPHISH_FEED_URL", "https://openphish.com/feed.txt")
+                self._cfg("PHISHSTATS_FEED_URL", "https://raw.githubusercontent.com/Phishing-Database/Phishing.Database/master/phishing-links-ACTIVE.txt")
             ),
             "otx": lambda: _fetch_otx(self._cfg("ALIENVAULT_OTX_KEY")),
-            "urlscan": lambda: _fetch_urlscan(self._cfg("URLSCAN_API_KEY")),
         }
         sources.update(self._overrides)
         out: list[RawThreat] = []
@@ -406,7 +326,7 @@ class ThreatIngestionService:
             out.append(raw)
         return out
 
-    # --- Stages 4–7 ---------------------------------------------------------
+    # --- Stages 4-7 ---------------------------------------------------------
     def run_ingestion(self) -> dict:
         stats = IngestionStats()
         raw = self.fetch_all()

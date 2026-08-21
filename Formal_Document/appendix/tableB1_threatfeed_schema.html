@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Table B1 – ThreatFeedEntry Schema</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Times New Roman', serif; background: #fff; padding: 32px; }
+  h3 { font-size: 13px; font-weight: bold; text-align: center; margin-bottom: 4px; color: #1a1a2e; }
+  .subtitle { font-size: 11px; text-align: center; color: #555; margin-bottom: 20px; font-style: italic; }
+  .wrap { width: 700px; margin: 0 auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  th { background: #1a1a2e; color: #fff; padding: 8px 10px; text-align: left; font-weight: bold; border: 1px solid #1a1a2e; }
+  td { padding: 6px 10px; border: 1px solid #d0d0d0; vertical-align: top; }
+  tr:nth-child(even) { background: #f8f9ff; }
+  .col-field  { width: 20%; font-family: 'Courier New', monospace; font-size: 10px; color: #1a3a6e; font-weight: bold; }
+  .col-type   { width: 16%; }
+  .col-null   { width: 10%; text-align: center; }
+  .col-desc   { width: 54%; }
+  .type-badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 9.5px;
+                font-family: 'Courier New', monospace; background: #e8f0fe; color: #1a3a6e; border: 1px solid #c5d8ff; }
+  .pk  { color: #b71c1c; font-size: 9px; font-weight: bold; }
+  .idx { color: #e65100; font-size: 9px; }
+  .null-y { color: #2e7d32; text-align: center; }
+  .null-n { color: #b71c1c; text-align: center; font-weight: bold; }
+  .note { font-size: 10px; color: #555; text-align: center; margin-top: 12px; font-style: italic; line-height: 1.5; }
+</style>
+</head>
+<body>
+<h3>Table B1. ThreatFeedEntry SQLAlchemy Model — Field Schema</h3>
+<p class="subtitle">PostgreSQL table: <code style="font-size:10px">threat_feed_entries</code> · ingested by the OSINT pipeline from Phishing.Database and AlienVault OTX</p>
+
+<div class="wrap">
+<table>
+  <thead>
+    <tr>
+      <th class="col-field">Field Name</th>
+      <th class="col-type">Type</th>
+      <th class="col-null">Nullable</th>
+      <th class="col-desc">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="col-field">id <span class="pk">PK</span></td>
+      <td><span class="type-badge">Integer</span></td>
+      <td class="null-n">No</td>
+      <td>Auto-incrementing primary key</td>
+    </tr>
+    <tr>
+      <td class="col-field">url <span class="idx">IDX</span></td>
+      <td><span class="type-badge">String(2048)</span></td>
+      <td class="null-n">No</td>
+      <td>Raw phishing URL as ingested; unique index prevents duplicate ingestion</td>
+    </tr>
+    <tr>
+      <td class="col-field">url_hash <span class="idx">UNIQUE</span></td>
+      <td><span class="type-badge">String(64)</span></td>
+      <td class="null-n">No</td>
+      <td>SHA-256 digest of the URL; used as the deduplication key for fast lookup</td>
+    </tr>
+    <tr>
+      <td class="col-field">source</td>
+      <td><span class="type-badge">String(64)</span></td>
+      <td class="null-n">No</td>
+      <td>Feed origin: <code style="font-size:10px">"phishing_database"</code> or <code style="font-size:10px">"alienvault_otx"</code></td>
+    </tr>
+    <tr>
+      <td class="col-field">lure_type</td>
+      <td><span class="type-badge">String(64)</span></td>
+      <td class="null-y">Yes</td>
+      <td>Assigned lure category (e.g., <em>credential_harvest</em>, <em>invoice_fraud</em>); NULL if no keyword matched</td>
+    </tr>
+    <tr>
+      <td class="col-field">threat_type</td>
+      <td><span class="type-badge">String(64)</span></td>
+      <td class="null-y">Yes</td>
+      <td>AlienVault OTX pulse category (e.g., <em>malware</em>, <em>phishing</em>); NULL for Phishing.Database entries</td>
+    </tr>
+    <tr>
+      <td class="col-field">confidence_score</td>
+      <td><span class="type-badge">Float</span></td>
+      <td class="null-y">Yes</td>
+      <td>Feed-supplied confidence rating (0.0–1.0); used to filter low-quality entries before scenario generation</td>
+    </tr>
+    <tr>
+      <td class="col-field">is_active</td>
+      <td><span class="type-badge">Boolean</span></td>
+      <td class="null-n">No</td>
+      <td>Default TRUE; set FALSE if URL is later found to be a false positive or is de-listed by feed</td>
+    </tr>
+    <tr>
+      <td class="col-field">is_processed</td>
+      <td><span class="type-badge">Boolean</span></td>
+      <td class="null-n">No</td>
+      <td>Default FALSE; set TRUE once the entry has been converted into a Scenario record</td>
+    </tr>
+    <tr>
+      <td class="col-field">raw_data</td>
+      <td><span class="type-badge">JSON</span></td>
+      <td class="null-y">Yes</td>
+      <td>Full original feed payload stored verbatim for audit and re-processing; schema varies by source</td>
+    </tr>
+    <tr>
+      <td class="col-field">ingested_at <span class="idx">IDX</span></td>
+      <td><span class="type-badge">DateTime</span></td>
+      <td class="null-n">No</td>
+      <td>UTC timestamp of first ingestion; indexed to support recency-based queries</td>
+    </tr>
+    <tr>
+      <td class="col-field">processed_at</td>
+      <td><span class="type-badge">DateTime</span></td>
+      <td class="null-y">Yes</td>
+      <td>UTC timestamp when the entry was promoted to a Scenario; NULL while pending</td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="note">
+  Unique constraint on <em>url_hash</em> (not on <em>url</em> directly) avoids PostgreSQL index size limits for long URLs.
+  The <em>raw_data</em> JSON column enables feed schema evolution without database migrations.
+</p>
+</div>
+</body>
+</html>

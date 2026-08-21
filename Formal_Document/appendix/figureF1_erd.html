@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Figure F1 – Entity Relationship Diagram</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Times New Roman', serif; background: #fff; padding: 24px; }
+  h3 { font-size: 13px; font-weight: bold; text-align: center; margin-bottom: 4px; color: #1a1a2e; }
+  .subtitle { font-size: 11px; text-align: center; color: #555; margin-bottom: 20px; font-style: italic; }
+  .note { font-size: 10px; color: #555; text-align: center; margin-top: 14px; font-style: italic; line-height: 1.5; }
+
+  .hdr       { font-family: 'Times New Roman', serif; font-size: 11px; font-weight: bold; fill: #fff; text-anchor: middle; }
+  .pk        { font-family: 'Times New Roman', serif; font-size: 9px; fill: #c8dcff; text-anchor: start; font-style: italic; }
+  .fk        { font-family: 'Times New Roman', serif; font-size: 9px; fill: #ffe0a0; text-anchor: start; font-style: italic; }
+  .field     { font-family: 'Times New Roman', serif; font-size: 9px; fill: #333; text-anchor: start; }
+  .field-more{ font-family: 'Times New Roman', serif; font-size: 8.5px; fill: #888; text-anchor: start; font-style: italic; }
+  .rel-label { font-family: 'Times New Roman', serif; font-size: 8.5px; fill: #555; text-anchor: middle; }
+  .card      { font-family: 'Times New Roman', serif; font-size: 9px; fill: #1a3a6e; font-weight: bold; }
+</style>
+</head>
+<body>
+<h3>Figure F1. Entity Relationship Diagram (ERD)</h3>
+<p class="subtitle">Core AHRID database schema — SQLAlchemy models · PostgreSQL (prod) / SQLite (dev)</p>
+
+<svg width="900" height="680" viewBox="0 0 900 680">
+  <defs>
+    <marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#888"/>
+    </marker>
+    <!-- entity header colours -->
+  </defs>
+
+  <!-- ═══════════════ USER (centre) ═══════════════ -->
+  <g id="user">
+    <rect x="340" y="220" width="200" height="200" rx="6" fill="#fff" stroke="#1a3a6e" stroke-width="2"/>
+    <rect x="340" y="220" width="200" height="28"  rx="6" fill="#1a3a6e"/>
+    <rect x="340" y="240" width="200" height="8"   fill="#1a3a6e"/><!-- bottom of header -->
+    <text class="hdr" x="440" y="238">users</text>
+    <!-- fields -->
+    <text class="pk"    x="348" y="262">PK  id (UUID)</text>
+    <text class="field" x="348" y="276">    email (unique)</text>
+    <text class="field" x="348" y="290">    password_hash</text>
+    <text class="field" x="348" y="304">    role · job_role</text>
+    <text class="field" x="348" y="318">    department</text>
+    <text class="field" x="348" y="332">    consent_given</text>
+    <text class="field" x="348" y="346">    cluster_label</text>
+    <text class="field" x="348" y="360">    is_active · is_verified</text>
+    <text class="field-more" x="348" y="376">    + 6 more fields</text>
+    <text class="field" x="348" y="392">    created_at · updated_at</text>
+  </g>
+
+  <!-- ═══════════════ ATTEMPT (bottom-left) ═══════════════ -->
+  <g id="attempt">
+    <rect x="30" y="400" width="190" height="160" rx="6" fill="#fff" stroke="#2456ab" stroke-width="2"/>
+    <rect x="30" y="400" width="190" height="28"  rx="6" fill="#2456ab"/>
+    <rect x="30" y="420" width="190" height="8"   fill="#2456ab"/>
+    <text class="hdr" x="125" y="418">attempts</text>
+    <text class="pk"    x="38" y="442">PK  id (UUID)</text>
+    <text class="fk"    x="38" y="456">FK  user_id → users</text>
+    <text class="fk"    x="38" y="470">FK  scenario_id → scenarios</text>
+    <text class="field" x="38" y="484">    session_id (UUID)</text>
+    <text class="field" x="38" y="498">    answer_given · is_correct</text>
+    <text class="field" x="38" y="512">    response_time_ms</text>
+    <text class="field" x="38" y="526">    category · difficulty</text>
+    <text class="field" x="38" y="540">    created_at</text>
+  </g>
+
+  <!-- ═══════════════ RISK SCORE (left) ═══════════════ -->
+  <g id="riskscore">
+    <rect x="30" y="200" width="190" height="150" rx="6" fill="#fff" stroke="#5c4d9a" stroke-width="2"/>
+    <rect x="30" y="200" width="190" height="28"  rx="6" fill="#5c4d9a"/>
+    <rect x="30" y="220" width="190" height="8"   fill="#5c4d9a"/>
+    <text class="hdr" x="125" y="218">risk_scores</text>
+    <text class="pk"    x="38" y="242">PK  id (UUID)</text>
+    <text class="fk"    x="38" y="256">FK  user_id → users (unique)</text>
+    <text class="field" x="38" y="270">    score (Float)</text>
+    <text class="field" x="38" y="284">    risk_tier (Low/Med/High/Crit)</text>
+    <text class="field" x="38" y="298">    shap_values (JSON)</text>
+    <text class="field" x="38" y="312">    top_risk_factors (JSON)</text>
+    <text class="field" x="38" y="326">    created_at · updated_at</text>
+  </g>
+
+  <!-- ═══════════════ NOTIFICATION (top-left) ═══════════════ -->
+  <g id="notification">
+    <rect x="30" y="30" width="190" height="130" rx="6" fill="#fff" stroke="#3872d0" stroke-width="2"/>
+    <rect x="30" y="30" width="190" height="28"  rx="6" fill="#3872d0"/>
+    <rect x="30" y="50" width="190" height="8"   fill="#3872d0"/>
+    <text class="hdr" x="125" y="48">notifications</text>
+    <text class="pk"    x="38" y="72">PK  id (UUID)</text>
+    <text class="fk"    x="38" y="86">FK  user_id → users</text>
+    <text class="field" x="38" y="100">    title · message</text>
+    <text class="field" x="38" y="114">    type · priority</text>
+    <text class="field" x="38" y="128">    is_read (Boolean)</text>
+    <text class="field" x="38" y="142">    created_at</text>
+  </g>
+
+  <!-- ═══════════════ AUDIT LOG (top-centre) ═══════════════ -->
+  <g id="auditlog">
+    <rect x="340" y="30" width="200" height="140" rx="6" fill="#fff" stroke="#555" stroke-width="2"/>
+    <rect x="340" y="30" width="200" height="28"  rx="6" fill="#555"/>
+    <rect x="340" y="50" width="200" height="8"   fill="#555"/>
+    <text class="hdr" x="440" y="48">audit_log</text>
+    <text class="pk"    x="348" y="72">PK  id (UUID)</text>
+    <text class="fk"    x="348" y="86">FK  actor_id → users (nullable)</text>
+    <text class="field" x="348" y="100">    action (String 80)</text>
+    <text class="field" x="348" y="114">    target_type · target_id</text>
+    <text class="field" x="348" y="128">    ip_address · user_agent</text>
+    <text class="field" x="348" y="142">    extra (JSON text)</text>
+    <text class="field" x="348" y="156">    created_at</text>
+  </g>
+
+  <!-- ═══════════════ SCENARIO (bottom-centre) ═══════════════ -->
+  <g id="scenario">
+    <rect x="340" y="480" width="200" height="170" rx="6" fill="#fff" stroke="#2e7d32" stroke-width="2"/>
+    <rect x="340" y="480" width="200" height="28"  rx="6" fill="#2e7d32"/>
+    <rect x="340" y="500" width="200" height="8"   fill="#2e7d32"/>
+    <text class="hdr" x="440" y="498">scenarios</text>
+    <text class="pk"    x="348" y="522">PK  id (UUID)</text>
+    <text class="field" x="348" y="536">    title · content</text>
+    <text class="field" x="348" y="550">    category · difficulty</text>
+    <text class="field" x="348" y="564">    question_type</text>
+    <text class="field" x="348" y="578">    correct_answer · option_a–d</text>
+    <text class="field" x="348" y="592">    source · is_active</text>
+    <text class="field" x="348" y="606">    times_served · times_correct</text>
+    <text class="field-more" x="348" y="620">    + red_flags · learning_tip · etc.</text>
+    <text class="field" x="348" y="634">    created_at · updated_at</text>
+  </g>
+
+  <!-- ═══════════════ TOKEN BLOCKLIST (top-right) ═══════════════ -->
+  <g id="blocklist">
+    <rect x="660" y="30" width="210" height="120" rx="6" fill="#fff" stroke="#8b1a1a" stroke-width="2"/>
+    <rect x="660" y="30" width="210" height="28"  rx="6" fill="#8b1a1a"/>
+    <rect x="660" y="50" width="210" height="8"   fill="#8b1a1a"/>
+    <text class="hdr" x="765" y="48">token_blocklist</text>
+    <text class="pk"    x="668" y="72">PK  id (Integer)</text>
+    <text class="field" x="668" y="86">    jti (String · unique · indexed)</text>
+    <text class="field" x="668" y="100">    token_type (access/refresh)</text>
+    <text class="field" x="668" y="114">    revoked_at (DateTime)</text>
+    <text class="field" x="668" y="128">    expires_at (DateTime)</text>
+    <text class="field-more" x="668" y="142">    no FK — jti is self-contained</text>
+  </g>
+
+  <!-- ═══════════════ THREAT FEED (right) ═══════════════ -->
+  <g id="threatfeed">
+    <rect x="660" y="200" width="210" height="170" rx="6" fill="#fff" stroke="#8b4000" stroke-width="2"/>
+    <rect x="660" y="200" width="210" height="28"  rx="6" fill="#8b4000"/>
+    <rect x="660" y="220" width="210" height="8"   fill="#8b4000"/>
+    <text class="hdr" x="765" y="218">threat_feed_entries</text>
+    <text class="pk"    x="668" y="242">PK  id (UUID)</text>
+    <text class="fk"    x="668" y="256">FK  scenario_id → scenarios (null)</text>
+    <text class="field" x="668" y="270">    source · original_url</text>
+    <text class="field" x="668" y="284">    target_brand · category</text>
+    <text class="field" x="668" y="298">    lure_type</text>
+    <text class="field" x="668" y="312">    was_converted (Boolean)</text>
+    <text class="field" x="668" y="326">    ingested_at · created_at</text>
+    <text class="field-more" x="668" y="340">    + otx_pulse_name · urlscan_verdict</text>
+    <text class="field" x="668" y="354">    created_at</text>
+  </g>
+
+  <!-- ═══════════════ PASSWORD RESET (bottom-right) ═══════════════ -->
+  <g id="pwreset">
+    <rect x="660" y="420" width="210" height="130" rx="6" fill="#fff" stroke="#e65100" stroke-width="2"/>
+    <rect x="660" y="420" width="210" height="28"  rx="6" fill="#e65100"/>
+    <rect x="660" y="440" width="210" height="8"   fill="#e65100"/>
+    <text class="hdr" x="765" y="438">password_resets</text>
+    <text class="pk"    x="668" y="462">PK  id (UUID)</text>
+    <text class="fk"    x="668" y="476">FK  user_id → users</text>
+    <text class="field" x="668" y="490">    token (String · unique)</text>
+    <text class="field" x="668" y="504">    status (pending/approved/rejected)</text>
+    <text class="field" x="668" y="518">    requested_at · expires_at</text>
+    <text class="field" x="668" y="532">    reviewed_by · reviewed_at</text>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════
+       RELATIONSHIPS
+  ═══════════════════════════════════════════════════════ -->
+
+  <!-- User → RiskScore (1:1) -->
+  <line x1="340" y1="295" x2="220" y2="295" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text class="rel-label" x="280" y="290">1</text>
+  <text class="rel-label" x="238" y="290">1</text>
+  <text class="rel-label" x="280" y="302" fill="#888" font-style="italic" font-size="8">has score</text>
+
+  <!-- User → Attempts (1:M) -->
+  <line x1="340" y1="360" x2="220" y2="470" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text class="card" x="310" y="376">1</text>
+  <text class="card" x="228" y="462">M</text>
+
+  <!-- User → Notifications (1:M) -->
+  <line x1="340" y1="250" x2="220" y2="120" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text class="card" x="310" y="248">1</text>
+  <text class="card" x="228" y="130">M</text>
+
+  <!-- User → AuditLog (1:M, nullable actor) -->
+  <line x1="440" y1="220" x2="440" y2="170" stroke="#888" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="5,3"/>
+  <text class="card" x="445" y="215">1</text>
+  <text class="card" x="445" y="180">M</text>
+  <text class="rel-label" x="460" y="196" fill="#aaa" font-style="italic">optional</text>
+
+  <!-- User → PasswordReset (1:M) -->
+  <line x1="540" y1="320" x2="660" y2="480" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text class="card" x="548" y="330">1</text>
+  <text class="card" x="648" y="472">M</text>
+
+  <!-- Scenario → Attempt (1:M) -->
+  <line x1="340" y1="535" x2="220" y2="520" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text class="card" x="330" y="530">1</text>
+  <text class="card" x="228" y="516">M</text>
+
+  <!-- ThreatFeedEntry → Scenario (1:0..1) -->
+  <line x1="660" y1="340" x2="540" y2="560" stroke="#888" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="5,3"/>
+  <text class="card" x="648" y="345">1</text>
+  <text class="card" x="545" y="552">0..1</text>
+  <text class="rel-label" x="610" y="460" fill="#aaa" font-style="italic">converts to</text>
+
+  <!-- User centre → TokenBlocklist: no FK, annotate -->
+  <line x1="540" y1="240" x2="660" y2="100" stroke="#ccc" stroke-width="1.5" stroke-dasharray="4,4"/>
+  <text class="rel-label" x="610" y="162" fill="#bbb">jti (no FK)</text>
+
+</svg>
+
+<p class="note">
+  PK = Primary Key (UUID unless noted). FK = Foreign Key. Dashed lines indicate optional or non-FK relationships.
+  TokenBlocklist carries no FK to users — tokens are validated by jti claim alone, so blocklist entries survive user deletion.
+  All UUID primary keys use Python's uuid4. Timestamps use UTC throughout.
+</p>
+</body>
+</html>

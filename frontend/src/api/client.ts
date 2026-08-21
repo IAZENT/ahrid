@@ -10,7 +10,8 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5000";
 export const apiClient: AxiosInstance = axios.create({
   baseURL: `${BASE_URL.replace(/\/$/, "")}/api/v1`,
   headers: { "Content-Type": "application/json" },
-  timeout: 10_000,
+  // Render free tier + cross-region Supabase pooler adds real latency on cold paths.
+  timeout: 30_000,
 });
 
 // ── Request: inject bearer token ─────────────────────────────────

@@ -16,7 +16,7 @@ from app.services.scenario_classifier import Classification
 # question rewards reasoning, not pattern-matching on length.
 _LURE_TEMPLATES: dict[str, dict] = {
     "credential_harvest": {
-        "title": "Suspicious sign-in page from {brand}",
+        "title": "Sign-in request from {brand}",
         "prompt": (
             "You receive a message asking you to verify your account at "
             "{url}. The page asks for your username and password. What is "
@@ -36,7 +36,7 @@ _LURE_TEMPLATES: dict[str, dict] = {
         "red_flags": "Unfamiliar host; urgency to verify; mismatched brand spelling.",
     },
     "invoice_fraud": {
-        "title": "Unexpected invoice from {brand}",
+        "title": "Invoice received from {brand}",
         "prompt": (
             "An email attaches an unexpected invoice and asks you to pay via "
             "the link {url}. The amount and supplier look almost right. What "
@@ -76,7 +76,7 @@ _LURE_TEMPLATES: dict[str, dict] = {
         "red_flags": "Unsolicited courier ping; small fee request; shortened link.",
     },
     "it_support": {
-        "title": "IT support warning",
+        "title": "Message from IT department",
         "prompt": (
             "A pop-up or email claiming to be IT says your account is at "
             "risk and tells you to act via {url}. What should you do?"
@@ -95,7 +95,7 @@ _LURE_TEMPLATES: dict[str, dict] = {
         "red_flags": "Unsolicited IT ping; pressure to act; ask to disable security.",
     },
     "ceo_impersonation": {
-        "title": "Urgent request from leadership",
+        "title": "Request from company leadership",
         "prompt": (
             "You receive what looks like a message from a senior leader "
             "asking for an urgent wire transfer or confidential data via "
@@ -115,7 +115,7 @@ _LURE_TEMPLATES: dict[str, dict] = {
         "red_flags": "Authority + urgency + confidentiality.",
     },
     "prize_scam": {
-        "title": "You've won a prize!",
+        "title": "You have been selected for a reward",
         "prompt": (
             "A message says you've been selected for a prize and to claim it "
             "at {url}. What should you do?"

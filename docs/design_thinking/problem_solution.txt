@@ -1,0 +1,214 @@
+================================================================================
+AHRIP - PROBLEM IDENTIFICATION & SOLUTION GENERATION
+Based on Design Thinking Analysis (Empathy Map, 5 Whys, POEMS, POV)
+Context: Kathmandu-based employees (Himalayan Finance Ltd)
+================================================================================
+
+
+================================================================================
+SECTION 1: ALL PROBLEMS
+================================================================================
+
+P1. Employees rush through training without reading content
+P2. Admin cannot interpret or act on risk scores meaningfully
+P3. Training feedback exists but employees do not use it to improve
+P4. Training engagement drops to zero during peak work periods
+P5. New employees are overwhelmed by multiple unfamiliar metrics
+
+
+================================================================================
+SECTION 2: AUDIENCE / USERS AFFECTED PER PROBLEM
+================================================================================
+
+P1 - Accountant, Receptionist, Sales Staff
+P2 - IT Security Admin, HR Manager
+P3 - Accountant, Receptionist, Sales Staff
+P4 - Accountant, HR Manager, Operations Staff
+P5 - New hires across all departments
+
+
+P1 - Employee (all roles)
+  Suman (accountant) clicks through 20 MCQs fast, skips explanations.
+  Mastery updates silently; risk score drops despite no real learning.
+
+P2 - Admin / Manager
+  Rajesh (IT admin) sees composite risk score 67 and cluster label
+  "moderate_risk" but does not know which category drives the score
+  or what action to take. Manager Deepa cannot explain the numbers
+  to leadership in plain terms.
+
+P3 - Employee (all roles)
+  After each wrong answer, Suman sees explanation, red flags, and a
+  learning tip but skips it instantly. He does not open the My Score
+  page to check which categories he is weak in.
+
+P4 - Employee (finance, HR, operations)
+  During month-end (25th-5th), Suman has zero bandwidth. He skips
+  training entirely for a week. Risk score rises from inactivity;
+  the system offers no accommodation when he returns.
+
+P5 - Employee (new hires especially)
+  A new hire opens the My Score page and sees: risk score "72
+  (moderate)", RF prediction "high - 68% confidence", SHAP factors,
+  and cluster archetype "Disengaged Learner". None of these metrics
+  are self-explanatory.
+
+
+
+================================================================================
+SECTION 3: FEASIBLE SOLUTIONS (10 per problem)
+================================================================================
+
+--------------------------------------------------------------------------------
+P1: Employees rush through training without reading content
+--------------------------------------------------------------------------------
+1.  Add minimum read-time per scenario (e.g., 15s before submit enables)
+2.  Show a brief comprehension check after the explanation card
+3.  Factor time-spent-reading into mastery/risk calculation, not just correctness
+4.  Introduce reflection prompt after wrong answers requiring typed response
+5.  Reduce session length from 20 to 10 questions but add depth per question
+6.  Display scenario relevance tag ("Why this matters for your role")
+7.  Require viewing the full explanation before advancing to next question
+8.  Flag sessions completed under 3 minutes as "low engagement" in admin view
+9.  Show engagement quality score alongside risk score to differentiate depth
+10. Tighten spaced repetition for missed scenarios (shorter re-appearance window)
+
+--------------------------------------------------------------------------------
+P2: Admin cannot interpret or act on risk scores meaningfully
+--------------------------------------------------------------------------------
+1.  Add per-category risk breakdown visible on admin user detail page
+2.  Show SHAP feature importance for each user's RF prediction
+3.  Generate automated coaching recommendations per high-risk user
+4.  Add "weakest category" column to the admin users table
+5.  Create one-click "assign remedial training" button from admin dashboard
+6.  Show historical risk trend (last 4 weeks) for each user on hover
+7.  Add notification to admin when a user's score crosses critical threshold
+8.  Display cluster archetype description (not just label) on dashboard
+9.  Export risk report per department as CSV for management review
+10. Add natural-language summary: "User X struggles with phishing_email
+    due to 3 consecutive wrong answers in last 2 sessions"
+
+--------------------------------------------------------------------------------
+P3: Training feedback exists but employees do not use it to improve
+--------------------------------------------------------------------------------
+1.  Require reading the full explanation before the "Next" button appears
+2.  Add a 1-question micro-quiz after the explanation to confirm understanding
+3.  Highlight the mastery % change prominently in the feedback card itself
+4.  Show "Your weakest area this session" summary before allowing session end
+5.  Send a notification after each session: "You struggled with phishing_email"
+6.  Make the session summary page the default landing after training
+7.  Add a "Review mistakes" button on the session summary to revisit wrong answers
+8.  Show per-category mastery trend on the employee dashboard (not just My Score)
+9.  Use the SHAP explanation in employee-facing language on the dashboard
+10. Prompt employee with "Did you know?" micro-facts related to their wrong answers
+
+--------------------------------------------------------------------------------
+P4: Training engagement drops to zero during peak work periods
+--------------------------------------------------------------------------------
+1.  Auto-detect low-engagement periods and send lighter "welcome back" session
+2.  Allow employees to set "busy hours" where notifications are suppressed
+3.  Offer 5-question micro-sessions during busy periods (instead of 20)
+4.  Schedule training reminders based on individual activity patterns (avoid 9-11 AM)
+5.  Send a push notification only after 3+ days of inactivity (not daily)
+6.  Send training reminders during historically active times per user
+7.  Allow managers to set department-wide "blackout windows" for training
+8.  Provide month-end-specific ultra-short scenarios (2-min invoice fraud focus)
+9.  Reduce session size dynamically during detected low-activity weeks
+10. Offer optional weekend catch-up sessions with reduced question count
+
+--------------------------------------------------------------------------------
+P5: New employees are overwhelmed by multiple unfamiliar metrics
+--------------------------------------------------------------------------------
+1.  Add onboarding tooltip explaining each metric on first login
+2.  Simplify My Score to show only composite risk + weakest category initially
+3.  Add plain-language labels: "Risk Score = how vulnerable you are (lower = better)"
+4.  Hide RF prediction and SHAP from employee view (admin-only data)
+5.  Rename "Risk Score" to "Security Score" and invert (higher = better)
+6.  Add a brief tutorial/walkthrough for first-time users
+7.  Show "What this means for you" plain-language summary above technical details
+8.  Use colour coding consistently (green = safe across all metrics)
+9.  Display detailed metrics only after 3+ sessions (avoid overwhelming new users)
+10. Add "What does this mean?" expandable helper text under each metric card
+
+
+================================================================================
+SECTION 4: BEST 2 ALTERNATIVES PER PROBLEM
+================================================================================
+
+--------------------------------------------------------------------------------
+P1: Employees rush through training without reading content
+--------------------------------------------------------------------------------
+-> (A) Add minimum engagement timer (15s) and require reading explanation
+   before advancing. Simple frontend change, directly prevents speed-rushing.
+-> (B) Tighten spaced repetition - shorten the re-appearance window for
+   incorrectly answered scenarios (e.g., 12h instead of 24-72h). Existing
+   adaptive engine supports this; requires parameter adjustment.
+
+--------------------------------------------------------------------------------
+P2: Admin cannot interpret or act on risk scores meaningfully
+--------------------------------------------------------------------------------
+1. Show SHAP-based per-category breakdown and weakest category on the
+   admin user table. Gives immediate actionable visibility without extra clicks.
+2. Add one-click "Assign remedial training" with auto-selected categories
+   based on weakest areas. Turns insight into direct action.
+
+--------------------------------------------------------------------------------
+P3: Training feedback exists but employees do not use it to improve
+--------------------------------------------------------------------------------
+1. Require reading the full explanation (minimum 5s display) before the
+   "Next" button enables. Zero backend change, immediate engagement improvement.
+2. Show per-category mastery breakdown on the main employee dashboard
+   (currently only visible on My Score page). Makes weakness visible where
+   Suman actually looks - the dashboard he opens every time.
+
+--------------------------------------------------------------------------------
+P4: Training engagement drops to zero during peak work periods
+--------------------------------------------------------------------------------
+1. Allow managers to declare department-wide "busy windows" (e.g., month-end)
+   where the system automatically offers 5-question micro-sessions instead of 20.
+2. Offer 5-question micro-sessions as a permanent alternative. Maintains
+   learning continuity without full 20-question commitment.
+
+--------------------------------------------------------------------------------
+P5: New employees are overwhelmed by multiple unfamiliar metrics
+--------------------------------------------------------------------------------
+1. Add first-login onboarding walkthrough with tooltip explanations for
+   each dashboard element. Low effort, addresses confusion at the source.
+2. Simplify default employee view: show only composite risk score and
+   weakest category with a plain-language SHAP summary. Hide RF prediction
+   details behind an expandable "Technical details" section.
+
+
+================================================================================
+CORRELATION MAP: Design Thinking Tasks <-> Problems
+================================================================================
+
+Empathy Map (Employee - Thinks/Feels)
+  -> P1 (rushing), P3 (feedback ignored)
+  Suman's risk score drops but he does not feel safer. He skips explanations.
+
+Empathy Map (Employee - Sees/Does)
+  -> P5 (metric overload)
+  Suman sees multiple confusing metrics on the My Score page.
+
+Empathy Map (Admin - Thinks/Does)
+  -> P2 (admin cannot act on scores)
+  Rajesh sees numbers but cannot explain or act on them.
+
+5 Whys (Why 1)   -> P1: "Security is IT's job" mindset = employees do not engage
+5 Whys (Why 2+3) -> P3: Training feels abstract despite role-matching = feedback skipped
+5 Whys (Why 4)   -> P3: No consequence for rushing = feedback skipped entirely
+5 Whys (Why 5)   -> P4: Compliance-driven design = no busy-period flexibility
+                 -> P2: Dashboard shows metrics, not actionable guidance
+
+POEMS (Environment)       -> P4: Month-end, open-plan interruptions, Tally workload
+POEMS (Friction Points)   -> P1 + P2: Fast answers lower difficulty; admin wants actions
+POEMS (Messages/Objects)  -> P5: Multiple metrics with no plain-language guidance
+
+POV Statement -> ALL: "believes security is not his problem" (P1) + "finds
+scenarios abstract despite labels" (P3) + "rushes through" (P1) + "shows
+compliant but is not" (P4)
+
+================================================================================
+END
+================================================================================

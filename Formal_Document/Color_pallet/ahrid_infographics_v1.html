@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AHRID — Infographics v1 (original)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#FAFBFC;color:#1B263B;padding:2rem;max-width:860px;margin:auto}
+h1{font-size:22px;font-weight:500;color:#083A69;margin-bottom:4px}
+.subtitle{font-size:13px;color:#5F6C7B;margin-bottom:28px}
+.section-lbl{font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:#5F6C7B;margin:24px 0 10px}
+.tag{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:4px;margin-bottom:8px}
+
+/* INFOGRAPHIC ELEMENTS */
+.ig-stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.ig-stat{border-radius:8px;padding:14px 10px;text-align:center}
+.ig-stat .big{font-size:26px;font-weight:500;line-height:1.1}
+.ig-stat .lbl{font-size:10px;margin-top:4px;line-height:1.4}
+
+.ig-risk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ig-risk{border-radius:8px;padding:12px;text-align:center;border:0.5px solid #D8DEE6}
+.ig-risk .pct{font-size:20px;font-weight:500}
+.ig-risk .name{font-size:10px;color:#5F6C7B;margin-top:2px}
+
+.ig-flow{display:flex;align-items:center;gap:0}
+.ig-step{flex:1;text-align:center;padding:10px 6px;font-size:10px;font-weight:500}
+.ig-arrow{font-size:16px;color:#5F6C7B;flex-shrink:0}
+
+.ig-legend{display:flex;flex-direction:column;gap:7px;flex:1}
+.ig-legend-row{display:flex;align-items:center;gap:7px;font-size:11px}
+.ig-legend-dot{width:11px;height:11px;border-radius:2px;flex-shrink:0}
+
+/* TABLES */
+.tbl-wrap{border-radius:8px;overflow:hidden;border:0.5px solid #D8DEE6}
+.tbl{width:100%;font-size:11px;border-collapse:collapse}
+.tbl th{background:#0B5294;color:#fff;padding:7px 10px;text-align:left;font-weight:500}
+.tbl td{padding:5px 10px;border-bottom:0.5px solid #D8DEE6;color:#1B263B}
+.tbl tr:nth-child(even) td{background:#F8FBFE}
+.tbl tr.total td{background:#EAF4FD;font-weight:500;color:#083A69;border-top:1px solid #D8DEE6}
+.tbl tr:last-child td{border-bottom:none}
+.badge-r{display:inline-block;font-size:9.5px;padding:2px 7px;border-radius:10px;font-weight:500}
+
+.tbl2 th{background:#1B263B;color:#fff;padding:7px 10px;font-weight:500}
+.tbl3 th{background:#F3F8FD;color:#0B5294;padding:7px 10px;font-weight:500;border-bottom:2px solid #0B5294}
+
+/* CHARTS */
+.bar-h{display:flex;flex-direction:column;gap:6px}
+.bh-row{display:flex;align-items:center;gap:8px;font-size:11px}
+.bh-lbl{width:110px;text-align:right;color:#5F6C7B;flex-shrink:0}
+.bh-track{flex:1;height:16px;background:#EAF4FD;border-radius:3px;overflow:hidden}
+.bh-fill{height:100%;border-radius:3px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px}
+.bh-val{font-size:9.5px;font-weight:500;color:#fff}
+
+.grouped-bars{display:flex;align-items:flex-end;gap:12px;height:120px;padding-top:10px}
+.bar-grp{display:flex;gap:3px;align-items:flex-end;flex:1}
+.bar-col{flex:1;border-radius:3px 3px 0 0}
+.bar-axis{border-top:0.5px solid #D8DEE6;display:flex;gap:12px;padding-top:5px}
+.bar-axis-lbl{flex:1;font-size:9px;text-align:center;color:#5F6C7B}
+
+.heatmap{display:grid;grid-template-columns:80px repeat(5,1fr);gap:2px;font-size:10px}
+.hm-cell{padding:5px 4px;text-align:center;border-radius:3px}
+.hm-lbl{padding:5px 4px;color:#5F6C7B;display:flex;align-items:center;font-size:9.5px}
+
+.timeline{position:relative;padding-left:20px}
+.tl-item{position:relative;padding:0 0 16px 20px;border-left:2px solid #DCEEFF}
+.tl-item:last-child{border-left:2px solid transparent}
+.tl-dot{position:absolute;left:-7px;top:2px;width:12px;height:12px;border-radius:50%;border:2px solid #fff}
+.tl-date{font-size:10px;color:#5F6C7B;margin-bottom:2px}
+.tl-title{font-size:12px;font-weight:500;color:#0B5294}
+.tl-body{font-size:11px;color:#5F6C7B;margin-top:2px}
+
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.comp-card{border-radius:8px;border:0.5px solid #D8DEE6;padding:12px}
+.comp-card.winner{border-color:#0B5294;border-width:1.5px}
+.comp-header{font-size:12px;font-weight:500;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.comp-row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:0.5px solid #D8DEE6}
+.comp-row:last-child{border:none}
+</style>
+</head>
+<body>
+
+<h1>AHRID — Infographics, Tables & Data Visuals (v1)</h1>
+<p class="subtitle">Original version · Some contrast issues noted — see v2 for fixes</p>
+
+<!-- STAT CARDS -->
+<div class="section-lbl">Infographic — stat cards</div>
+<div class="ig-stat-grid">
+  <div class="ig-stat" style="background:#0B5294">
+    <div class="big" style="color:#fff">91.4%</div>
+    <div class="lbl" style="color:#DCEEFF">RF accuracy</div>
+  </div>
+  <div class="ig-stat" style="background:#F3F8FD;border:0.5px solid #D8DEE6">
+    <div class="big" style="color:#0B5294">+52pp</div>
+    <div class="lbl" style="color:#5F6C7B">F1 vs baseline</div>
+  </div>
+  <div class="ig-stat" style="background:#D97706">
+    <div class="big" style="color:#fff">38</div>
+    <div class="lbl" style="color:#FFF8E8">References</div>
+  </div>
+  <div class="ig-stat" style="background:#DCEEFF">
+    <div class="big" style="color:#083A69">247</div>
+    <div class="lbl" style="color:#0B5294">SMEs surveyed</div>
+  </div>
+</div>
+
+<!-- RISK BADGES -->
+<div class="section-lbl">Infographic — risk tier badges</div>
+<div class="ig-risk-grid">
+  <div class="ig-risk" style="background:#FFF0F0;border-color:#B91C1C">
+    <div class="pct" style="color:#B91C1C">High</div>
+    <div class="name">Phishing (34%)</div>
+    <div style="margin-top:6px;font-size:9px;background:#B91C1C;color:#fff;border-radius:10px;padding:2px 8px;display:inline-block">Critical</div>
+  </div>
+  <div class="ig-risk" style="background:#FFF8E8;border-color:#D97706">
+    <div class="pct" style="color:#D97706">Med</div>
+    <div class="name">Social eng. (28%)</div>
+    <div style="margin-top:6px;font-size:9px;background:#D97706;color:#fff;border-radius:10px;padding:2px 8px;display:inline-block">Moderate</div>
+  </div>
+  <div class="ig-risk" style="background:#F1FAF5;border-color:#15803D">
+    <div class="pct" style="color:#15803D">Low</div>
+    <div class="name">Credential (18%)</div>
+    <div style="margin-top:6px;font-size:9px;background:#15803D;color:#fff;border-radius:10px;padding:2px 8px;display:inline-block">Managed</div>
+  </div>
+</div>
+
+<!-- FLOW DIAGRAM -->
+<div class="section-lbl">Infographic — pipeline flow</div>
+<div style="background:#f4f5f7;border-radius:8px;padding:12px">
+  <div class="ig-flow">
+    <div class="ig-step" style="background:#083A69;color:#fff;border-radius:6px">OSINT<br>Ingestion</div>
+    <div class="ig-arrow">→</div>
+    <div class="ig-step" style="background:#0B5294;color:#fff;border-radius:6px">Threat<br>Classifier</div>
+    <div class="ig-arrow">→</div>
+    <div class="ig-step" style="background:#1A6CAA;color:#fff;border-radius:6px">K-Means<br>Cluster</div>
+    <div class="ig-arrow">→</div>
+    <div class="ig-step" style="background:#2E82C0;color:#fff;border-radius:6px">Adaptive<br>Engine</div>
+    <div class="ig-arrow">→</div>
+    <div class="ig-step" style="background:#D97706;color:#fff;border-radius:6px">Training<br>Module</div>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<div class="section-lbl">Infographic — timeline</div>
+<div style="background:#f4f5f7;border-radius:8px;padding:14px 16px">
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot" style="background:#083A69"></div>
+      <div class="tl-date">Phase 1 — Jan 2026</div>
+      <div class="tl-title">OSINT pipeline + threat ingestion</div>
+      <div class="tl-body">AlienVault OTX, Phishing.Database integrated; 2,450 threat records collected.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:#0B5294"></div>
+      <div class="tl-date">Phase 2 — Mar 2026</div>
+      <div class="tl-title">ML model training</div>
+      <div class="tl-body">Random Forest 91.4% accuracy; K-Means 4-cluster segmentation deployed.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:#D97706"></div>
+      <div class="tl-date">Phase 3 — May 2026</div>
+      <div class="tl-title">Dashboard + adaptive engine</div>
+      <div class="tl-body">React frontend live on Vercel; FastAPI backend on Render.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:#15803D"></div>
+      <div class="tl-date">Phase 4 — Jul 2026</div>
+      <div class="tl-title">Evaluation + submission</div>
+      <div class="tl-body">User study with 247 SME employees; thesis submitted.</div>
+    </div>
+  </div>
+</div>
+
+<hr style="border:none;border-top:0.5px solid #D8DEE6;margin:20px 0">
+
+<!-- HORIZONTAL BAR -->
+<div class="section-lbl">Data — horizontal bar chart</div>
+<div style="background:#f4f5f7;border-radius:8px;padding:14px">
+  <div class="bar-h">
+    <div class="bh-row"><div class="bh-lbl">RF Accuracy</div><div class="bh-track"><div class="bh-fill" style="width:91.4%;background:#0B5294"><span class="bh-val">91.4%</span></div></div></div>
+    <div class="bh-row"><div class="bh-lbl">PR-AUC</div><div class="bh-track"><div class="bh-fill" style="width:91.7%;background:#2F6FB6"><span class="bh-val">0.917</span></div></div></div>
+    <div class="bh-row"><div class="bh-lbl">F1 Macro</div><div class="bh-track"><div class="bh-fill" style="width:88.8%;background:#5C93D3"><span class="bh-val">0.888</span></div></div></div>
+    <div class="bh-row"><div class="bh-lbl">Cohen κ</div><div class="bh-track"><div class="bh-fill" style="width:87.5%;background:#8BB7E8"><span class="bh-val" style="color:#1B263B">0.875</span></div></div></div>
+    <div class="bh-row"><div class="bh-lbl">Baseline F1</div><div class="bh-track"><div class="bh-fill" style="width:36.5%;background:#A8B2BD"><span class="bh-val" style="color:#1B263B">0.365</span></div></div></div>
+  </div>
+</div>
+
+<!-- GROUPED BARS -->
+<div class="section-lbl">Data — grouped bars (pre/post per cluster)</div>
+<div style="background:#f4f5f7;border-radius:8px;padding:14px">
+  <div style="font-size:10px;color:#5F6C7B;margin-bottom:8px;display:flex;gap:14px">
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#0B5294;vertical-align:middle;margin-right:4px"></span>Pre-training</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#D97706;vertical-align:middle;margin-right:4px"></span>Post-training</span>
+  </div>
+  <div class="grouped-bars">
+    <div class="bar-grp"><div class="bar-col" style="height:55%;background:#0B5294"></div><div class="bar-col" style="height:88%;background:#D97706"></div></div>
+    <div class="bar-grp"><div class="bar-col" style="height:48%;background:#0B5294"></div><div class="bar-col" style="height:82%;background:#D97706"></div></div>
+    <div class="bar-grp"><div class="bar-col" style="height:61%;background:#0B5294"></div><div class="bar-col" style="height:91%;background:#D97706"></div></div>
+    <div class="bar-grp"><div class="bar-col" style="height:43%;background:#0B5294"></div><div class="bar-col" style="height:79%;background:#D97706"></div></div>
+  </div>
+  <div class="bar-axis">
+    <div class="bar-axis-lbl">Cluster A</div>
+    <div class="bar-axis-lbl">Cluster B</div>
+    <div class="bar-axis-lbl">Cluster C</div>
+    <div class="bar-axis-lbl">Cluster D</div>
+  </div>
+</div>
+
+<!-- HEATMAP -->
+<div class="section-lbl">Data — heatmap (risk × cluster)</div>
+<div style="background:#f4f5f7;border-radius:8px;padding:14px">
+  <div class="heatmap" id="heatmap"></div>
+</div>
+
+<hr style="border:none;border-top:0.5px solid #D8DEE6;margin:20px 0">
+
+<!-- TABLES -->
+<div class="section-lbl">Tables — style 1: standard</div>
+<div class="tbl-wrap">
+  <table class="tbl">
+    <thead><tr><th>Platform</th><th>Annual cost</th><th>ML-adaptive</th><th>OSINT</th><th>Score</th></tr></thead>
+    <tbody>
+      <tr><td>KnowBe4</td><td>$24–48/user</td><td><span class="badge-r" style="background:#FFF0F0;color:#B91C1C">No</span></td><td><span class="badge-r" style="background:#FFF0F0;color:#B91C1C">No</span></td><td style="color:#5F6C7B">6/10</td></tr>
+      <tr><td>CybSafe</td><td>$20–50/user</td><td><span class="badge-r" style="background:#FFF8E8;color:#D97706">Partial</span></td><td><span class="badge-r" style="background:#FFF0F0;color:#B91C1C">No</span></td><td style="color:#5F6C7B">7/10</td></tr>
+      <tr class="total"><td>AHRID</td><td style="color:#15803D">$0</td><td><span class="badge-r" style="background:#F1FAF5;color:#15803D">Yes</span></td><td><span class="badge-r" style="background:#F1FAF5;color:#15803D">Yes</span></td><td style="color:#0B5294">9/10</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section-lbl" style="margin-top:18px">Tables — style 2: dark header</div>
+<div class="tbl-wrap">
+  <table class="tbl tbl2">
+    <thead><tr><th>Metric</th><th>RF model</th><th>Baseline</th><th>Delta</th></tr></thead>
+    <tbody>
+      <tr><td>Accuracy</td><td style="color:#0B5294;font-weight:500">91.4%</td><td>39.2%</td><td style="color:#15803D">+52.2pp</td></tr>
+      <tr><td>F1 Macro</td><td style="color:#0B5294;font-weight:500">0.888</td><td>0.365</td><td style="color:#15803D">+0.523</td></tr>
+      <tr><td>PR-AUC</td><td style="color:#0B5294;font-weight:500">0.917</td><td>0.401</td><td style="color:#15803D">+0.516</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section-lbl" style="margin-top:18px">Tables — style 3: minimal border rule</div>
+<div>
+  <table class="tbl tbl3" style="width:100%">
+    <thead><tr><th>Cluster</th><th>Size</th><th>Dominant risk</th><th>Recommended module</th></tr></thead>
+    <tbody>
+      <tr><td>Cluster A</td><td>31%</td><td>Phishing</td><td>Email safety drill</td></tr>
+      <tr><td>Cluster B</td><td>27%</td><td>Social engineering</td><td>Scenario simulation</td></tr>
+      <tr><td>Cluster C</td><td>24%</td><td>Credential hygiene</td><td>Password workshop</td></tr>
+      <tr><td>Cluster D</td><td>18%</td><td>Device security</td><td>Endpoint checklist</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- COMPARISON CARDS -->
+<div class="section-lbl" style="margin-top:18px">Comparison cards</div>
+<div class="comparison">
+  <div class="comp-card winner">
+    <div class="comp-header"><span style="width:8px;height:8px;border-radius:50%;background:#0B5294;flex-shrink:0"></span>AHRID <span style="font-size:9px;background:#DCEEFF;color:#083A69;padding:1px 7px;border-radius:10px;font-weight:400">Recommended</span></div>
+    <div class="comp-row"><span>Cost</span><span style="color:#15803D;font-weight:500">$0</span></div>
+    <div class="comp-row"><span>ML-adaptive</span><span style="color:#15803D">Yes</span></div>
+    <div class="comp-row"><span>OSINT-driven</span><span style="color:#15803D">Yes</span></div>
+    <div class="comp-row"><span>Nepal context</span><span style="color:#15803D">Yes</span></div>
+    <div class="comp-row"><span>F1 score</span><span style="color:#0B5294;font-weight:500">0.888</span></div>
+  </div>
+  <div class="comp-card">
+    <div class="comp-header"><span style="width:8px;height:8px;border-radius:50%;background:#A8B2BD;flex-shrink:0"></span>KnowBe4</div>
+    <div class="comp-row"><span>Cost</span><span style="color:#B91C1C">$24–48/user</span></div>
+    <div class="comp-row"><span>ML-adaptive</span><span style="color:#B91C1C">No</span></div>
+    <div class="comp-row"><span>OSINT-driven</span><span style="color:#B91C1C">No</span></div>
+    <div class="comp-row"><span>Nepal context</span><span style="color:#B91C1C">No</span></div>
+    <div class="comp-row"><span>F1 score</span><span style="color:#5F6C7B">N/A</span></div>
+  </div>
+</div>
+
+<script>
+const heatData = [
+  ["",        "Cluster A","Cluster B","Cluster C","Cluster D","Cluster E"],
+  ["Phishing",      82,71,55,43,30],
+  ["Social eng.",   58,84,47,62,38],
+  ["Credential",    41,52,79,68,44],
+  ["Device",        33,45,61,85,52],
+  ["Insider",       27,38,44,57,76],
+];
+const hm = document.getElementById('heatmap');
+heatData.forEach((row, ri) => {
+  row.forEach((cell, ci) => {
+    const el = document.createElement('div');
+    if(ri === 0){
+      el.className = 'hm-cell';
+      el.style.cssText = 'font-size:9px;font-weight:500;color:#5F6C7B;padding:4px;text-align:center';
+      el.textContent = cell;
+    } else if(ci === 0){
+      el.className = 'hm-lbl';
+      el.textContent = cell;
+    } else {
+      const v = cell;
+      const alpha = (v - 25) / 60;
+      el.className = 'hm-cell';
+      el.style.background = `rgba(11,82,148,${0.12 + alpha * 0.75})`;
+      el.style.color = alpha > 0.5 ? '#fff' : '#083A69';
+      el.style.fontWeight = v >= 70 ? '500' : '400';
+      el.textContent = v;
+    }
+    hm.appendChild(el);
+  });
+});
+</script>
+</body>
+</html>

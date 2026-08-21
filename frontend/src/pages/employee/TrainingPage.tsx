@@ -332,7 +332,7 @@ export function TrainingPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-4">
+    <div className="mx-auto flex max-w-4xl flex-col gap-5">
       {/* Progress rail */}
       <div className="space-y-2">
         <div className="flex items-center justify-between text-xs text-text-muted">
@@ -343,8 +343,8 @@ export function TrainingPage() {
             <span className="hidden sm:inline">·</span>
             <CategoryBadge category={scenario.category} size="sm" />
             <span className="hidden sm:inline">·</span>
-            <span className="hidden sm:inline">
-              Difficulty {scenario.difficulty}
+            <span className="hidden sm:inline" title={`Difficulty ${scenario.difficulty}/3`}>
+              {"★".repeat(scenario.difficulty)}{"☆".repeat(3 - scenario.difficulty)}
             </span>
           </div>
           <div className="flex items-center gap-1.5 tabular-nums">
@@ -371,7 +371,7 @@ export function TrainingPage() {
           transition={{ duration: 0.18 }}
         >
           <Card>
-            <CardBody className="space-y-4">
+            <CardBody className="space-y-5 p-6">
               {scenario.selection_reason && (
                 <div className="flex items-start gap-2 rounded-md border border-accent/20 bg-accent/5 px-3 py-2 text-xs text-accent">
                   <Info className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
@@ -379,12 +379,12 @@ export function TrainingPage() {
                 </div>
               )}
               <div>
-                <h2 className="text-lg font-semibold text-text-primary">
-                  {scenario.title}
-                </h2>
-                <p className="mt-2 whitespace-pre-line break-words text-sm text-text-secondary [overflow-wrap:anywhere]">
-                  {scenario.content}
-                </p>
+                <div className="rounded-lg border border-border-subtle bg-bg-elevated/50 px-5 py-4">
+                  <p className="whitespace-pre-line break-words text-base leading-relaxed text-text-primary [overflow-wrap:anywhere]">
+                    {scenario.content}
+                  </p>
+                </div>
+                <p className="mt-3 text-sm font-medium text-text-secondary">What should you do?</p>
               </div>
               {scenario.visual_html && (
                 <VisualScenario
@@ -468,7 +468,7 @@ export function TrainingPage() {
 
       <div className="flex items-center justify-between">
         <span className="text-2xs text-text-muted">
-          Tip: press <kbd className="rounded bg-bg-elevated px-1">A–D</kbd> to pick,{" "}
+          Tip: press <kbd className="rounded bg-bg-elevated px-1">A-D</kbd> to pick,{" "}
           <kbd className="rounded bg-bg-elevated px-1">Enter</kbd> to{" "}
           {feedback ? "continue" : "submit"}.
         </span>

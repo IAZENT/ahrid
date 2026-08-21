@@ -1,0 +1,9 @@
+{
+  "promptDelete": true,
+  "defaultViewMode": "preview",
+  "foldHeading": false,
+  "showLineNumber": true,
+  "livePreview": true,
+  "legacyEditor": false,
+  "vimMode": false
+}
